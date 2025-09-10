@@ -1,0 +1,3 @@
+rootProject.name = 'phasetwo'
+
+include 'sample-app'
