@@ -10,12 +10,8 @@ import com.phasetwo.types.AuditEventRepresentation;
 import com.phasetwo.types.EventRepresentation;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminEventsAdminEventsRequest;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminEventsEventsRequest;
-import com.phasetwo.types.GetWebhookSendsRequest;
 import com.phasetwo.types.GetWebhooksRequest;
-import com.phasetwo.types.RealmEventsConfigRepresentation;
-import com.phasetwo.types.SecretRepresentation;
 import com.phasetwo.types.WebhookRepresentation;
-import com.phasetwo.types.WebhookSendRepresentation;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -36,28 +32,20 @@ public class AsyncEventsClient {
         return this.rawClient;
     }
 
+    public CompletableFuture<Void> deleteAllAdminEvents(String realm) {
+        return this.rawClient.deleteAllAdminEvents(realm).thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<Void> deleteAllAdminEvents(String realm, RequestOptions requestOptions) {
+        return this.rawClient.deleteAllAdminEvents(realm, requestOptions).thenApply(response -> response.body());
+    }
+
     public CompletableFuture<Void> deleteAllEvents(String realm) {
         return this.rawClient.deleteAllEvents(realm).thenApply(response -> response.body());
     }
 
     public CompletableFuture<Void> deleteAllEvents(String realm, RequestOptions requestOptions) {
         return this.rawClient.deleteAllEvents(realm, requestOptions).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<RealmEventsConfigRepresentation>
-            getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(String realm) {
-        return this.rawClient
-                .getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(realm)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<RealmEventsConfigRepresentation>
-            getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(
-                    String realm, RequestOptions requestOptions) {
-        return this.rawClient
-                .getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(
-                        realm, requestOptions)
-                .thenApply(response -> response.body());
     }
 
     public CompletableFuture<Void> createEvent(String realm) {
@@ -152,82 +140,6 @@ public class AsyncEventsClient {
 
     public CompletableFuture<Void> deleteWebhook(String realm, String webhookId, RequestOptions requestOptions) {
         return this.rawClient.deleteWebhook(realm, webhookId, requestOptions).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<SecretRepresentation> getWebhookSecretById(String realm, String webhookId) {
-        return this.rawClient.getWebhookSecretById(realm, webhookId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<SecretRepresentation> getWebhookSecretById(
-            String realm, String webhookId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSecretById(realm, webhookId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<WebhookSendRepresentation>> getWebhookSends(String realm, String webhookId) {
-        return this.rawClient.getWebhookSends(realm, webhookId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<WebhookSendRepresentation>> getWebhookSends(
-            String realm, String webhookId, GetWebhookSendsRequest request) {
-        return this.rawClient.getWebhookSends(realm, webhookId, request).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<WebhookSendRepresentation>> getWebhookSends(
-            String realm, String webhookId, GetWebhookSendsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSends(realm, webhookId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<WebhookSendRepresentation> getWebhookSendById(
-            String realm, String webhookId, String sendId) {
-        return this.rawClient.getWebhookSendById(realm, webhookId, sendId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<WebhookSendRepresentation> getWebhookSendById(
-            String realm, String webhookId, String sendId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSendById(realm, webhookId, sendId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> resendWebhookById(String realm, String webhookId, String sendId) {
-        return this.rawClient.resendWebhookById(realm, webhookId, sendId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> resendWebhookById(
-            String realm, String webhookId, String sendId, RequestOptions requestOptions) {
-        return this.rawClient
-                .resendWebhookById(realm, webhookId, sendId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<AuditEventRepresentation> getPayloadByKeycloakTypeAndId(
-            String realm, String type, String kid) {
-        return this.rawClient.getPayloadByKeycloakTypeAndId(realm, type, kid).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<AuditEventRepresentation> getPayloadByKeycloakTypeAndId(
-            String realm, String type, String kid, RequestOptions requestOptions) {
-        return this.rawClient
-                .getPayloadByKeycloakTypeAndId(realm, type, kid, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<WebhookSendRepresentation>> getWebhookSendsByKeycloakTypeAndId(
-            String realm, String type, String kid) {
-        return this.rawClient
-                .getWebhookSendsByKeycloakTypeAndId(realm, type, kid)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<WebhookSendRepresentation>> getWebhookSendsByKeycloakTypeAndId(
-            String realm, String type, String kid, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSendsByKeycloakTypeAndId(realm, type, kid, requestOptions)
-                .thenApply(response -> response.body());
     }
 
     public CompletableFuture<List<EventRepresentation>>

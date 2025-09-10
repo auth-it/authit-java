@@ -5,9 +5,6 @@ package com.phasetwo;
 
 import com.phasetwo.core.ClientOptions;
 import com.phasetwo.core.RequestOptions;
-import com.phasetwo.types.ActiveOrganizationRepresentation;
-import com.phasetwo.types.CredentialRepresentation;
-import com.phasetwo.types.FederatedIdentityRepresentation;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminUsersRequest;
 import com.phasetwo.types.GetAdminRealmsRealmUsersCountRequest;
 import com.phasetwo.types.GetAdminRealmsRealmUsersUserIdRequest;
@@ -15,11 +12,7 @@ import com.phasetwo.types.MagicLinkRequest;
 import com.phasetwo.types.OrganizationRepresentation;
 import com.phasetwo.types.OrganizationRoleRepresentation;
 import com.phasetwo.types.PutAdminRealmsRealmUsersUserIdExecuteActionsEmailRequest;
-import com.phasetwo.types.PutAdminRealmsRealmUsersUserIdResetPasswordEmailRequest;
 import com.phasetwo.types.PutAdminRealmsRealmUsersUserIdSendVerifyEmailRequest;
-import com.phasetwo.types.SwitchOrganizationRepresentation;
-import com.phasetwo.types.UpConfig;
-import com.phasetwo.types.UserProfileMetadata;
 import com.phasetwo.types.UserRepresentation;
 import com.phasetwo.types.UserSessionRepresentation;
 import java.util.List;
@@ -86,61 +79,6 @@ public class UsersClient {
                 .body();
     }
 
-    /**
-     * Get the configuration for the user profile
-     */
-    public UpConfig getAdminRealmsRealmUsersProfile(String realm) {
-        return this.rawClient.getAdminRealmsRealmUsersProfile(realm).body();
-    }
-
-    /**
-     * Get the configuration for the user profile
-     */
-    public UpConfig getAdminRealmsRealmUsersProfile(String realm, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersProfile(realm, requestOptions)
-                .body();
-    }
-
-    /**
-     * Set the configuration for the user profile
-     */
-    public UpConfig putAdminRealmsRealmUsersProfile(String realm) {
-        return this.rawClient.putAdminRealmsRealmUsersProfile(realm).body();
-    }
-
-    /**
-     * Set the configuration for the user profile
-     */
-    public UpConfig putAdminRealmsRealmUsersProfile(String realm, UpConfig request) {
-        return this.rawClient.putAdminRealmsRealmUsersProfile(realm, request).body();
-    }
-
-    /**
-     * Set the configuration for the user profile
-     */
-    public UpConfig putAdminRealmsRealmUsersProfile(String realm, UpConfig request, RequestOptions requestOptions) {
-        return this.rawClient
-                .putAdminRealmsRealmUsersProfile(realm, request, requestOptions)
-                .body();
-    }
-
-    /**
-     * Get the UserProfileMetadata from the configuration
-     */
-    public UserProfileMetadata getAdminRealmsRealmUsersProfileMetadata(String realm) {
-        return this.rawClient.getAdminRealmsRealmUsersProfileMetadata(realm).body();
-    }
-
-    /**
-     * Get the UserProfileMetadata from the configuration
-     */
-    public UserProfileMetadata getAdminRealmsRealmUsersProfileMetadata(String realm, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersProfileMetadata(realm, requestOptions)
-                .body();
-    }
-
     public UserRepresentation getRepresentationOfTheUser(String realm, String userId) {
         return this.rawClient.getRepresentationOfTheUser(realm, userId).body();
     }
@@ -178,76 +116,6 @@ public class UsersClient {
     }
 
     /**
-     * Returned values can contain for example &quot;password&quot;, &quot;otp&quot; etc. This will always return empty list for &quot;local&quot; users, which are not backed by any user storage
-     */
-    public List<String> returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(
-            String realm, String userId) {
-        return this.rawClient
-                .returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(realm, userId)
-                .body();
-    }
-
-    /**
-     * Returned values can contain for example &quot;password&quot;, &quot;otp&quot; etc. This will always return empty list for &quot;local&quot; users, which are not backed by any user storage
-     */
-    public List<String> returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(realm, userId, requestOptions)
-                .body();
-    }
-
-    public List<CredentialRepresentation> getAdminRealmsRealmUsersUserIdCredentials(String realm, String userId) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdCredentials(realm, userId)
-                .body();
-    }
-
-    public List<CredentialRepresentation> getAdminRealmsRealmUsersUserIdCredentials(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdCredentials(realm, userId, requestOptions)
-                .body();
-    }
-
-    public void removeACredentialForAUser(String realm, String userId, String credentialId) {
-        this.rawClient.removeACredentialForAUser(realm, userId, credentialId).body();
-    }
-
-    public void removeACredentialForAUser(
-            String realm, String userId, String credentialId, RequestOptions requestOptions) {
-        this.rawClient
-                .removeACredentialForAUser(realm, userId, credentialId, requestOptions)
-                .body();
-    }
-
-    public void updateACredentialLabelForAUser(String realm, String userId, String credentialId) {
-        this.rawClient
-                .updateACredentialLabelForAUser(realm, userId, credentialId)
-                .body();
-    }
-
-    public void updateACredentialLabelForAUser(
-            String realm, String userId, String credentialId, RequestOptions requestOptions) {
-        this.rawClient
-                .updateACredentialLabelForAUser(realm, userId, credentialId, requestOptions)
-                .body();
-    }
-
-    public void disableAllCredentialsForAUserOfASpecificType(String realm, String userId, List<String> request) {
-        this.rawClient
-                .disableAllCredentialsForAUserOfASpecificType(realm, userId, request)
-                .body();
-    }
-
-    public void disableAllCredentialsForAUserOfASpecificType(
-            String realm, String userId, List<String> request, RequestOptions requestOptions) {
-        this.rawClient
-                .disableAllCredentialsForAUserOfASpecificType(realm, userId, request, requestOptions)
-                .body();
-    }
-
-    /**
      * An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
     public void sendAnEmailToTheUserWithALinkTheyCanClickToExecuteParticularActions(
@@ -268,43 +136,6 @@ public class UsersClient {
         this.rawClient
                 .sendAnEmailToTheUserWithALinkTheyCanClickToExecuteParticularActions(
                         realm, userId, request, requestOptions)
-                .body();
-    }
-
-    public List<FederatedIdentityRepresentation> getSocialLoginsAssociatedWithTheUser(String realm, String userId) {
-        return this.rawClient
-                .getSocialLoginsAssociatedWithTheUser(realm, userId)
-                .body();
-    }
-
-    public List<FederatedIdentityRepresentation> getSocialLoginsAssociatedWithTheUser(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getSocialLoginsAssociatedWithTheUser(realm, userId, requestOptions)
-                .body();
-    }
-
-    public void addASocialLoginProviderToTheUser(String realm, String userId, String provider) {
-        this.rawClient.addASocialLoginProviderToTheUser(realm, userId, provider).body();
-    }
-
-    public void addASocialLoginProviderToTheUser(
-            String realm, String userId, String provider, RequestOptions requestOptions) {
-        this.rawClient
-                .addASocialLoginProviderToTheUser(realm, userId, provider, requestOptions)
-                .body();
-    }
-
-    public void removeASocialLoginProviderFromUser(String realm, String userId, String provider) {
-        this.rawClient
-                .removeASocialLoginProviderFromUser(realm, userId, provider)
-                .body();
-    }
-
-    public void removeASocialLoginProviderFromUser(
-            String realm, String userId, String provider, RequestOptions requestOptions) {
-        this.rawClient
-                .removeASocialLoginProviderFromUser(realm, userId, provider, requestOptions)
                 .body();
     }
 
@@ -331,67 +162,6 @@ public class UsersClient {
         this.rawClient
                 .removeAllUserSessionsAssociatedWithTheUserAlsoSendNotificationToAllClientsThatHaveAnAdminUrlToInvalidateTheSessionsForTheParticularUser(
                         realm, userId, requestOptions)
-                .body();
-    }
-
-    public List<UserSessionRepresentation> getOfflineSessionsAssociatedWithTheUserAndClient(
-            String realm, String userId, String clientUuid) {
-        return this.rawClient
-                .getOfflineSessionsAssociatedWithTheUserAndClient(realm, userId, clientUuid)
-                .body();
-    }
-
-    public List<UserSessionRepresentation> getOfflineSessionsAssociatedWithTheUserAndClient(
-            String realm, String userId, String clientUuid, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOfflineSessionsAssociatedWithTheUserAndClient(realm, userId, clientUuid, requestOptions)
-                .body();
-    }
-
-    public void setUpANewPasswordForTheUser(String realm, String userId) {
-        this.rawClient.setUpANewPasswordForTheUser(realm, userId).body();
-    }
-
-    public void setUpANewPasswordForTheUser(String realm, String userId, CredentialRepresentation request) {
-        this.rawClient.setUpANewPasswordForTheUser(realm, userId, request).body();
-    }
-
-    public void setUpANewPasswordForTheUser(
-            String realm, String userId, CredentialRepresentation request, RequestOptions requestOptions) {
-        this.rawClient
-                .setUpANewPasswordForTheUser(realm, userId, request, requestOptions)
-                .body();
-    }
-
-    /**
-     * The redirectUri and clientId parameters are optional. The default for the redirect is the account client. This endpoint has been deprecated.  Please use the execute-actions-email passing a list with UPDATE_PASSWORD within it.
-     */
-    public void sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(String realm, String userId) {
-        this.rawClient
-                .sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(realm, userId)
-                .body();
-    }
-
-    /**
-     * The redirectUri and clientId parameters are optional. The default for the redirect is the account client. This endpoint has been deprecated.  Please use the execute-actions-email passing a list with UPDATE_PASSWORD within it.
-     */
-    public void sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(
-            String realm, String userId, PutAdminRealmsRealmUsersUserIdResetPasswordEmailRequest request) {
-        this.rawClient
-                .sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(realm, userId, request)
-                .body();
-    }
-
-    /**
-     * The redirectUri and clientId parameters are optional. The default for the redirect is the account client. This endpoint has been deprecated.  Please use the execute-actions-email passing a list with UPDATE_PASSWORD within it.
-     */
-    public void sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(
-            String realm,
-            String userId,
-            PutAdminRealmsRealmUsersUserIdResetPasswordEmailRequest request,
-            RequestOptions requestOptions) {
-        this.rawClient
-                .sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(realm, userId, request, requestOptions)
                 .body();
     }
 
@@ -439,19 +209,6 @@ public class UsersClient {
             String realm, String userId, RequestOptions requestOptions) {
         return this.rawClient
                 .getSessionsAssociatedWithTheUser(realm, userId, requestOptions)
-                .body();
-    }
-
-    public Map<String, List<String>> getAdminRealmsRealmUsersUserIdUnmanagedAttributes(String realm, String userId) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdUnmanagedAttributes(realm, userId)
-                .body();
-    }
-
-    public Map<String, List<String>> getAdminRealmsRealmUsersUserIdUnmanagedAttributes(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdUnmanagedAttributes(realm, userId, requestOptions)
                 .body();
     }
 
@@ -514,35 +271,6 @@ public class UsersClient {
         this.rawClient
                 .revokeOrganizationRolesFromAUser(realm, userId, orgId, request, requestOptions)
                 .body();
-    }
-
-    /**
-     * Switch the active organization context for the authenticated user
-     */
-    public void switchActiveOrganization(String realm, SwitchOrganizationRepresentation request) {
-        this.rawClient.switchActiveOrganization(realm, request).body();
-    }
-
-    /**
-     * Switch the active organization context for the authenticated user
-     */
-    public void switchActiveOrganization(
-            String realm, SwitchOrganizationRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.switchActiveOrganization(realm, request, requestOptions).body();
-    }
-
-    /**
-     * Get the currently active organization for the authenticated user
-     */
-    public ActiveOrganizationRepresentation getActiveOrganization(String realm) {
-        return this.rawClient.getActiveOrganization(realm).body();
-    }
-
-    /**
-     * Get the currently active organization for the authenticated user
-     */
-    public ActiveOrganizationRepresentation getActiveOrganization(String realm, RequestOptions requestOptions) {
-        return this.rawClient.getActiveOrganization(realm, requestOptions).body();
     }
 
     public void createMagicLink(String realm, MagicLinkRequest request) {

@@ -14,8 +14,7 @@ import com.phasetwo.types.GetOrganizationsRequest;
 import com.phasetwo.types.InvitationRepresentation;
 import com.phasetwo.types.InvitationRequestRepresentation;
 import com.phasetwo.types.MyOrganizationRepresentation;
-import com.phasetwo.types.OrganizationConfigRepresentation;
-import com.phasetwo.types.OrganizationMemberAttributeRepresentation;
+import com.phasetwo.types.OrganizationDomainRepresentation;
 import com.phasetwo.types.OrganizationRepresentation;
 import com.phasetwo.types.OrganizationRoleRepresentation;
 import com.phasetwo.types.PortalLinkRepresentation;
@@ -221,45 +220,6 @@ public class AsyncOrganizationsClient {
     }
 
     /**
-     * Get the global organization configuration for this realm
-     */
-    public CompletableFuture<OrganizationConfigRepresentation> getOrganizationConfig(String realm) {
-        return this.rawClient.getOrganizationConfig(realm).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get the global organization configuration for this realm
-     */
-    public CompletableFuture<OrganizationConfigRepresentation> getOrganizationConfig(
-            String realm, RequestOptions requestOptions) {
-        return this.rawClient.getOrganizationConfig(realm, requestOptions).thenApply(response -> response.body());
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public CompletableFuture<Void> updateOrganizationConfig(String realm) {
-        return this.rawClient.updateOrganizationConfig(realm).thenApply(response -> response.body());
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public CompletableFuture<Void> updateOrganizationConfig(String realm, OrganizationConfigRepresentation request) {
-        return this.rawClient.updateOrganizationConfig(realm, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public CompletableFuture<Void> updateOrganizationConfig(
-            String realm, OrganizationConfigRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient
-                .updateOrganizationConfig(realm, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getOrganizationMemberships(
@@ -309,6 +269,30 @@ public class AsyncOrganizationsClient {
             String realm, String orgId, GetOrganizationMembershipsCountRequest request, RequestOptions requestOptions) {
         return this.rawClient
                 .getOrganizationMembershipsCount(realm, orgId, request, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<List<OrganizationDomainRepresentation>> getOrganizationDomains(
+            String realm, String orgId) {
+        return this.rawClient.getOrganizationDomains(realm, orgId).thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<List<OrganizationDomainRepresentation>> getOrganizationDomains(
+            String realm, String orgId, RequestOptions requestOptions) {
+        return this.rawClient
+                .getOrganizationDomains(realm, orgId, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<OrganizationDomainRepresentation> getOrganizationDomain(
+            String realm, String orgId, String domainName) {
+        return this.rawClient.getOrganizationDomain(realm, orgId, domainName).thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<OrganizationDomainRepresentation> getOrganizationDomain(
+            String realm, String orgId, String domainName, RequestOptions requestOptions) {
+        return this.rawClient
+                .getOrganizationDomain(realm, orgId, domainName, requestOptions)
                 .thenApply(response -> response.body());
     }
 
@@ -371,60 +355,6 @@ public class AsyncOrganizationsClient {
             String realm, String orgId, String userId, RequestOptions requestOptions) {
         return this.rawClient
                 .removeOrganizationMember(realm, orgId, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get attributes for a specific member of an organization
-     */
-    public CompletableFuture<Map<String, List<String>>> getOrganizationMemberAttributes(
-            String realm, String orgId, String userId) {
-        return this.rawClient
-                .getOrganizationMemberAttributes(realm, orgId, userId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get attributes for a specific member of an organization
-     */
-    public CompletableFuture<Map<String, List<String>>> getOrganizationMemberAttributes(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationMemberAttributes(realm, orgId, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public CompletableFuture<Map<String, List<String>>> addOrganizationMemberAttributes(
-            String realm, String orgId, String userId) {
-        return this.rawClient
-                .addOrganizationMemberAttributes(realm, orgId, userId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public CompletableFuture<Map<String, List<String>>> addOrganizationMemberAttributes(
-            String realm, String orgId, String userId, OrganizationMemberAttributeRepresentation request) {
-        return this.rawClient
-                .addOrganizationMemberAttributes(realm, orgId, userId, request)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public CompletableFuture<Map<String, List<String>>> addOrganizationMemberAttributes(
-            String realm,
-            String orgId,
-            String userId,
-            OrganizationMemberAttributeRepresentation request,
-            RequestOptions requestOptions) {
-        return this.rawClient
-                .addOrganizationMemberAttributes(realm, orgId, userId, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 

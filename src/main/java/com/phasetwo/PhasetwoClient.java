@@ -10,13 +10,9 @@ import java.util.function.Supplier;
 public class PhasetwoClient {
     protected final ClientOptions clientOptions;
 
-    protected final Supplier<RealmsAdminClient> realmsAdminClient;
+    protected final Supplier<EventsClient> eventsClient;
 
     protected final Supplier<AttackDetectionClient> attackDetectionClient;
-
-    protected final Supplier<ClientsClient> clientsClient;
-
-    protected final Supplier<EventsClient> eventsClient;
 
     protected final Supplier<SessionsClient> sessionsClient;
 
@@ -28,42 +24,23 @@ public class PhasetwoClient {
 
     protected final Supplier<OrganizationsClient> organizationsClient;
 
-    protected final Supplier<OrganizationClient> organizationClient;
-
-    protected final Supplier<IdentityProvidersClient> identityProvidersClient;
-
-    protected final Supplier<AttributesClient> attributesClient;
-
     public PhasetwoClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
-        this.realmsAdminClient = Suppliers.memoize(() -> new RealmsAdminClient(clientOptions));
-        this.attackDetectionClient = Suppliers.memoize(() -> new AttackDetectionClient(clientOptions));
-        this.clientsClient = Suppliers.memoize(() -> new ClientsClient(clientOptions));
         this.eventsClient = Suppliers.memoize(() -> new EventsClient(clientOptions));
+        this.attackDetectionClient = Suppliers.memoize(() -> new AttackDetectionClient(clientOptions));
         this.sessionsClient = Suppliers.memoize(() -> new SessionsClient(clientOptions));
         this.rolesClient = Suppliers.memoize(() -> new RolesClient(clientOptions));
         this.usersClient = Suppliers.memoize(() -> new UsersClient(clientOptions));
         this.roleMapperClient = Suppliers.memoize(() -> new RoleMapperClient(clientOptions));
         this.organizationsClient = Suppliers.memoize(() -> new OrganizationsClient(clientOptions));
-        this.organizationClient = Suppliers.memoize(() -> new OrganizationClient(clientOptions));
-        this.identityProvidersClient = Suppliers.memoize(() -> new IdentityProvidersClient(clientOptions));
-        this.attributesClient = Suppliers.memoize(() -> new AttributesClient(clientOptions));
-    }
-
-    public RealmsAdminClient realmsAdmin() {
-        return this.realmsAdminClient.get();
-    }
-
-    public AttackDetectionClient attackDetection() {
-        return this.attackDetectionClient.get();
-    }
-
-    public ClientsClient clients() {
-        return this.clientsClient.get();
     }
 
     public EventsClient events() {
         return this.eventsClient.get();
+    }
+
+    public AttackDetectionClient attackDetection() {
+        return this.attackDetectionClient.get();
     }
 
     public SessionsClient sessions() {
@@ -84,18 +61,6 @@ public class PhasetwoClient {
 
     public OrganizationsClient organizations() {
         return this.organizationsClient.get();
-    }
-
-    public OrganizationClient organization() {
-        return this.organizationClient.get();
-    }
-
-    public IdentityProvidersClient identityProviders() {
-        return this.identityProvidersClient.get();
-    }
-
-    public AttributesClient attributes() {
-        return this.attributesClient.get();
     }
 
     public static PhasetwoClientBuilder builder() {

@@ -12,7 +12,7 @@ Instantiate and use the client with the following:
 package com.example.usage;
 
 import com.phasetwo.PhasetwoClient;
-import com.phasetwo.types.ClientRepresentation;
+import com.phasetwo.types.AuditEventRepresentation;
 
 public class Example {
     public static void main(String[] args) {
@@ -21,9 +21,9 @@ public class Example {
             .token("<token>")
             .build();
 
-        client.clients().createANewClientClientsClientIdMustBeUnique(
+        client.events().createEvent(
             "realm",
-            ClientRepresentation
+            AuditEventRepresentation
                 .builder()
                 .build()
         );
@@ -66,7 +66,7 @@ When the API returns a non-success status code (4xx or 5xx response), an API exc
 import com.phasetwo.core.PhasetwoApiException;
 
 try {
-    client.clients().createANewClientClientsClientIdMustBeUnique(...);
+    client.events().createEvent(...);
 } catch (PhasetwoApiException e) {
     // Do something with the API exception...
 }
@@ -129,7 +129,7 @@ PhasetwoClient client = PhasetwoClient
     .build();
 
 // Request level
-client.clients().createANewClientClientsClientIdMustBeUnique(
+client.events().createEvent(
     ...,
     RequestOptions
         .builder()

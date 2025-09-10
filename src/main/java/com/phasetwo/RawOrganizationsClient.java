@@ -13,9 +13,7 @@ import com.phasetwo.core.PhasetwoClientHttpResponse;
 import com.phasetwo.core.PhasetwoException;
 import com.phasetwo.core.QueryStringMapper;
 import com.phasetwo.core.RequestOptions;
-import com.phasetwo.errors.BadRequestError;
 import com.phasetwo.errors.ConflictError;
-import com.phasetwo.errors.NotFoundError;
 import com.phasetwo.types.CreatePortalLinkRequest;
 import com.phasetwo.types.GetOrganizationInvitationsRequest;
 import com.phasetwo.types.GetOrganizationMembershipsCountRequest;
@@ -25,8 +23,7 @@ import com.phasetwo.types.GetOrganizationsRequest;
 import com.phasetwo.types.InvitationRepresentation;
 import com.phasetwo.types.InvitationRequestRepresentation;
 import com.phasetwo.types.MyOrganizationRepresentation;
-import com.phasetwo.types.OrganizationConfigRepresentation;
-import com.phasetwo.types.OrganizationMemberAttributeRepresentation;
+import com.phasetwo.types.OrganizationDomainRepresentation;
 import com.phasetwo.types.OrganizationRepresentation;
 import com.phasetwo.types.OrganizationRoleRepresentation;
 import com.phasetwo.types.PortalLinkRepresentation;
@@ -613,123 +610,6 @@ public class RawOrganizationsClient {
     }
 
     /**
-     * Get the global organization configuration for this realm
-     */
-    public PhasetwoClientHttpResponse<OrganizationConfigRepresentation> getOrganizationConfig(String realm) {
-        return getOrganizationConfig(realm, null);
-    }
-
-    /**
-     * Get the global organization configuration for this realm
-     */
-    public PhasetwoClientHttpResponse<OrganizationConfigRepresentation> getOrganizationConfig(
-            String realm, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs/config")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new PhasetwoClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(
-                                responseBody.string(), OrganizationConfigRepresentation.class),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new PhasetwoApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new PhasetwoException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public PhasetwoClientHttpResponse<Void> updateOrganizationConfig(String realm) {
-        return updateOrganizationConfig(
-                realm, OrganizationConfigRepresentation.builder().build());
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public PhasetwoClientHttpResponse<Void> updateOrganizationConfig(
-            String realm, OrganizationConfigRepresentation request) {
-        return updateOrganizationConfig(realm, request, null);
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public PhasetwoClientHttpResponse<Void> updateOrganizationConfig(
-            String realm, OrganizationConfigRepresentation request, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs/config")
-                .build();
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new PhasetwoException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("PUT", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new PhasetwoClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            try {
-                if (response.code() == 400) {
-                    throw new BadRequestError(
-                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                }
-            } catch (JsonProcessingException ignored) {
-                // unable to map error response, throwing generic error
-            }
-            throw new PhasetwoApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new PhasetwoException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public PhasetwoClientHttpResponse<List<UserWithOrgsBriefRepresentation>> getOrganizationMemberships(
@@ -862,6 +742,97 @@ public class RawOrganizationsClient {
             if (response.isSuccessful()) {
                 return new PhasetwoClientHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), int.class), response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new PhasetwoApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new PhasetwoException("Network error executing HTTP request", e);
+        }
+    }
+
+    public PhasetwoClientHttpResponse<List<OrganizationDomainRepresentation>> getOrganizationDomains(
+            String realm, String orgId) {
+        return getOrganizationDomains(realm, orgId, null);
+    }
+
+    public PhasetwoClientHttpResponse<List<OrganizationDomainRepresentation>> getOrganizationDomains(
+            String realm, String orgId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("domains")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new PhasetwoClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(
+                                responseBody.string(), new TypeReference<List<OrganizationDomainRepresentation>>() {}),
+                        response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new PhasetwoApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new PhasetwoException("Network error executing HTTP request", e);
+        }
+    }
+
+    public PhasetwoClientHttpResponse<OrganizationDomainRepresentation> getOrganizationDomain(
+            String realm, String orgId, String domainName) {
+        return getOrganizationDomain(realm, orgId, domainName, null);
+    }
+
+    public PhasetwoClientHttpResponse<OrganizationDomainRepresentation> getOrganizationDomain(
+            String realm, String orgId, String domainName, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("domains")
+                .addPathSegment(domainName)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new PhasetwoClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(
+                                responseBody.string(), OrganizationDomainRepresentation.class),
+                        response);
             }
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             throw new PhasetwoApiException(
@@ -1043,159 +1014,6 @@ public class RawOrganizationsClient {
                 return new PhasetwoClientHttpResponse<>(null, response);
             }
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new PhasetwoApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new PhasetwoException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Get attributes for a specific member of an organization
-     */
-    public PhasetwoClientHttpResponse<Map<String, List<String>>> getOrganizationMemberAttributes(
-            String realm, String orgId, String userId) {
-        return getOrganizationMemberAttributes(realm, orgId, userId, null);
-    }
-
-    /**
-     * Get attributes for a specific member of an organization
-     */
-    public PhasetwoClientHttpResponse<Map<String, List<String>>> getOrganizationMemberAttributes(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("members")
-                .addPathSegment(userId)
-                .addPathSegments("attributes")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new PhasetwoClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(
-                                responseBody.string(), new TypeReference<Map<String, List<String>>>() {}),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            try {
-                switch (response.code()) {
-                    case 400:
-                        throw new BadRequestError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 404:
-                        throw new NotFoundError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                }
-            } catch (JsonProcessingException ignored) {
-                // unable to map error response, throwing generic error
-            }
-            throw new PhasetwoApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new PhasetwoException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public PhasetwoClientHttpResponse<Map<String, List<String>>> addOrganizationMemberAttributes(
-            String realm, String orgId, String userId) {
-        return addOrganizationMemberAttributes(
-                realm,
-                orgId,
-                userId,
-                OrganizationMemberAttributeRepresentation.builder().build());
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public PhasetwoClientHttpResponse<Map<String, List<String>>> addOrganizationMemberAttributes(
-            String realm, String orgId, String userId, OrganizationMemberAttributeRepresentation request) {
-        return addOrganizationMemberAttributes(realm, orgId, userId, request, null);
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public PhasetwoClientHttpResponse<Map<String, List<String>>> addOrganizationMemberAttributes(
-            String realm,
-            String orgId,
-            String userId,
-            OrganizationMemberAttributeRepresentation request,
-            RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("members")
-                .addPathSegment(userId)
-                .addPathSegments("attributes")
-                .build();
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new PhasetwoException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("PUT", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new PhasetwoClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(
-                                responseBody.string(), new TypeReference<Map<String, List<String>>>() {}),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            try {
-                switch (response.code()) {
-                    case 400:
-                        throw new BadRequestError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                    case 404:
-                        throw new NotFoundError(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response);
-                }
-            } catch (JsonProcessingException ignored) {
-                // unable to map error response, throwing generic error
-            }
             throw new PhasetwoApiException(
                     "Error with status code " + response.code(),
                     response.code(),

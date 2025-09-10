@@ -92,43 +92,6 @@ public class AsyncRolesClient {
         return this.rawClient.deleteARoleByName(realm, roleName, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<RoleRepresentation>> getCompositesOfTheRole(String realm, String roleName) {
-        return this.rawClient.getCompositesOfTheRole(realm, roleName).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<RoleRepresentation>> getCompositesOfTheRole(
-            String realm, String roleName, RequestOptions requestOptions) {
-        return this.rawClient
-                .getCompositesOfTheRole(realm, roleName, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> addACompositeToTheRole(
-            String realm, String roleName, List<RoleRepresentation> request) {
-        return this.rawClient.addACompositeToTheRole(realm, roleName, request).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> addACompositeToTheRole(
-            String realm, String roleName, List<RoleRepresentation> request, RequestOptions requestOptions) {
-        return this.rawClient
-                .addACompositeToTheRole(realm, roleName, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeRolesFromTheRolesComposite(
-            String realm, String roleName, List<RoleRepresentation> request) {
-        return this.rawClient
-                .removeRolesFromTheRolesComposite(realm, roleName, request)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeRolesFromTheRolesComposite(
-            String realm, String roleName, List<RoleRepresentation> request, RequestOptions requestOptions) {
-        return this.rawClient
-                .removeRolesFromTheRolesComposite(realm, roleName, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
     public CompletableFuture<List<UserRepresentation>> returnsAStreamOfUsersThatHaveTheSpecifiedRoleName(
             String realm, String roleName) {
         return this.rawClient

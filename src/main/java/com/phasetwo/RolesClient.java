@@ -90,41 +90,6 @@ public class RolesClient {
         this.rawClient.deleteARoleByName(realm, roleName, requestOptions).body();
     }
 
-    public List<RoleRepresentation> getCompositesOfTheRole(String realm, String roleName) {
-        return this.rawClient.getCompositesOfTheRole(realm, roleName).body();
-    }
-
-    public List<RoleRepresentation> getCompositesOfTheRole(
-            String realm, String roleName, RequestOptions requestOptions) {
-        return this.rawClient
-                .getCompositesOfTheRole(realm, roleName, requestOptions)
-                .body();
-    }
-
-    public void addACompositeToTheRole(String realm, String roleName, List<RoleRepresentation> request) {
-        this.rawClient.addACompositeToTheRole(realm, roleName, request).body();
-    }
-
-    public void addACompositeToTheRole(
-            String realm, String roleName, List<RoleRepresentation> request, RequestOptions requestOptions) {
-        this.rawClient
-                .addACompositeToTheRole(realm, roleName, request, requestOptions)
-                .body();
-    }
-
-    public void removeRolesFromTheRolesComposite(String realm, String roleName, List<RoleRepresentation> request) {
-        this.rawClient
-                .removeRolesFromTheRolesComposite(realm, roleName, request)
-                .body();
-    }
-
-    public void removeRolesFromTheRolesComposite(
-            String realm, String roleName, List<RoleRepresentation> request, RequestOptions requestOptions) {
-        this.rawClient
-                .removeRolesFromTheRolesComposite(realm, roleName, request, requestOptions)
-                .body();
-    }
-
     public List<UserRepresentation> returnsAStreamOfUsersThatHaveTheSpecifiedRoleName(String realm, String roleName) {
         return this.rawClient
                 .returnsAStreamOfUsersThatHaveTheSpecifiedRoleName(realm, roleName)

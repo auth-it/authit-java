@@ -14,8 +14,7 @@ import com.phasetwo.types.GetOrganizationsRequest;
 import com.phasetwo.types.InvitationRepresentation;
 import com.phasetwo.types.InvitationRequestRepresentation;
 import com.phasetwo.types.MyOrganizationRepresentation;
-import com.phasetwo.types.OrganizationConfigRepresentation;
-import com.phasetwo.types.OrganizationMemberAttributeRepresentation;
+import com.phasetwo.types.OrganizationDomainRepresentation;
 import com.phasetwo.types.OrganizationRepresentation;
 import com.phasetwo.types.OrganizationRoleRepresentation;
 import com.phasetwo.types.PortalLinkRepresentation;
@@ -209,42 +208,6 @@ public class OrganizationsClient {
     }
 
     /**
-     * Get the global organization configuration for this realm
-     */
-    public OrganizationConfigRepresentation getOrganizationConfig(String realm) {
-        return this.rawClient.getOrganizationConfig(realm).body();
-    }
-
-    /**
-     * Get the global organization configuration for this realm
-     */
-    public OrganizationConfigRepresentation getOrganizationConfig(String realm, RequestOptions requestOptions) {
-        return this.rawClient.getOrganizationConfig(realm, requestOptions).body();
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public void updateOrganizationConfig(String realm) {
-        this.rawClient.updateOrganizationConfig(realm).body();
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public void updateOrganizationConfig(String realm, OrganizationConfigRepresentation request) {
-        this.rawClient.updateOrganizationConfig(realm, request).body();
-    }
-
-    /**
-     * Update the global organization configuration for this realm
-     */
-    public void updateOrganizationConfig(
-            String realm, OrganizationConfigRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.updateOrganizationConfig(realm, request, requestOptions).body();
-    }
-
-    /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public List<UserWithOrgsBriefRepresentation> getOrganizationMemberships(String realm, String orgId) {
@@ -293,6 +256,28 @@ public class OrganizationsClient {
             String realm, String orgId, GetOrganizationMembershipsCountRequest request, RequestOptions requestOptions) {
         return this.rawClient
                 .getOrganizationMembershipsCount(realm, orgId, request, requestOptions)
+                .body();
+    }
+
+    public List<OrganizationDomainRepresentation> getOrganizationDomains(String realm, String orgId) {
+        return this.rawClient.getOrganizationDomains(realm, orgId).body();
+    }
+
+    public List<OrganizationDomainRepresentation> getOrganizationDomains(
+            String realm, String orgId, RequestOptions requestOptions) {
+        return this.rawClient
+                .getOrganizationDomains(realm, orgId, requestOptions)
+                .body();
+    }
+
+    public OrganizationDomainRepresentation getOrganizationDomain(String realm, String orgId, String domainName) {
+        return this.rawClient.getOrganizationDomain(realm, orgId, domainName).body();
+    }
+
+    public OrganizationDomainRepresentation getOrganizationDomain(
+            String realm, String orgId, String domainName, RequestOptions requestOptions) {
+        return this.rawClient
+                .getOrganizationDomain(realm, orgId, domainName, requestOptions)
                 .body();
     }
 
@@ -349,58 +334,6 @@ public class OrganizationsClient {
     public void removeOrganizationMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
         this.rawClient
                 .removeOrganizationMember(realm, orgId, userId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Get attributes for a specific member of an organization
-     */
-    public Map<String, List<String>> getOrganizationMemberAttributes(String realm, String orgId, String userId) {
-        return this.rawClient
-                .getOrganizationMemberAttributes(realm, orgId, userId)
-                .body();
-    }
-
-    /**
-     * Get attributes for a specific member of an organization
-     */
-    public Map<String, List<String>> getOrganizationMemberAttributes(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationMemberAttributes(realm, orgId, userId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public Map<String, List<String>> addOrganizationMemberAttributes(String realm, String orgId, String userId) {
-        return this.rawClient
-                .addOrganizationMemberAttributes(realm, orgId, userId)
-                .body();
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public Map<String, List<String>> addOrganizationMemberAttributes(
-            String realm, String orgId, String userId, OrganizationMemberAttributeRepresentation request) {
-        return this.rawClient
-                .addOrganizationMemberAttributes(realm, orgId, userId, request)
-                .body();
-    }
-
-    /**
-     * Add or update attributes for a specific member of an organization
-     */
-    public Map<String, List<String>> addOrganizationMemberAttributes(
-            String realm,
-            String orgId,
-            String userId,
-            OrganizationMemberAttributeRepresentation request,
-            RequestOptions requestOptions) {
-        return this.rawClient
-                .addOrganizationMemberAttributes(realm, orgId, userId, request, requestOptions)
                 .body();
     }
 

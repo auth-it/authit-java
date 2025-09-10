@@ -10,12 +10,8 @@ import com.phasetwo.types.AuditEventRepresentation;
 import com.phasetwo.types.EventRepresentation;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminEventsAdminEventsRequest;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminEventsEventsRequest;
-import com.phasetwo.types.GetWebhookSendsRequest;
 import com.phasetwo.types.GetWebhooksRequest;
-import com.phasetwo.types.RealmEventsConfigRepresentation;
-import com.phasetwo.types.SecretRepresentation;
 import com.phasetwo.types.WebhookRepresentation;
-import com.phasetwo.types.WebhookSendRepresentation;
 import java.util.List;
 
 public class EventsClient {
@@ -35,28 +31,20 @@ public class EventsClient {
         return this.rawClient;
     }
 
+    public void deleteAllAdminEvents(String realm) {
+        this.rawClient.deleteAllAdminEvents(realm).body();
+    }
+
+    public void deleteAllAdminEvents(String realm, RequestOptions requestOptions) {
+        this.rawClient.deleteAllAdminEvents(realm, requestOptions).body();
+    }
+
     public void deleteAllEvents(String realm) {
         this.rawClient.deleteAllEvents(realm).body();
     }
 
     public void deleteAllEvents(String realm, RequestOptions requestOptions) {
         this.rawClient.deleteAllEvents(realm, requestOptions).body();
-    }
-
-    public RealmEventsConfigRepresentation
-            getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(String realm) {
-        return this.rawClient
-                .getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(realm)
-                .body();
-    }
-
-    public RealmEventsConfigRepresentation
-            getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(
-                    String realm, RequestOptions requestOptions) {
-        return this.rawClient
-                .getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(
-                        realm, requestOptions)
-                .body();
     }
 
     public void createEvent(String realm) {
@@ -146,77 +134,6 @@ public class EventsClient {
 
     public void deleteWebhook(String realm, String webhookId, RequestOptions requestOptions) {
         this.rawClient.deleteWebhook(realm, webhookId, requestOptions).body();
-    }
-
-    public SecretRepresentation getWebhookSecretById(String realm, String webhookId) {
-        return this.rawClient.getWebhookSecretById(realm, webhookId).body();
-    }
-
-    public SecretRepresentation getWebhookSecretById(String realm, String webhookId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSecretById(realm, webhookId, requestOptions)
-                .body();
-    }
-
-    public List<WebhookSendRepresentation> getWebhookSends(String realm, String webhookId) {
-        return this.rawClient.getWebhookSends(realm, webhookId).body();
-    }
-
-    public List<WebhookSendRepresentation> getWebhookSends(
-            String realm, String webhookId, GetWebhookSendsRequest request) {
-        return this.rawClient.getWebhookSends(realm, webhookId, request).body();
-    }
-
-    public List<WebhookSendRepresentation> getWebhookSends(
-            String realm, String webhookId, GetWebhookSendsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSends(realm, webhookId, request, requestOptions)
-                .body();
-    }
-
-    public WebhookSendRepresentation getWebhookSendById(String realm, String webhookId, String sendId) {
-        return this.rawClient.getWebhookSendById(realm, webhookId, sendId).body();
-    }
-
-    public WebhookSendRepresentation getWebhookSendById(
-            String realm, String webhookId, String sendId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSendById(realm, webhookId, sendId, requestOptions)
-                .body();
-    }
-
-    public void resendWebhookById(String realm, String webhookId, String sendId) {
-        this.rawClient.resendWebhookById(realm, webhookId, sendId).body();
-    }
-
-    public void resendWebhookById(String realm, String webhookId, String sendId, RequestOptions requestOptions) {
-        this.rawClient
-                .resendWebhookById(realm, webhookId, sendId, requestOptions)
-                .body();
-    }
-
-    public AuditEventRepresentation getPayloadByKeycloakTypeAndId(String realm, String type, String kid) {
-        return this.rawClient.getPayloadByKeycloakTypeAndId(realm, type, kid).body();
-    }
-
-    public AuditEventRepresentation getPayloadByKeycloakTypeAndId(
-            String realm, String type, String kid, RequestOptions requestOptions) {
-        return this.rawClient
-                .getPayloadByKeycloakTypeAndId(realm, type, kid, requestOptions)
-                .body();
-    }
-
-    public List<WebhookSendRepresentation> getWebhookSendsByKeycloakTypeAndId(String realm, String type, String kid) {
-        return this.rawClient
-                .getWebhookSendsByKeycloakTypeAndId(realm, type, kid)
-                .body();
-    }
-
-    public List<WebhookSendRepresentation> getWebhookSendsByKeycloakTypeAndId(
-            String realm, String type, String kid, RequestOptions requestOptions) {
-        return this.rawClient
-                .getWebhookSendsByKeycloakTypeAndId(realm, type, kid, requestOptions)
-                .body();
     }
 
     public List<EventRepresentation> getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(

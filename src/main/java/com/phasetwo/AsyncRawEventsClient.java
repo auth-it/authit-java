@@ -22,12 +22,8 @@ import com.phasetwo.types.AuditEventRepresentation;
 import com.phasetwo.types.EventRepresentation;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminEventsAdminEventsRequest;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminEventsEventsRequest;
-import com.phasetwo.types.GetWebhookSendsRequest;
 import com.phasetwo.types.GetWebhooksRequest;
-import com.phasetwo.types.RealmEventsConfigRepresentation;
-import com.phasetwo.types.SecretRepresentation;
 import com.phasetwo.types.WebhookRepresentation;
-import com.phasetwo.types.WebhookSendRepresentation;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -49,17 +45,17 @@ public class AsyncRawEventsClient {
         this.clientOptions = clientOptions;
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> deleteAllEvents(String realm) {
-        return deleteAllEvents(realm, null);
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> deleteAllAdminEvents(String realm) {
+        return deleteAllAdminEvents(realm, null);
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> deleteAllEvents(
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> deleteAllAdminEvents(
             String realm, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
                 .addPathSegment(realm)
-                .addPathSegments("events")
+                .addPathSegments("admin-events")
                 .build();
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
@@ -109,42 +105,35 @@ public class AsyncRawEventsClient {
         return future;
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<RealmEventsConfigRepresentation>>
-            getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(String realm) {
-        return getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(realm, null);
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> deleteAllEvents(String realm) {
+        return deleteAllEvents(realm, null);
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<RealmEventsConfigRepresentation>>
-            getTheEventsProviderConfigurationReturnsJsonObjectWithEventsProviderConfiguration(
-                    String realm, RequestOptions requestOptions) {
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> deleteAllEvents(
+            String realm, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
                 .addPathSegment(realm)
-                .addPathSegments("events/config")
+                .addPathSegments("events")
                 .build();
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
-                .method("GET", null)
+                .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<PhasetwoClientHttpResponse<RealmEventsConfigRepresentation>> future =
-                new CompletableFuture<>();
+        CompletableFuture<PhasetwoClientHttpResponse<Void>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.isSuccessful()) {
-                        future.complete(new PhasetwoClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBody.string(), RealmEventsConfigRepresentation.class),
-                                response));
+                        future.complete(new PhasetwoClientHttpResponse<>(null, response));
                         return;
                     }
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";
@@ -650,393 +639,6 @@ public class AsyncRawEventsClient {
                     } catch (JsonProcessingException ignored) {
                         // unable to map error response, throwing generic error
                     }
-                    future.completeExceptionally(new PhasetwoApiException(
-                            "Error with status code " + response.code(),
-                            response.code(),
-                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                            response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<SecretRepresentation>> getWebhookSecretById(
-            String realm, String webhookId) {
-        return getWebhookSecretById(realm, webhookId, null);
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<SecretRepresentation>> getWebhookSecretById(
-            String realm, String webhookId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("webhooks")
-                .addPathSegment(webhookId)
-                .addPathSegments("secret")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<PhasetwoClientHttpResponse<SecretRepresentation>> future = new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful()) {
-                        future.complete(new PhasetwoClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), SecretRepresentation.class),
-                                response));
-                        return;
-                    }
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    try {
-                        if (response.code() == 404) {
-                            future.completeExceptionally(new NotFoundError(
-                                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response));
-                            return;
-                        }
-                    } catch (JsonProcessingException ignored) {
-                        // unable to map error response, throwing generic error
-                    }
-                    future.completeExceptionally(new PhasetwoApiException(
-                            "Error with status code " + response.code(),
-                            response.code(),
-                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                            response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<List<WebhookSendRepresentation>>> getWebhookSends(
-            String realm, String webhookId) {
-        return getWebhookSends(
-                realm, webhookId, GetWebhookSendsRequest.builder().build());
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<List<WebhookSendRepresentation>>> getWebhookSends(
-            String realm, String webhookId, GetWebhookSendsRequest request) {
-        return getWebhookSends(realm, webhookId, request, null);
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<List<WebhookSendRepresentation>>> getWebhookSends(
-            String realm, String webhookId, GetWebhookSendsRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("webhooks")
-                .addPathSegment(webhookId)
-                .addPathSegments("sends");
-        if (request.getFirst().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
-        }
-        if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
-        }
-        Request.Builder _requestBuilder = new Request.Builder()
-                .url(httpUrl.build())
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json");
-        Request okhttpRequest = _requestBuilder.build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<PhasetwoClientHttpResponse<List<WebhookSendRepresentation>>> future =
-                new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful()) {
-                        future.complete(new PhasetwoClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBody.string(), new TypeReference<List<WebhookSendRepresentation>>() {}),
-                                response));
-                        return;
-                    }
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    try {
-                        if (response.code() == 404) {
-                            future.completeExceptionally(new NotFoundError(
-                                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response));
-                            return;
-                        }
-                    } catch (JsonProcessingException ignored) {
-                        // unable to map error response, throwing generic error
-                    }
-                    future.completeExceptionally(new PhasetwoApiException(
-                            "Error with status code " + response.code(),
-                            response.code(),
-                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                            response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<WebhookSendRepresentation>> getWebhookSendById(
-            String realm, String webhookId, String sendId) {
-        return getWebhookSendById(realm, webhookId, sendId, null);
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<WebhookSendRepresentation>> getWebhookSendById(
-            String realm, String webhookId, String sendId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("webhooks")
-                .addPathSegment(webhookId)
-                .addPathSegments("sends")
-                .addPathSegment(sendId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<PhasetwoClientHttpResponse<WebhookSendRepresentation>> future = new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful()) {
-                        future.complete(new PhasetwoClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBody.string(), WebhookSendRepresentation.class),
-                                response));
-                        return;
-                    }
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    try {
-                        if (response.code() == 404) {
-                            future.completeExceptionally(new NotFoundError(
-                                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class), response));
-                            return;
-                        }
-                    } catch (JsonProcessingException ignored) {
-                        // unable to map error response, throwing generic error
-                    }
-                    future.completeExceptionally(new PhasetwoApiException(
-                            "Error with status code " + response.code(),
-                            response.code(),
-                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                            response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> resendWebhookById(
-            String realm, String webhookId, String sendId) {
-        return resendWebhookById(realm, webhookId, sendId, null);
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> resendWebhookById(
-            String realm, String webhookId, String sendId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("webhooks")
-                .addPathSegment(webhookId)
-                .addPathSegments("sends")
-                .addPathSegment(sendId)
-                .addPathSegments("resend")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("POST", RequestBody.create("", null))
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<PhasetwoClientHttpResponse<Void>> future = new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful()) {
-                        future.complete(new PhasetwoClientHttpResponse<>(null, response));
-                        return;
-                    }
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    future.completeExceptionally(new PhasetwoApiException(
-                            "Error with status code " + response.code(),
-                            response.code(),
-                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                            response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<AuditEventRepresentation>> getPayloadByKeycloakTypeAndId(
-            String realm, String type, String kid) {
-        return getPayloadByKeycloakTypeAndId(realm, type, kid, null);
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<AuditEventRepresentation>> getPayloadByKeycloakTypeAndId(
-            String realm, String type, String kid, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("webhooks/payload")
-                .addPathSegment(type)
-                .addPathSegment(kid)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<PhasetwoClientHttpResponse<AuditEventRepresentation>> future = new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful()) {
-                        future.complete(new PhasetwoClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBody.string(), AuditEventRepresentation.class),
-                                response));
-                        return;
-                    }
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-                    future.completeExceptionally(new PhasetwoApiException(
-                            "Error with status code " + response.code(),
-                            response.code(),
-                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                            response));
-                    return;
-                } catch (IOException e) {
-                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
-            }
-        });
-        return future;
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<List<WebhookSendRepresentation>>>
-            getWebhookSendsByKeycloakTypeAndId(String realm, String type, String kid) {
-        return getWebhookSendsByKeycloakTypeAndId(realm, type, kid, null);
-    }
-
-    public CompletableFuture<PhasetwoClientHttpResponse<List<WebhookSendRepresentation>>>
-            getWebhookSendsByKeycloakTypeAndId(String realm, String type, String kid, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("webhooks/sends")
-                .addPathSegment(type)
-                .addPathSegment(kid)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        CompletableFuture<PhasetwoClientHttpResponse<List<WebhookSendRepresentation>>> future =
-                new CompletableFuture<>();
-        client.newCall(okhttpRequest).enqueue(new Callback() {
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (response.isSuccessful()) {
-                        future.complete(new PhasetwoClientHttpResponse<>(
-                                ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBody.string(), new TypeReference<List<WebhookSendRepresentation>>() {}),
-                                response));
-                        return;
-                    }
-                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
                     future.completeExceptionally(new PhasetwoApiException(
                             "Error with status code " + response.code(),
                             response.code(),

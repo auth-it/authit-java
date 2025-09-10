@@ -10,13 +10,9 @@ import java.util.function.Supplier;
 public class AsyncPhasetwoClient {
     protected final ClientOptions clientOptions;
 
-    protected final Supplier<AsyncRealmsAdminClient> realmsAdminClient;
+    protected final Supplier<AsyncEventsClient> eventsClient;
 
     protected final Supplier<AsyncAttackDetectionClient> attackDetectionClient;
-
-    protected final Supplier<AsyncClientsClient> clientsClient;
-
-    protected final Supplier<AsyncEventsClient> eventsClient;
 
     protected final Supplier<AsyncSessionsClient> sessionsClient;
 
@@ -28,42 +24,23 @@ public class AsyncPhasetwoClient {
 
     protected final Supplier<AsyncOrganizationsClient> organizationsClient;
 
-    protected final Supplier<AsyncOrganizationClient> organizationClient;
-
-    protected final Supplier<AsyncIdentityProvidersClient> identityProvidersClient;
-
-    protected final Supplier<AsyncAttributesClient> attributesClient;
-
     public AsyncPhasetwoClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
-        this.realmsAdminClient = Suppliers.memoize(() -> new AsyncRealmsAdminClient(clientOptions));
-        this.attackDetectionClient = Suppliers.memoize(() -> new AsyncAttackDetectionClient(clientOptions));
-        this.clientsClient = Suppliers.memoize(() -> new AsyncClientsClient(clientOptions));
         this.eventsClient = Suppliers.memoize(() -> new AsyncEventsClient(clientOptions));
+        this.attackDetectionClient = Suppliers.memoize(() -> new AsyncAttackDetectionClient(clientOptions));
         this.sessionsClient = Suppliers.memoize(() -> new AsyncSessionsClient(clientOptions));
         this.rolesClient = Suppliers.memoize(() -> new AsyncRolesClient(clientOptions));
         this.usersClient = Suppliers.memoize(() -> new AsyncUsersClient(clientOptions));
         this.roleMapperClient = Suppliers.memoize(() -> new AsyncRoleMapperClient(clientOptions));
         this.organizationsClient = Suppliers.memoize(() -> new AsyncOrganizationsClient(clientOptions));
-        this.organizationClient = Suppliers.memoize(() -> new AsyncOrganizationClient(clientOptions));
-        this.identityProvidersClient = Suppliers.memoize(() -> new AsyncIdentityProvidersClient(clientOptions));
-        this.attributesClient = Suppliers.memoize(() -> new AsyncAttributesClient(clientOptions));
-    }
-
-    public AsyncRealmsAdminClient realmsAdmin() {
-        return this.realmsAdminClient.get();
-    }
-
-    public AsyncAttackDetectionClient attackDetection() {
-        return this.attackDetectionClient.get();
-    }
-
-    public AsyncClientsClient clients() {
-        return this.clientsClient.get();
     }
 
     public AsyncEventsClient events() {
         return this.eventsClient.get();
+    }
+
+    public AsyncAttackDetectionClient attackDetection() {
+        return this.attackDetectionClient.get();
     }
 
     public AsyncSessionsClient sessions() {
@@ -84,18 +61,6 @@ public class AsyncPhasetwoClient {
 
     public AsyncOrganizationsClient organizations() {
         return this.organizationsClient.get();
-    }
-
-    public AsyncOrganizationClient organization() {
-        return this.organizationClient.get();
-    }
-
-    public AsyncIdentityProvidersClient identityProviders() {
-        return this.identityProvidersClient.get();
-    }
-
-    public AsyncAttributesClient attributes() {
-        return this.attributesClient.get();
     }
 
     public static AsyncPhasetwoClientBuilder builder() {

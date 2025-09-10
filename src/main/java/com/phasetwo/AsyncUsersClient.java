@@ -5,9 +5,6 @@ package com.phasetwo;
 
 import com.phasetwo.core.ClientOptions;
 import com.phasetwo.core.RequestOptions;
-import com.phasetwo.types.ActiveOrganizationRepresentation;
-import com.phasetwo.types.CredentialRepresentation;
-import com.phasetwo.types.FederatedIdentityRepresentation;
 import com.phasetwo.types.GetAdminRealmsRealmExtAdminUsersRequest;
 import com.phasetwo.types.GetAdminRealmsRealmUsersCountRequest;
 import com.phasetwo.types.GetAdminRealmsRealmUsersUserIdRequest;
@@ -15,11 +12,7 @@ import com.phasetwo.types.MagicLinkRequest;
 import com.phasetwo.types.OrganizationRepresentation;
 import com.phasetwo.types.OrganizationRoleRepresentation;
 import com.phasetwo.types.PutAdminRealmsRealmUsersUserIdExecuteActionsEmailRequest;
-import com.phasetwo.types.PutAdminRealmsRealmUsersUserIdResetPasswordEmailRequest;
 import com.phasetwo.types.PutAdminRealmsRealmUsersUserIdSendVerifyEmailRequest;
-import com.phasetwo.types.SwitchOrganizationRepresentation;
-import com.phasetwo.types.UpConfig;
-import com.phasetwo.types.UserProfileMetadata;
 import com.phasetwo.types.UserRepresentation;
 import com.phasetwo.types.UserSessionRepresentation;
 import java.util.List;
@@ -87,63 +80,6 @@ public class AsyncUsersClient {
                 .thenApply(response -> response.body());
     }
 
-    /**
-     * Get the configuration for the user profile
-     */
-    public CompletableFuture<UpConfig> getAdminRealmsRealmUsersProfile(String realm) {
-        return this.rawClient.getAdminRealmsRealmUsersProfile(realm).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get the configuration for the user profile
-     */
-    public CompletableFuture<UpConfig> getAdminRealmsRealmUsersProfile(String realm, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersProfile(realm, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Set the configuration for the user profile
-     */
-    public CompletableFuture<UpConfig> putAdminRealmsRealmUsersProfile(String realm) {
-        return this.rawClient.putAdminRealmsRealmUsersProfile(realm).thenApply(response -> response.body());
-    }
-
-    /**
-     * Set the configuration for the user profile
-     */
-    public CompletableFuture<UpConfig> putAdminRealmsRealmUsersProfile(String realm, UpConfig request) {
-        return this.rawClient.putAdminRealmsRealmUsersProfile(realm, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Set the configuration for the user profile
-     */
-    public CompletableFuture<UpConfig> putAdminRealmsRealmUsersProfile(
-            String realm, UpConfig request, RequestOptions requestOptions) {
-        return this.rawClient
-                .putAdminRealmsRealmUsersProfile(realm, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get the UserProfileMetadata from the configuration
-     */
-    public CompletableFuture<UserProfileMetadata> getAdminRealmsRealmUsersProfileMetadata(String realm) {
-        return this.rawClient.getAdminRealmsRealmUsersProfileMetadata(realm).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get the UserProfileMetadata from the configuration
-     */
-    public CompletableFuture<UserProfileMetadata> getAdminRealmsRealmUsersProfileMetadata(
-            String realm, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersProfileMetadata(realm, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
     public CompletableFuture<UserRepresentation> getRepresentationOfTheUser(String realm, String userId) {
         return this.rawClient.getRepresentationOfTheUser(realm, userId).thenApply(response -> response.body());
     }
@@ -184,80 +120,6 @@ public class AsyncUsersClient {
     }
 
     /**
-     * Returned values can contain for example &quot;password&quot;, &quot;otp&quot; etc. This will always return empty list for &quot;local&quot; users, which are not backed by any user storage
-     */
-    public CompletableFuture<List<String>> returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(
-            String realm, String userId) {
-        return this.rawClient
-                .returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(realm, userId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Returned values can contain for example &quot;password&quot;, &quot;otp&quot; etc. This will always return empty list for &quot;local&quot; users, which are not backed by any user storage
-     */
-    public CompletableFuture<List<String>> returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .returnCredentialTypesWhichAreProvidedByTheUserStorageWhereUserIsStored(realm, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<CredentialRepresentation>> getAdminRealmsRealmUsersUserIdCredentials(
-            String realm, String userId) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdCredentials(realm, userId)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<CredentialRepresentation>> getAdminRealmsRealmUsersUserIdCredentials(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdCredentials(realm, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeACredentialForAUser(String realm, String userId, String credentialId) {
-        return this.rawClient
-                .removeACredentialForAUser(realm, userId, credentialId)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeACredentialForAUser(
-            String realm, String userId, String credentialId, RequestOptions requestOptions) {
-        return this.rawClient
-                .removeACredentialForAUser(realm, userId, credentialId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> updateACredentialLabelForAUser(String realm, String userId, String credentialId) {
-        return this.rawClient
-                .updateACredentialLabelForAUser(realm, userId, credentialId)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> updateACredentialLabelForAUser(
-            String realm, String userId, String credentialId, RequestOptions requestOptions) {
-        return this.rawClient
-                .updateACredentialLabelForAUser(realm, userId, credentialId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> disableAllCredentialsForAUserOfASpecificType(
-            String realm, String userId, List<String> request) {
-        return this.rawClient
-                .disableAllCredentialsForAUserOfASpecificType(realm, userId, request)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> disableAllCredentialsForAUserOfASpecificType(
-            String realm, String userId, List<String> request, RequestOptions requestOptions) {
-        return this.rawClient
-                .disableAllCredentialsForAUserOfASpecificType(realm, userId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
      * An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
     public CompletableFuture<Void> sendAnEmailToTheUserWithALinkTheyCanClickToExecuteParticularActions(
@@ -278,46 +140,6 @@ public class AsyncUsersClient {
         return this.rawClient
                 .sendAnEmailToTheUserWithALinkTheyCanClickToExecuteParticularActions(
                         realm, userId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<FederatedIdentityRepresentation>> getSocialLoginsAssociatedWithTheUser(
-            String realm, String userId) {
-        return this.rawClient
-                .getSocialLoginsAssociatedWithTheUser(realm, userId)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<FederatedIdentityRepresentation>> getSocialLoginsAssociatedWithTheUser(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getSocialLoginsAssociatedWithTheUser(realm, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> addASocialLoginProviderToTheUser(String realm, String userId, String provider) {
-        return this.rawClient
-                .addASocialLoginProviderToTheUser(realm, userId, provider)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> addASocialLoginProviderToTheUser(
-            String realm, String userId, String provider, RequestOptions requestOptions) {
-        return this.rawClient
-                .addASocialLoginProviderToTheUser(realm, userId, provider, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeASocialLoginProviderFromUser(String realm, String userId, String provider) {
-        return this.rawClient
-                .removeASocialLoginProviderFromUser(realm, userId, provider)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeASocialLoginProviderFromUser(
-            String realm, String userId, String provider, RequestOptions requestOptions) {
-        return this.rawClient
-                .removeASocialLoginProviderFromUser(realm, userId, provider, requestOptions)
                 .thenApply(response -> response.body());
     }
 
@@ -345,71 +167,6 @@ public class AsyncUsersClient {
         return this.rawClient
                 .removeAllUserSessionsAssociatedWithTheUserAlsoSendNotificationToAllClientsThatHaveAnAdminUrlToInvalidateTheSessionsForTheParticularUser(
                         realm, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<UserSessionRepresentation>> getOfflineSessionsAssociatedWithTheUserAndClient(
-            String realm, String userId, String clientUuid) {
-        return this.rawClient
-                .getOfflineSessionsAssociatedWithTheUserAndClient(realm, userId, clientUuid)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<UserSessionRepresentation>> getOfflineSessionsAssociatedWithTheUserAndClient(
-            String realm, String userId, String clientUuid, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOfflineSessionsAssociatedWithTheUserAndClient(realm, userId, clientUuid, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> setUpANewPasswordForTheUser(String realm, String userId) {
-        return this.rawClient.setUpANewPasswordForTheUser(realm, userId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> setUpANewPasswordForTheUser(
-            String realm, String userId, CredentialRepresentation request) {
-        return this.rawClient
-                .setUpANewPasswordForTheUser(realm, userId, request)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> setUpANewPasswordForTheUser(
-            String realm, String userId, CredentialRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient
-                .setUpANewPasswordForTheUser(realm, userId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * The redirectUri and clientId parameters are optional. The default for the redirect is the account client. This endpoint has been deprecated.  Please use the execute-actions-email passing a list with UPDATE_PASSWORD within it.
-     */
-    public CompletableFuture<Void> sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(
-            String realm, String userId) {
-        return this.rawClient
-                .sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(realm, userId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * The redirectUri and clientId parameters are optional. The default for the redirect is the account client. This endpoint has been deprecated.  Please use the execute-actions-email passing a list with UPDATE_PASSWORD within it.
-     */
-    public CompletableFuture<Void> sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(
-            String realm, String userId, PutAdminRealmsRealmUsersUserIdResetPasswordEmailRequest request) {
-        return this.rawClient
-                .sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(realm, userId, request)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * The redirectUri and clientId parameters are optional. The default for the redirect is the account client. This endpoint has been deprecated.  Please use the execute-actions-email passing a list with UPDATE_PASSWORD within it.
-     */
-    public CompletableFuture<Void> sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(
-            String realm,
-            String userId,
-            PutAdminRealmsRealmUsersUserIdResetPasswordEmailRequest request,
-            RequestOptions requestOptions) {
-        return this.rawClient
-                .sendAnEmailToTheUserWithALinkTheyCanClickToResetTheirPassword(realm, userId, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 
@@ -461,20 +218,6 @@ public class AsyncUsersClient {
             String realm, String userId, RequestOptions requestOptions) {
         return this.rawClient
                 .getSessionsAssociatedWithTheUser(realm, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Map<String, List<String>>> getAdminRealmsRealmUsersUserIdUnmanagedAttributes(
-            String realm, String userId) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdUnmanagedAttributes(realm, userId)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Map<String, List<String>>> getAdminRealmsRealmUsersUserIdUnmanagedAttributes(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminRealmsRealmUsersUserIdUnmanagedAttributes(realm, userId, requestOptions)
                 .thenApply(response -> response.body());
     }
 
@@ -538,38 +281,6 @@ public class AsyncUsersClient {
         return this.rawClient
                 .revokeOrganizationRolesFromAUser(realm, userId, orgId, request, requestOptions)
                 .thenApply(response -> response.body());
-    }
-
-    /**
-     * Switch the active organization context for the authenticated user
-     */
-    public CompletableFuture<Void> switchActiveOrganization(String realm, SwitchOrganizationRepresentation request) {
-        return this.rawClient.switchActiveOrganization(realm, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Switch the active organization context for the authenticated user
-     */
-    public CompletableFuture<Void> switchActiveOrganization(
-            String realm, SwitchOrganizationRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient
-                .switchActiveOrganization(realm, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get the currently active organization for the authenticated user
-     */
-    public CompletableFuture<ActiveOrganizationRepresentation> getActiveOrganization(String realm) {
-        return this.rawClient.getActiveOrganization(realm).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get the currently active organization for the authenticated user
-     */
-    public CompletableFuture<ActiveOrganizationRepresentation> getActiveOrganization(
-            String realm, RequestOptions requestOptions) {
-        return this.rawClient.getActiveOrganization(realm, requestOptions).thenApply(response -> response.body());
     }
 
     public CompletableFuture<Void> createMagicLink(String realm, MagicLinkRequest request) {
