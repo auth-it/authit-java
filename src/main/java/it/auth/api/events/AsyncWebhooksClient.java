@@ -77,13 +77,13 @@ public class AsyncWebhooksClient {
         return this.rawClient.getWebhooksCount(realm, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<WebhookRepresentation> getWebhookById(String realm, String webhookId) {
-        return this.rawClient.getWebhookById(realm, webhookId).thenApply(response -> response.body());
+    public CompletableFuture<WebhookRepresentation> getWebhook(String realm, String webhookId) {
+        return this.rawClient.getWebhook(realm, webhookId).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<WebhookRepresentation> getWebhookById(
+    public CompletableFuture<WebhookRepresentation> getWebhook(
             String realm, String webhookId, RequestOptions requestOptions) {
-        return this.rawClient.getWebhookById(realm, webhookId, requestOptions).thenApply(response -> response.body());
+        return this.rawClient.getWebhook(realm, webhookId, requestOptions).thenApply(response -> response.body());
     }
 
     public CompletableFuture<Void> updateWebhook(String realm, String webhookId) {

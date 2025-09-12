@@ -74,12 +74,12 @@ public class WebhooksClient {
         return this.rawClient.getWebhooksCount(realm, requestOptions).body();
     }
 
-    public WebhookRepresentation getWebhookById(String realm, String webhookId) {
-        return this.rawClient.getWebhookById(realm, webhookId).body();
+    public WebhookRepresentation getWebhook(String realm, String webhookId) {
+        return this.rawClient.getWebhook(realm, webhookId).body();
     }
 
-    public WebhookRepresentation getWebhookById(String realm, String webhookId, RequestOptions requestOptions) {
-        return this.rawClient.getWebhookById(realm, webhookId, requestOptions).body();
+    public WebhookRepresentation getWebhook(String realm, String webhookId, RequestOptions requestOptions) {
+        return this.rawClient.getWebhook(realm, webhookId, requestOptions).body();
     }
 
     public void updateWebhook(String realm, String webhookId) {

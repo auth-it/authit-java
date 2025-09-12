@@ -10,8 +10,8 @@ import it.auth.api.events.AsyncWebhooksClient;
 import it.auth.api.types.AdminEventRepresentation;
 import it.auth.api.types.AuditEventRepresentation;
 import it.auth.api.types.EventRepresentation;
-import it.auth.api.types.GetAdminRealmsRealmExtAdminEventsAdminEventsRequest;
-import it.auth.api.types.GetAdminRealmsRealmExtAdminEventsEventsRequest;
+import it.auth.api.types.GetAdminEventsRequest;
+import it.auth.api.types.GetEventsRequest;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -77,56 +77,49 @@ public class AsyncEventsClient {
         return this.rawClient.createEvent(realm, request, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<EventRepresentation>>
-            getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(String realm) {
-        return this.rawClient
-                .getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(realm)
-                .thenApply(response -> response.body());
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public CompletableFuture<List<EventRepresentation>> getEvents(String realm) {
+        return this.rawClient.getEvents(realm).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<EventRepresentation>>
-            getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-                    String realm, GetAdminRealmsRealmExtAdminEventsEventsRequest request) {
-        return this.rawClient
-                .getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(realm, request)
-                .thenApply(response -> response.body());
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public CompletableFuture<List<EventRepresentation>> getEvents(String realm, GetEventsRequest request) {
+        return this.rawClient.getEvents(realm, request).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<EventRepresentation>>
-            getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-                    String realm,
-                    GetAdminRealmsRealmExtAdminEventsEventsRequest request,
-                    RequestOptions requestOptions) {
-        return this.rawClient
-                .getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-                        realm, request, requestOptions)
-                .thenApply(response -> response.body());
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public CompletableFuture<List<EventRepresentation>> getEvents(
+            String realm, GetEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getEvents(realm, request, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<AdminEventRepresentation>>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(String realm) {
-        return this.rawClient
-                .getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(realm)
-                .thenApply(response -> response.body());
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents(String realm) {
+        return this.rawClient.getAdminEvents(realm).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<AdminEventRepresentation>>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                    String realm, GetAdminRealmsRealmExtAdminEventsAdminEventsRequest request) {
-        return this.rawClient
-                .getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(realm, request)
-                .thenApply(response -> response.body());
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents(
+            String realm, GetAdminEventsRequest request) {
+        return this.rawClient.getAdminEvents(realm, request).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<AdminEventRepresentation>>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                    String realm,
-                    GetAdminRealmsRealmExtAdminEventsAdminEventsRequest request,
-                    RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                        realm, request, requestOptions)
-                .thenApply(response -> response.body());
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents(
+            String realm, GetAdminEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getAdminEvents(realm, request, requestOptions).thenApply(response -> response.body());
     }
 
     public AsyncWebhooksClient webhooks() {

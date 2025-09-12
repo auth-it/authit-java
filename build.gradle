@@ -44,7 +44,7 @@ java {
 
 group = 'it.auth'
 
-version = '0.0.13'
+version = '0.0.14'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -71,7 +71,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'it.auth'
             artifactId = 'authit-java'
-            version = '0.0.13'
+            version = '0.0.14'
             from components.java
             pom {
                 licenses {

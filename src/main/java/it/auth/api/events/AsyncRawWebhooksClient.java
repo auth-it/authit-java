@@ -246,12 +246,12 @@ public class AsyncRawWebhooksClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<WebhookRepresentation>> getWebhookById(
+    public CompletableFuture<AuthItClientHttpResponse<WebhookRepresentation>> getWebhook(
             String realm, String webhookId) {
-        return getWebhookById(realm, webhookId, null);
+        return getWebhook(realm, webhookId, null);
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<WebhookRepresentation>> getWebhookById(
+    public CompletableFuture<AuthItClientHttpResponse<WebhookRepresentation>> getWebhook(
             String realm, String webhookId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()

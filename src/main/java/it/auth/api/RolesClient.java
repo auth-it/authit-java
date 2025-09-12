@@ -5,20 +5,26 @@ package it.auth.api;
 
 import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
+import it.auth.api.core.Suppliers;
+import it.auth.api.roles.MappingsClient;
 import it.auth.api.types.GetRolesRequest;
 import it.auth.api.types.GetUsersByRoleRequest;
 import it.auth.api.types.RoleRepresentation;
 import it.auth.api.types.UserRepresentation;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class RolesClient {
     protected final ClientOptions clientOptions;
 
     private final RawRolesClient rawClient;
 
+    protected final Supplier<MappingsClient> mappingsClient;
+
     public RolesClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new RawRolesClient(clientOptions);
+        this.mappingsClient = Suppliers.memoize(() -> new MappingsClient(clientOptions));
     }
 
     /**
@@ -141,5 +147,9 @@ public class RolesClient {
         return this.rawClient
                 .getUsersByRole(realm, roleName, request, requestOptions)
                 .body();
+    }
+
+    public MappingsClient mappings() {
+        return this.mappingsClient.get();
     }
 }

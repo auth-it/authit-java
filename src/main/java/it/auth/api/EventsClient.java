@@ -10,8 +10,8 @@ import it.auth.api.events.WebhooksClient;
 import it.auth.api.types.AdminEventRepresentation;
 import it.auth.api.types.AuditEventRepresentation;
 import it.auth.api.types.EventRepresentation;
-import it.auth.api.types.GetAdminRealmsRealmExtAdminEventsAdminEventsRequest;
-import it.auth.api.types.GetAdminRealmsRealmExtAdminEventsEventsRequest;
+import it.auth.api.types.GetAdminEventsRequest;
+import it.auth.api.types.GetEventsRequest;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -75,52 +75,47 @@ public class EventsClient {
         this.rawClient.createEvent(realm, request, requestOptions).body();
     }
 
-    public List<EventRepresentation> getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-            String realm) {
-        return this.rawClient
-                .getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(realm)
-                .body();
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public List<EventRepresentation> getEvents(String realm) {
+        return this.rawClient.getEvents(realm).body();
     }
 
-    public List<EventRepresentation> getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-            String realm, GetAdminRealmsRealmExtAdminEventsEventsRequest request) {
-        return this.rawClient
-                .getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(realm, request)
-                .body();
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public List<EventRepresentation> getEvents(String realm, GetEventsRequest request) {
+        return this.rawClient.getEvents(realm, request).body();
     }
 
-    public List<EventRepresentation> getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-            String realm, GetAdminRealmsRealmExtAdminEventsEventsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-                        realm, request, requestOptions)
-                .body();
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public List<EventRepresentation> getEvents(String realm, GetEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getEvents(realm, request, requestOptions).body();
     }
 
-    public List<AdminEventRepresentation>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(String realm) {
-        return this.rawClient
-                .getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(realm)
-                .body();
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public List<AdminEventRepresentation> getAdminEvents(String realm) {
+        return this.rawClient.getAdminEvents(realm).body();
     }
 
-    public List<AdminEventRepresentation>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                    String realm, GetAdminRealmsRealmExtAdminEventsAdminEventsRequest request) {
-        return this.rawClient
-                .getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(realm, request)
-                .body();
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public List<AdminEventRepresentation> getAdminEvents(String realm, GetAdminEventsRequest request) {
+        return this.rawClient.getAdminEvents(realm, request).body();
     }
 
-    public List<AdminEventRepresentation>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                    String realm,
-                    GetAdminRealmsRealmExtAdminEventsAdminEventsRequest request,
-                    RequestOptions requestOptions) {
-        return this.rawClient
-                .getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                        realm, request, requestOptions)
-                .body();
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public List<AdminEventRepresentation> getAdminEvents(
+            String realm, GetAdminEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getAdminEvents(realm, request, requestOptions).body();
     }
 
     public WebhooksClient webhooks() {

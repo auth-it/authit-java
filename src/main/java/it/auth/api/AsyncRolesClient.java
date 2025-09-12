@@ -5,21 +5,27 @@ package it.auth.api;
 
 import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
+import it.auth.api.core.Suppliers;
+import it.auth.api.roles.AsyncMappingsClient;
 import it.auth.api.types.GetRolesRequest;
 import it.auth.api.types.GetUsersByRoleRequest;
 import it.auth.api.types.RoleRepresentation;
 import it.auth.api.types.UserRepresentation;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class AsyncRolesClient {
     protected final ClientOptions clientOptions;
 
     private final AsyncRawRolesClient rawClient;
 
+    protected final Supplier<AsyncMappingsClient> mappingsClient;
+
     public AsyncRolesClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new AsyncRawRolesClient(clientOptions);
+        this.mappingsClient = Suppliers.memoize(() -> new AsyncMappingsClient(clientOptions));
     }
 
     /**
@@ -147,5 +153,9 @@ public class AsyncRolesClient {
         return this.rawClient
                 .getUsersByRole(realm, roleName, request, requestOptions)
                 .thenApply(response -> response.body());
+    }
+
+    public AsyncMappingsClient mappings() {
+        return this.mappingsClient.get();
     }
 }

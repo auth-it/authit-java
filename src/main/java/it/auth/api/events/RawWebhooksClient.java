@@ -200,11 +200,11 @@ public class RawWebhooksClient {
         }
     }
 
-    public AuthItClientHttpResponse<WebhookRepresentation> getWebhookById(String realm, String webhookId) {
-        return getWebhookById(realm, webhookId, null);
+    public AuthItClientHttpResponse<WebhookRepresentation> getWebhook(String realm, String webhookId) {
+        return getWebhook(realm, webhookId, null);
     }
 
-    public AuthItClientHttpResponse<WebhookRepresentation> getWebhookById(
+    public AuthItClientHttpResponse<WebhookRepresentation> getWebhook(
             String realm, String webhookId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()

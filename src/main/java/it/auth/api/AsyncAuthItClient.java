@@ -20,8 +20,6 @@ public class AsyncAuthItClient {
 
     protected final Supplier<AsyncUsersClient> usersClient;
 
-    protected final Supplier<AsyncRoleMapperClient> roleMapperClient;
-
     protected final Supplier<AsyncOrganizationsClient> organizationsClient;
 
     public AsyncAuthItClient(ClientOptions clientOptions) {
@@ -31,7 +29,6 @@ public class AsyncAuthItClient {
         this.sessionsClient = Suppliers.memoize(() -> new AsyncSessionsClient(clientOptions));
         this.rolesClient = Suppliers.memoize(() -> new AsyncRolesClient(clientOptions));
         this.usersClient = Suppliers.memoize(() -> new AsyncUsersClient(clientOptions));
-        this.roleMapperClient = Suppliers.memoize(() -> new AsyncRoleMapperClient(clientOptions));
         this.organizationsClient = Suppliers.memoize(() -> new AsyncOrganizationsClient(clientOptions));
     }
 
@@ -53,10 +50,6 @@ public class AsyncAuthItClient {
 
     public AsyncUsersClient users() {
         return this.usersClient.get();
-    }
-
-    public AsyncRoleMapperClient roleMapper() {
-        return this.roleMapperClient.get();
     }
 
     public AsyncOrganizationsClient organizations() {

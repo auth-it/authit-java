@@ -19,8 +19,8 @@ import it.auth.api.errors.ForbiddenError;
 import it.auth.api.types.AdminEventRepresentation;
 import it.auth.api.types.AuditEventRepresentation;
 import it.auth.api.types.EventRepresentation;
-import it.auth.api.types.GetAdminRealmsRealmExtAdminEventsAdminEventsRequest;
-import it.auth.api.types.GetAdminRealmsRealmExtAdminEventsEventsRequest;
+import it.auth.api.types.GetAdminEventsRequest;
+import it.auth.api.types.GetEventsRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -258,23 +258,26 @@ public class AsyncRawEventsClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>>
-            getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(String realm) {
-        return getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-                realm, GetAdminRealmsRealmExtAdminEventsEventsRequest.builder().build());
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents(String realm) {
+        return getEvents(realm, GetEventsRequest.builder().build());
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>>
-            getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-                    String realm, GetAdminRealmsRealmExtAdminEventsEventsRequest request) {
-        return getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(realm, request, null);
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents(
+            String realm, GetEventsRequest request) {
+        return getEvents(realm, request, null);
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>>
-            getEventsReturnsAllEventsOrFiltersThemBasedOnUrlQueryParametersListedHere(
-                    String realm,
-                    GetAdminRealmsRealmExtAdminEventsEventsRequest request,
-                    RequestOptions requestOptions) {
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents(
+            String realm, GetEventsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
@@ -355,25 +358,26 @@ public class AsyncRawEventsClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(String realm) {
-        return getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                realm,
-                GetAdminRealmsRealmExtAdminEventsAdminEventsRequest.builder().build());
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>> getAdminEvents(String realm) {
+        return getAdminEvents(realm, GetAdminEventsRequest.builder().build());
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                    String realm, GetAdminRealmsRealmExtAdminEventsAdminEventsRequest request) {
-        return getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                realm, request, null);
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>> getAdminEvents(
+            String realm, GetAdminEventsRequest request) {
+        return getAdminEvents(realm, request, null);
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>>
-            getAdminEventsReturnsAllAdminEventsOrFiltersEventsBasedOnUrlQueryParametersListedHere(
-                    String realm,
-                    GetAdminRealmsRealmExtAdminEventsAdminEventsRequest request,
-                    RequestOptions requestOptions) {
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>> getAdminEvents(
+            String realm, GetAdminEventsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")

@@ -20,8 +20,6 @@ public class AuthItClient {
 
     protected final Supplier<UsersClient> usersClient;
 
-    protected final Supplier<RoleMapperClient> roleMapperClient;
-
     protected final Supplier<OrganizationsClient> organizationsClient;
 
     public AuthItClient(ClientOptions clientOptions) {
@@ -31,7 +29,6 @@ public class AuthItClient {
         this.sessionsClient = Suppliers.memoize(() -> new SessionsClient(clientOptions));
         this.rolesClient = Suppliers.memoize(() -> new RolesClient(clientOptions));
         this.usersClient = Suppliers.memoize(() -> new UsersClient(clientOptions));
-        this.roleMapperClient = Suppliers.memoize(() -> new RoleMapperClient(clientOptions));
         this.organizationsClient = Suppliers.memoize(() -> new OrganizationsClient(clientOptions));
     }
 
@@ -53,10 +50,6 @@ public class AuthItClient {
 
     public UsersClient users() {
         return this.usersClient.get();
-    }
-
-    public RoleMapperClient roleMapper() {
-        return this.roleMapperClient.get();
     }
 
     public OrganizationsClient organizations() {

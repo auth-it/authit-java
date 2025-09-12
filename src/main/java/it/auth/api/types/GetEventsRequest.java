@@ -20,8 +20,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = GetAdminRealmsRealmExtAdminEventsEventsRequest.Builder.class)
-public final class GetAdminRealmsRealmExtAdminEventsEventsRequest {
+@JsonDeserialize(builder = GetEventsRequest.Builder.class)
+public final class GetEventsRequest {
     private final Optional<List<String>> type;
 
     private final Optional<String> client;
@@ -40,7 +40,7 @@ public final class GetAdminRealmsRealmExtAdminEventsEventsRequest {
 
     private final Map<String, Object> additionalProperties;
 
-    private GetAdminRealmsRealmExtAdminEventsEventsRequest(
+    private GetEventsRequest(
             Optional<List<String>> type,
             Optional<String> client,
             Optional<String> dateFrom,
@@ -128,8 +128,7 @@ public final class GetAdminRealmsRealmExtAdminEventsEventsRequest {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof GetAdminRealmsRealmExtAdminEventsEventsRequest
-                && equalTo((GetAdminRealmsRealmExtAdminEventsEventsRequest) other);
+        return other instanceof GetEventsRequest && equalTo((GetEventsRequest) other);
     }
 
     @JsonAnyGetter
@@ -137,7 +136,7 @@ public final class GetAdminRealmsRealmExtAdminEventsEventsRequest {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(GetAdminRealmsRealmExtAdminEventsEventsRequest other) {
+    private boolean equalTo(GetEventsRequest other) {
         return type.equals(other.type)
                 && client.equals(other.client)
                 && dateFrom.equals(other.dateFrom)
@@ -186,7 +185,7 @@ public final class GetAdminRealmsRealmExtAdminEventsEventsRequest {
 
         private Builder() {}
 
-        public Builder from(GetAdminRealmsRealmExtAdminEventsEventsRequest other) {
+        public Builder from(GetEventsRequest other) {
             type(other.getType());
             client(other.getClient());
             dateFrom(other.getDateFrom());
@@ -291,8 +290,8 @@ public final class GetAdminRealmsRealmExtAdminEventsEventsRequest {
             return this;
         }
 
-        public GetAdminRealmsRealmExtAdminEventsEventsRequest build() {
-            return new GetAdminRealmsRealmExtAdminEventsEventsRequest(
+        public GetEventsRequest build() {
+            return new GetEventsRequest(
                     type, client, dateFrom, dateTo, first, ipAddress, max, user, additionalProperties);
         }
     }

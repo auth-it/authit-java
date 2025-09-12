@@ -20,8 +20,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 @JsonInclude(JsonInclude.Include.NON_ABSENT)
-@JsonDeserialize(builder = GetAdminRealmsRealmExtAdminEventsAdminEventsRequest.Builder.class)
-public final class GetAdminRealmsRealmExtAdminEventsAdminEventsRequest {
+@JsonDeserialize(builder = GetAdminEventsRequest.Builder.class)
+public final class GetAdminEventsRequest {
     private final Optional<List<String>> operationTypes;
 
     private final Optional<List<String>> resourceTypes;
@@ -46,7 +46,7 @@ public final class GetAdminRealmsRealmExtAdminEventsAdminEventsRequest {
 
     private final Map<String, Object> additionalProperties;
 
-    private GetAdminRealmsRealmExtAdminEventsAdminEventsRequest(
+    private GetAdminEventsRequest(
             Optional<List<String>> operationTypes,
             Optional<List<String>> resourceTypes,
             Optional<String> authClient,
@@ -137,8 +137,7 @@ public final class GetAdminRealmsRealmExtAdminEventsAdminEventsRequest {
     @java.lang.Override
     public boolean equals(Object other) {
         if (this == other) return true;
-        return other instanceof GetAdminRealmsRealmExtAdminEventsAdminEventsRequest
-                && equalTo((GetAdminRealmsRealmExtAdminEventsAdminEventsRequest) other);
+        return other instanceof GetAdminEventsRequest && equalTo((GetAdminEventsRequest) other);
     }
 
     @JsonAnyGetter
@@ -146,7 +145,7 @@ public final class GetAdminRealmsRealmExtAdminEventsAdminEventsRequest {
         return this.additionalProperties;
     }
 
-    private boolean equalTo(GetAdminRealmsRealmExtAdminEventsAdminEventsRequest other) {
+    private boolean equalTo(GetAdminEventsRequest other) {
         return operationTypes.equals(other.operationTypes)
                 && resourceTypes.equals(other.resourceTypes)
                 && authClient.equals(other.authClient)
@@ -214,7 +213,7 @@ public final class GetAdminRealmsRealmExtAdminEventsAdminEventsRequest {
 
         private Builder() {}
 
-        public Builder from(GetAdminRealmsRealmExtAdminEventsAdminEventsRequest other) {
+        public Builder from(GetAdminEventsRequest other) {
             operationTypes(other.getOperationTypes());
             resourceTypes(other.getResourceTypes());
             authClient(other.getAuthClient());
@@ -360,8 +359,8 @@ public final class GetAdminRealmsRealmExtAdminEventsAdminEventsRequest {
             return this;
         }
 
-        public GetAdminRealmsRealmExtAdminEventsAdminEventsRequest build() {
-            return new GetAdminRealmsRealmExtAdminEventsAdminEventsRequest(
+        public GetAdminEventsRequest build() {
+            return new GetAdminEventsRequest(
                     operationTypes,
                     resourceTypes,
                     authClient,
