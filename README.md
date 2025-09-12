@@ -11,12 +11,12 @@ Instantiate and use the client with the following:
 ```java
 package com.example.usage;
 
-import com.phasetwo.PhasetwoClient;
-import com.phasetwo.types.AuditEventRepresentation;
+import it.auth.api.AuthItClient;
+import it.auth.api.types.AuditEventRepresentation;
 
 public class Example {
     public static void main(String[] args) {
-        PhasetwoClient client = PhasetwoClient
+        AuthItClient client = AuthItClient
             .builder()
             .token("<token>")
             .build();
@@ -36,10 +36,10 @@ public class Example {
 This SDK allows you to configure different environments for API requests.
 
 ```java
-import com.phasetwo.PhasetwoClient;
-import com.phasetwo.core.Environment;
+import it.auth.api.AuthItClient;
+import it.auth.api.core.Environment;
 
-PhasetwoClient client = PhasetwoClient
+AuthItClient client = AuthItClient
     .builder()
     .environment(Environment.Default)
     .build();
@@ -50,9 +50,9 @@ PhasetwoClient client = PhasetwoClient
 You can set a custom base URL when constructing the client.
 
 ```java
-import com.phasetwo.PhasetwoClient;
+import it.auth.api.AuthItClient;
 
-PhasetwoClient client = PhasetwoClient
+AuthItClient client = AuthItClient
     .builder()
     .url("https://example.com")
     .build();
@@ -63,11 +63,11 @@ PhasetwoClient client = PhasetwoClient
 When the API returns a non-success status code (4xx or 5xx response), an API exception will be thrown.
 
 ```java
-import com.phasetwo.core.PhasetwoApiException;
+import it.auth.api.core.AuthItApiException;
 
 try {
     client.events().createEvent(...);
-} catch (PhasetwoApiException e) {
+} catch (AuthItApiException e) {
     // Do something with the API exception...
 }
 ```
@@ -80,12 +80,12 @@ This SDK is built to work with any instance of `OkHttpClient`. By default, if no
 However, you can pass your own client like so:
 
 ```java
-import com.phasetwo.PhasetwoClient;
+import it.auth.api.AuthItClient;
 import okhttp3.OkHttpClient;
 
 OkHttpClient customClient = ...;
 
-PhasetwoClient client = PhasetwoClient
+AuthItClient client = AuthItClient
     .builder()
     .httpClient(customClient)
     .build();
@@ -106,9 +106,9 @@ A request is deemed retriable when any of the following HTTP status codes is ret
 Use the `maxRetries` client option to configure this behavior.
 
 ```java
-import com.phasetwo.PhasetwoClient;
+import it.auth.api.AuthItClient;
 
-PhasetwoClient client = PhasetwoClient
+AuthItClient client = AuthItClient
     .builder()
     .maxRetries(1)
     .build();
@@ -119,11 +119,11 @@ PhasetwoClient client = PhasetwoClient
 The SDK defaults to a 60 second timeout. You can configure this with a timeout option at the client or request level.
 
 ```java
-import com.phasetwo.PhasetwoClient;
-import com.phasetwo.core.RequestOptions;
+import it.auth.api.AuthItClient;
+import it.auth.api.core.RequestOptions;
 
 // Client level
-PhasetwoClient client = PhasetwoClient
+AuthItClient client = AuthItClient
     .builder()
     .timeout(10)
     .build();
