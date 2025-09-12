@@ -221,6 +221,63 @@ public class AsyncUsersClient {
                 .thenApply(response -> response.body());
     }
 
+    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(
+            String realm, String orgId, String name) {
+        return this.rawClient.getUserOrganizationRoles(realm, orgId, name).thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(
+            String realm, String orgId, String name, RequestOptions requestOptions) {
+        return this.rawClient
+                .getUserOrganizationRoles(realm, orgId, name, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<Void> hasOrganizationRole(String realm, String orgId, String name, String userId) {
+        return this.rawClient.hasOrganizationRole(realm, orgId, name, userId).thenApply(response -> response.body());
+    }
+
+    public CompletableFuture<Void> hasOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        return this.rawClient
+                .hasOrganizationRole(realm, orgId, name, userId, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    /**
+     * Grant the specified user to the specified organization role
+     */
+    public CompletableFuture<Void> grantOrganizationRole(String realm, String orgId, String name, String userId) {
+        return this.rawClient.grantOrganizationRole(realm, orgId, name, userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Grant the specified user to the specified organization role
+     */
+    public CompletableFuture<Void> grantOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        return this.rawClient
+                .grantOrganizationRole(realm, orgId, name, userId, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user
+     */
+    public CompletableFuture<Void> revokeOrganizationRole(String realm, String orgId, String name, String userId) {
+        return this.rawClient.revokeOrganizationRole(realm, orgId, name, userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user
+     */
+    public CompletableFuture<Void> revokeOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        return this.rawClient
+                .revokeOrganizationRole(realm, orgId, name, userId, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
     public CompletableFuture<List<OrganizationRepresentation>> listOrganizationsForTheGivenUser(
             String realm, String userId) {
         return this.rawClient.listOrganizationsForTheGivenUser(realm, userId).thenApply(response -> response.body());
@@ -233,53 +290,51 @@ public class AsyncUsersClient {
                 .thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRolesForTheGivenUserAndOrg(
+    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRoles(
             String realm, String userId, String orgId) {
-        return this.rawClient
-                .listOrganizationRolesForTheGivenUserAndOrg(realm, userId, orgId)
-                .thenApply(response -> response.body());
+        return this.rawClient.listOrganizationRoles(realm, userId, orgId).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRolesForTheGivenUserAndOrg(
+    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRoles(
             String realm, String userId, String orgId, RequestOptions requestOptions) {
         return this.rawClient
-                .listOrganizationRolesForTheGivenUserAndOrg(realm, userId, orgId, requestOptions)
+                .listOrganizationRoles(realm, userId, orgId, requestOptions)
                 .thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> grantAUserOrganizationRoles(
+    public CompletableFuture<Void> grantOrganizationRoles(
             String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
         return this.rawClient
-                .grantAUserOrganizationRoles(realm, userId, orgId, request)
+                .grantOrganizationRoles(realm, userId, orgId, request)
                 .thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> grantAUserOrganizationRoles(
+    public CompletableFuture<Void> grantOrganizationRoles(
             String realm,
             String userId,
             String orgId,
             List<OrganizationRoleRepresentation> request,
             RequestOptions requestOptions) {
         return this.rawClient
-                .grantAUserOrganizationRoles(realm, userId, orgId, request, requestOptions)
+                .grantOrganizationRoles(realm, userId, orgId, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> revokeOrganizationRolesFromAUser(
+    public CompletableFuture<Void> revokeOrganizationRoles(
             String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
         return this.rawClient
-                .revokeOrganizationRolesFromAUser(realm, userId, orgId, request)
+                .revokeOrganizationRoles(realm, userId, orgId, request)
                 .thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> revokeOrganizationRolesFromAUser(
+    public CompletableFuture<Void> revokeOrganizationRoles(
             String realm,
             String userId,
             String orgId,
             List<OrganizationRoleRepresentation> request,
             RequestOptions requestOptions) {
         return this.rawClient
-                .revokeOrganizationRolesFromAUser(realm, userId, orgId, request, requestOptions)
+                .revokeOrganizationRoles(realm, userId, orgId, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 

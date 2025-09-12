@@ -5,33 +5,44 @@ package com.phasetwo;
 
 import com.phasetwo.core.ClientOptions;
 import com.phasetwo.core.RequestOptions;
+import com.phasetwo.core.Suppliers;
+import com.phasetwo.organizations.AsyncDomainsClient;
+import com.phasetwo.organizations.AsyncInvitationsClient;
+import com.phasetwo.organizations.AsyncMembershipsClient;
+import com.phasetwo.organizations.AsyncRolesClient;
 import com.phasetwo.types.CreatePortalLinkRequest;
-import com.phasetwo.types.GetOrganizationInvitationsRequest;
-import com.phasetwo.types.GetOrganizationMembershipsCountRequest;
-import com.phasetwo.types.GetOrganizationMembershipsRequest;
 import com.phasetwo.types.GetOrganizationsCountRequest;
 import com.phasetwo.types.GetOrganizationsRequest;
 import com.phasetwo.types.InvitationRepresentation;
-import com.phasetwo.types.InvitationRequestRepresentation;
 import com.phasetwo.types.MyOrganizationRepresentation;
-import com.phasetwo.types.OrganizationDomainRepresentation;
 import com.phasetwo.types.OrganizationRepresentation;
 import com.phasetwo.types.OrganizationRoleRepresentation;
 import com.phasetwo.types.PortalLinkRepresentation;
-import com.phasetwo.types.UserRepresentation;
-import com.phasetwo.types.UserWithOrgsBriefRepresentation;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class AsyncOrganizationsClient {
     protected final ClientOptions clientOptions;
 
     private final AsyncRawOrganizationsClient rawClient;
 
+    protected final Supplier<AsyncMembershipsClient> membershipsClient;
+
+    protected final Supplier<AsyncDomainsClient> domainsClient;
+
+    protected final Supplier<AsyncInvitationsClient> invitationsClient;
+
+    protected final Supplier<AsyncRolesClient> rolesClient;
+
     public AsyncOrganizationsClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new AsyncRawOrganizationsClient(clientOptions);
+        this.membershipsClient = Suppliers.memoize(() -> new AsyncMembershipsClient(clientOptions));
+        this.domainsClient = Suppliers.memoize(() -> new AsyncDomainsClient(clientOptions));
+        this.invitationsClient = Suppliers.memoize(() -> new AsyncInvitationsClient(clientOptions));
+        this.rolesClient = Suppliers.memoize(() -> new AsyncRolesClient(clientOptions));
     }
 
     /**
@@ -219,255 +230,6 @@ public class AsyncOrganizationsClient {
                 .thenApply(response -> response.body());
     }
 
-    /**
-     * Get a paginated list of users who are a member of the specified organization.
-     */
-    public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getOrganizationMemberships(
-            String realm, String orgId) {
-        return this.rawClient.getOrganizationMemberships(realm, orgId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a paginated list of users who are a member of the specified organization.
-     */
-    public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getOrganizationMemberships(
-            String realm, String orgId, GetOrganizationMembershipsRequest request) {
-        return this.rawClient.getOrganizationMemberships(realm, orgId, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a paginated list of users who are a member of the specified organization.
-     */
-    public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getOrganizationMemberships(
-            String realm, String orgId, GetOrganizationMembershipsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationMemberships(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get total number of members of a given organization
-     */
-    public CompletableFuture<Integer> getOrganizationMembershipsCount(String realm, String orgId) {
-        return this.rawClient.getOrganizationMembershipsCount(realm, orgId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get total number of members of a given organization
-     */
-    public CompletableFuture<Integer> getOrganizationMembershipsCount(
-            String realm, String orgId, GetOrganizationMembershipsCountRequest request) {
-        return this.rawClient
-                .getOrganizationMembershipsCount(realm, orgId, request)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get total number of members of a given organization
-     */
-    public CompletableFuture<Integer> getOrganizationMembershipsCount(
-            String realm, String orgId, GetOrganizationMembershipsCountRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationMembershipsCount(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<OrganizationDomainRepresentation>> getOrganizationDomains(
-            String realm, String orgId) {
-        return this.rawClient.getOrganizationDomains(realm, orgId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<OrganizationDomainRepresentation>> getOrganizationDomains(
-            String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationDomains(realm, orgId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<OrganizationDomainRepresentation> getOrganizationDomain(
-            String realm, String orgId, String domainName) {
-        return this.rawClient.getOrganizationDomain(realm, orgId, domainName).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<OrganizationDomainRepresentation> getOrganizationDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationDomain(realm, orgId, domainName, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Initiate a verification check for the domain name owned by this organization
-     */
-    public CompletableFuture<Void> verifyDomain(String realm, String orgId, String domainName) {
-        return this.rawClient.verifyDomain(realm, orgId, domainName).thenApply(response -> response.body());
-    }
-
-    /**
-     * Initiate a verification check for the domain name owned by this organization
-     */
-    public CompletableFuture<Void> verifyDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        return this.rawClient
-                .verifyDomain(realm, orgId, domainName, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> checkOrganizationMembership(String realm, String orgId, String userId) {
-        return this.rawClient.checkOrganizationMembership(realm, orgId, userId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> checkOrganizationMembership(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .checkOrganizationMembership(realm, orgId, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public CompletableFuture<Void> addOrganizationMember(String realm, String orgId, String userId) {
-        return this.rawClient.addOrganizationMember(realm, orgId, userId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public CompletableFuture<Void> addOrganizationMember(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .addOrganizationMember(realm, orgId, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public CompletableFuture<Void> removeOrganizationMember(String realm, String orgId, String userId) {
-        return this.rawClient.removeOrganizationMember(realm, orgId, userId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public CompletableFuture<Void> removeOrganizationMember(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .removeOrganizationMember(realm, orgId, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public CompletableFuture<List<InvitationRepresentation>> getOrganizationInvitations(String realm, String orgId) {
-        return this.rawClient.getOrganizationInvitations(realm, orgId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public CompletableFuture<List<InvitationRepresentation>> getOrganizationInvitations(
-            String realm, String orgId, GetOrganizationInvitationsRequest request) {
-        return this.rawClient.getOrganizationInvitations(realm, orgId, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public CompletableFuture<List<InvitationRepresentation>> getOrganizationInvitations(
-            String realm, String orgId, GetOrganizationInvitationsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationInvitations(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> addOrganizationInvitation(String realm, String orgId) {
-        return this.rawClient.addOrganizationInvitation(realm, orgId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> addOrganizationInvitation(
-            String realm, String orgId, InvitationRequestRepresentation request) {
-        return this.rawClient.addOrganizationInvitation(realm, orgId, request).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> addOrganizationInvitation(
-            String realm, String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient
-                .addOrganizationInvitation(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a count of invitations to an organization
-     */
-    public CompletableFuture<Integer> getOrganizationInvitationCount(String realm, String orgId) {
-        return this.rawClient.getOrganizationInvitationCount(realm, orgId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a count of invitations to an organization
-     */
-    public CompletableFuture<Integer> getOrganizationInvitationCount(
-            String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationInvitationCount(realm, orgId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get an invitation to an organization by its uuid.
-     */
-    public CompletableFuture<InvitationRepresentation> getOrganizationInvitationById(
-            String realm, String orgId, String invitationId) {
-        return this.rawClient
-                .getOrganizationInvitationById(realm, orgId, invitationId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Get an invitation to an organization by its uuid.
-     */
-    public CompletableFuture<InvitationRepresentation> getOrganizationInvitationById(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationInvitationById(realm, orgId, invitationId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeOrganizationInvitation(String realm, String orgId, String invitationId) {
-        return this.rawClient
-                .removeOrganizationInvitation(realm, orgId, invitationId)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> removeOrganizationInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        return this.rawClient
-                .removeOrganizationInvitation(realm, orgId, invitationId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Resend the email for an existing Organization Invitation
-     */
-    public CompletableFuture<Void> resendOrganizationInvitation(String realm, String orgId, String invitationId) {
-        return this.rawClient
-                .resendOrganizationInvitation(realm, orgId, invitationId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Resend the email for an existing Organization Invitation
-     */
-    public CompletableFuture<Void> resendOrganizationInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        return this.rawClient
-                .resendOrganizationInvitation(realm, orgId, invitationId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
     public CompletableFuture<List<OrganizationRoleRepresentation>> getOrganizationRoles(String realm, String orgId) {
         return this.rawClient.getOrganizationRoles(realm, orgId).thenApply(response -> response.body());
     }
@@ -505,123 +267,19 @@ public class AsyncOrganizationsClient {
                 .thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> deleteOrganizationRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        return this.rawClient.deleteOrganizationRoles(realm, orgId, request).thenApply(response -> response.body());
+    public AsyncMembershipsClient memberships() {
+        return this.membershipsClient.get();
     }
 
-    public CompletableFuture<Void> deleteOrganizationRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
-        return this.rawClient
-                .deleteOrganizationRoles(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
+    public AsyncDomainsClient domains() {
+        return this.domainsClient.get();
     }
 
-    public CompletableFuture<OrganizationRoleRepresentation> getOrganizationRole(
-            String realm, String orgId, String name) {
-        return this.rawClient.getOrganizationRole(realm, orgId, name).thenApply(response -> response.body());
+    public AsyncInvitationsClient invitations() {
+        return this.invitationsClient.get();
     }
 
-    public CompletableFuture<OrganizationRoleRepresentation> getOrganizationRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationRole(realm, orgId, name, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> updateOrganizationRole(String realm, String orgId, String name) {
-        return this.rawClient.updateOrganizationRole(realm, orgId, name).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> updateOrganizationRole(
-            String realm, String orgId, String name, OrganizationRoleRepresentation request) {
-        return this.rawClient
-                .updateOrganizationRole(realm, orgId, name, request)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> updateOrganizationRole(
-            String realm,
-            String orgId,
-            String name,
-            OrganizationRoleRepresentation request,
-            RequestOptions requestOptions) {
-        return this.rawClient
-                .updateOrganizationRole(realm, orgId, name, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> deleteOrganizationRole(String realm, String orgId, String name) {
-        return this.rawClient.deleteOrganizationRole(realm, orgId, name).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> deleteOrganizationRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient
-                .deleteOrganizationRole(realm, orgId, name, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(
-            String realm, String orgId, String name) {
-        return this.rawClient.getUserOrganizationRoles(realm, orgId, name).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient
-                .getUserOrganizationRoles(realm, orgId, name, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> checkUserOrganizationRole(String realm, String orgId, String name, String userId) {
-        return this.rawClient
-                .checkUserOrganizationRole(realm, orgId, name, userId)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> checkUserOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .checkUserOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Grant the specified user to the specified organization role
-     */
-    public CompletableFuture<Void> grantUserOrganizationRole(String realm, String orgId, String name, String userId) {
-        return this.rawClient
-                .grantUserOrganizationRole(realm, orgId, name, userId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Grant the specified user to the specified organization role
-     */
-    public CompletableFuture<Void> grantUserOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .grantUserOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Revoke the specified organization role from the specified user
-     */
-    public CompletableFuture<Void> revokeUserOrganizationRole(String realm, String orgId, String name, String userId) {
-        return this.rawClient
-                .revokeUserOrganizationRole(realm, orgId, name, userId)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Revoke the specified organization role from the specified user
-     */
-    public CompletableFuture<Void> revokeUserOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .revokeUserOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .thenApply(response -> response.body());
+    public AsyncRolesClient roles() {
+        return this.rolesClient.get();
     }
 }

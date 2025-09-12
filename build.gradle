@@ -44,7 +44,7 @@ java {
 
 group = 'com.phasetwo'
 
-version = '0.0.11'
+version = '0.0.12'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -71,7 +71,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.phasetwo'
             artifactId = 'phasetwo'
-            version = '0.0.11'
+            version = '0.0.12'
             from components.java
             pom {
                 licenses {

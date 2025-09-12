@@ -913,6 +913,246 @@ public class AsyncRawUsersClient {
         return future;
     }
 
+    public CompletableFuture<PhasetwoClientHttpResponse<List<UserRepresentation>>> getUserOrganizationRoles(
+            String realm, String orgId, String name) {
+        return getUserOrganizationRoles(realm, orgId, name, null);
+    }
+
+    public CompletableFuture<PhasetwoClientHttpResponse<List<UserRepresentation>>> getUserOrganizationRoles(
+            String realm, String orgId, String name, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<PhasetwoClientHttpResponse<List<UserRepresentation>>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new PhasetwoClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(), new TypeReference<List<UserRepresentation>>() {}),
+                                response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new PhasetwoApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> hasOrganizationRole(
+            String realm, String orgId, String name, String userId) {
+        return hasOrganizationRole(realm, orgId, name, userId, null);
+    }
+
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> hasOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<PhasetwoClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new PhasetwoClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new PhasetwoApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Grant the specified user to the specified organization role
+     */
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> grantOrganizationRole(
+            String realm, String orgId, String name, String userId) {
+        return grantOrganizationRole(realm, orgId, name, userId, null);
+    }
+
+    /**
+     * Grant the specified user to the specified organization role
+     */
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> grantOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("PUT", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<PhasetwoClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new PhasetwoClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new PhasetwoApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user
+     */
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> revokeOrganizationRole(
+            String realm, String orgId, String name, String userId) {
+        return revokeOrganizationRole(realm, orgId, name, userId, null);
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user
+     */
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> revokeOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<PhasetwoClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new PhasetwoClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new PhasetwoApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new PhasetwoException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
     public CompletableFuture<PhasetwoClientHttpResponse<List<OrganizationRepresentation>>>
             listOrganizationsForTheGivenUser(String realm, String userId) {
         return listOrganizationsForTheGivenUser(realm, userId, null);
@@ -973,14 +1213,13 @@ public class AsyncRawUsersClient {
         return future;
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>>>
-            listOrganizationRolesForTheGivenUserAndOrg(String realm, String userId, String orgId) {
-        return listOrganizationRolesForTheGivenUserAndOrg(realm, userId, orgId, null);
+    public CompletableFuture<PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>>> listOrganizationRoles(
+            String realm, String userId, String orgId) {
+        return listOrganizationRoles(realm, userId, orgId, null);
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>>>
-            listOrganizationRolesForTheGivenUserAndOrg(
-                    String realm, String userId, String orgId, RequestOptions requestOptions) {
+    public CompletableFuture<PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>>> listOrganizationRoles(
+            String realm, String userId, String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
@@ -1036,12 +1275,12 @@ public class AsyncRawUsersClient {
         return future;
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> grantAUserOrganizationRoles(
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> grantOrganizationRoles(
             String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return grantAUserOrganizationRoles(realm, userId, orgId, request, null);
+        return grantOrganizationRoles(realm, userId, orgId, request, null);
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> grantAUserOrganizationRoles(
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> grantOrganizationRoles(
             String realm,
             String userId,
             String orgId,
@@ -1103,12 +1342,12 @@ public class AsyncRawUsersClient {
         return future;
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> revokeOrganizationRolesFromAUser(
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> revokeOrganizationRoles(
             String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return revokeOrganizationRolesFromAUser(realm, userId, orgId, request, null);
+        return revokeOrganizationRoles(realm, userId, orgId, request, null);
     }
 
-    public CompletableFuture<PhasetwoClientHttpResponse<Void>> revokeOrganizationRolesFromAUser(
+    public CompletableFuture<PhasetwoClientHttpResponse<Void>> revokeOrganizationRoles(
             String realm,
             String userId,
             String orgId,

@@ -728,6 +728,194 @@ public class RawUsersClient {
         }
     }
 
+    public PhasetwoClientHttpResponse<List<UserRepresentation>> getUserOrganizationRoles(
+            String realm, String orgId, String name) {
+        return getUserOrganizationRoles(realm, orgId, name, null);
+    }
+
+    public PhasetwoClientHttpResponse<List<UserRepresentation>> getUserOrganizationRoles(
+            String realm, String orgId, String name, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new PhasetwoClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(
+                                responseBody.string(), new TypeReference<List<UserRepresentation>>() {}),
+                        response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new PhasetwoApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new PhasetwoException("Network error executing HTTP request", e);
+        }
+    }
+
+    public PhasetwoClientHttpResponse<Void> hasOrganizationRole(
+            String realm, String orgId, String name, String userId) {
+        return hasOrganizationRole(realm, orgId, name, userId, null);
+    }
+
+    public PhasetwoClientHttpResponse<Void> hasOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new PhasetwoClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new PhasetwoApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new PhasetwoException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Grant the specified user to the specified organization role
+     */
+    public PhasetwoClientHttpResponse<Void> grantOrganizationRole(
+            String realm, String orgId, String name, String userId) {
+        return grantOrganizationRole(realm, orgId, name, userId, null);
+    }
+
+    /**
+     * Grant the specified user to the specified organization role
+     */
+    public PhasetwoClientHttpResponse<Void> grantOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("PUT", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new PhasetwoClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new PhasetwoApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new PhasetwoException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user
+     */
+    public PhasetwoClientHttpResponse<Void> revokeOrganizationRole(
+            String realm, String orgId, String name, String userId) {
+        return revokeOrganizationRole(realm, orgId, name, userId, null);
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user
+     */
+    public PhasetwoClientHttpResponse<Void> revokeOrganizationRole(
+            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(realm)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new PhasetwoClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new PhasetwoApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new PhasetwoException("Network error executing HTTP request", e);
+        }
+    }
+
     public PhasetwoClientHttpResponse<List<OrganizationRepresentation>> listOrganizationsForTheGivenUser(
             String realm, String userId) {
         return listOrganizationsForTheGivenUser(realm, userId, null);
@@ -773,12 +961,12 @@ public class RawUsersClient {
         }
     }
 
-    public PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRolesForTheGivenUserAndOrg(
+    public PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRoles(
             String realm, String userId, String orgId) {
-        return listOrganizationRolesForTheGivenUserAndOrg(realm, userId, orgId, null);
+        return listOrganizationRoles(realm, userId, orgId, null);
     }
 
-    public PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRolesForTheGivenUserAndOrg(
+    public PhasetwoClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRoles(
             String realm, String userId, String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
@@ -820,12 +1008,12 @@ public class RawUsersClient {
         }
     }
 
-    public PhasetwoClientHttpResponse<Void> grantAUserOrganizationRoles(
+    public PhasetwoClientHttpResponse<Void> grantOrganizationRoles(
             String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return grantAUserOrganizationRoles(realm, userId, orgId, request, null);
+        return grantOrganizationRoles(realm, userId, orgId, request, null);
     }
 
-    public PhasetwoClientHttpResponse<Void> grantAUserOrganizationRoles(
+    public PhasetwoClientHttpResponse<Void> grantOrganizationRoles(
             String realm,
             String userId,
             String orgId,
@@ -874,12 +1062,12 @@ public class RawUsersClient {
         }
     }
 
-    public PhasetwoClientHttpResponse<Void> revokeOrganizationRolesFromAUser(
+    public PhasetwoClientHttpResponse<Void> revokeOrganizationRoles(
             String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return revokeOrganizationRolesFromAUser(realm, userId, orgId, request, null);
+        return revokeOrganizationRoles(realm, userId, orgId, request, null);
     }
 
-    public PhasetwoClientHttpResponse<Void> revokeOrganizationRolesFromAUser(
+    public PhasetwoClientHttpResponse<Void> revokeOrganizationRoles(
             String realm,
             String userId,
             String orgId,

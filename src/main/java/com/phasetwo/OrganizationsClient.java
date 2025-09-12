@@ -5,32 +5,43 @@ package com.phasetwo;
 
 import com.phasetwo.core.ClientOptions;
 import com.phasetwo.core.RequestOptions;
+import com.phasetwo.core.Suppliers;
+import com.phasetwo.organizations.DomainsClient;
+import com.phasetwo.organizations.InvitationsClient;
+import com.phasetwo.organizations.MembershipsClient;
+import com.phasetwo.organizations.RolesClient;
 import com.phasetwo.types.CreatePortalLinkRequest;
-import com.phasetwo.types.GetOrganizationInvitationsRequest;
-import com.phasetwo.types.GetOrganizationMembershipsCountRequest;
-import com.phasetwo.types.GetOrganizationMembershipsRequest;
 import com.phasetwo.types.GetOrganizationsCountRequest;
 import com.phasetwo.types.GetOrganizationsRequest;
 import com.phasetwo.types.InvitationRepresentation;
-import com.phasetwo.types.InvitationRequestRepresentation;
 import com.phasetwo.types.MyOrganizationRepresentation;
-import com.phasetwo.types.OrganizationDomainRepresentation;
 import com.phasetwo.types.OrganizationRepresentation;
 import com.phasetwo.types.OrganizationRoleRepresentation;
 import com.phasetwo.types.PortalLinkRepresentation;
-import com.phasetwo.types.UserRepresentation;
-import com.phasetwo.types.UserWithOrgsBriefRepresentation;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class OrganizationsClient {
     protected final ClientOptions clientOptions;
 
     private final RawOrganizationsClient rawClient;
 
+    protected final Supplier<MembershipsClient> membershipsClient;
+
+    protected final Supplier<DomainsClient> domainsClient;
+
+    protected final Supplier<InvitationsClient> invitationsClient;
+
+    protected final Supplier<RolesClient> rolesClient;
+
     public OrganizationsClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new RawOrganizationsClient(clientOptions);
+        this.membershipsClient = Suppliers.memoize(() -> new MembershipsClient(clientOptions));
+        this.domainsClient = Suppliers.memoize(() -> new DomainsClient(clientOptions));
+        this.invitationsClient = Suppliers.memoize(() -> new InvitationsClient(clientOptions));
+        this.rolesClient = Suppliers.memoize(() -> new RolesClient(clientOptions));
     }
 
     /**
@@ -207,239 +218,6 @@ public class OrganizationsClient {
                 .body();
     }
 
-    /**
-     * Get a paginated list of users who are a member of the specified organization.
-     */
-    public List<UserWithOrgsBriefRepresentation> getOrganizationMemberships(String realm, String orgId) {
-        return this.rawClient.getOrganizationMemberships(realm, orgId).body();
-    }
-
-    /**
-     * Get a paginated list of users who are a member of the specified organization.
-     */
-    public List<UserWithOrgsBriefRepresentation> getOrganizationMemberships(
-            String realm, String orgId, GetOrganizationMembershipsRequest request) {
-        return this.rawClient.getOrganizationMemberships(realm, orgId, request).body();
-    }
-
-    /**
-     * Get a paginated list of users who are a member of the specified organization.
-     */
-    public List<UserWithOrgsBriefRepresentation> getOrganizationMemberships(
-            String realm, String orgId, GetOrganizationMembershipsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationMemberships(realm, orgId, request, requestOptions)
-                .body();
-    }
-
-    /**
-     * Get total number of members of a given organization
-     */
-    public int getOrganizationMembershipsCount(String realm, String orgId) {
-        return this.rawClient.getOrganizationMembershipsCount(realm, orgId).body();
-    }
-
-    /**
-     * Get total number of members of a given organization
-     */
-    public int getOrganizationMembershipsCount(
-            String realm, String orgId, GetOrganizationMembershipsCountRequest request) {
-        return this.rawClient
-                .getOrganizationMembershipsCount(realm, orgId, request)
-                .body();
-    }
-
-    /**
-     * Get total number of members of a given organization
-     */
-    public int getOrganizationMembershipsCount(
-            String realm, String orgId, GetOrganizationMembershipsCountRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationMembershipsCount(realm, orgId, request, requestOptions)
-                .body();
-    }
-
-    public List<OrganizationDomainRepresentation> getOrganizationDomains(String realm, String orgId) {
-        return this.rawClient.getOrganizationDomains(realm, orgId).body();
-    }
-
-    public List<OrganizationDomainRepresentation> getOrganizationDomains(
-            String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationDomains(realm, orgId, requestOptions)
-                .body();
-    }
-
-    public OrganizationDomainRepresentation getOrganizationDomain(String realm, String orgId, String domainName) {
-        return this.rawClient.getOrganizationDomain(realm, orgId, domainName).body();
-    }
-
-    public OrganizationDomainRepresentation getOrganizationDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationDomain(realm, orgId, domainName, requestOptions)
-                .body();
-    }
-
-    /**
-     * Initiate a verification check for the domain name owned by this organization
-     */
-    public void verifyDomain(String realm, String orgId, String domainName) {
-        this.rawClient.verifyDomain(realm, orgId, domainName).body();
-    }
-
-    /**
-     * Initiate a verification check for the domain name owned by this organization
-     */
-    public void verifyDomain(String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        this.rawClient.verifyDomain(realm, orgId, domainName, requestOptions).body();
-    }
-
-    public void checkOrganizationMembership(String realm, String orgId, String userId) {
-        this.rawClient.checkOrganizationMembership(realm, orgId, userId).body();
-    }
-
-    public void checkOrganizationMembership(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .checkOrganizationMembership(realm, orgId, userId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public void addOrganizationMember(String realm, String orgId, String userId) {
-        this.rawClient.addOrganizationMember(realm, orgId, userId).body();
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public void addOrganizationMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .addOrganizationMember(realm, orgId, userId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public void removeOrganizationMember(String realm, String orgId, String userId) {
-        this.rawClient.removeOrganizationMember(realm, orgId, userId).body();
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public void removeOrganizationMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .removeOrganizationMember(realm, orgId, userId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public List<InvitationRepresentation> getOrganizationInvitations(String realm, String orgId) {
-        return this.rawClient.getOrganizationInvitations(realm, orgId).body();
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public List<InvitationRepresentation> getOrganizationInvitations(
-            String realm, String orgId, GetOrganizationInvitationsRequest request) {
-        return this.rawClient.getOrganizationInvitations(realm, orgId, request).body();
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public List<InvitationRepresentation> getOrganizationInvitations(
-            String realm, String orgId, GetOrganizationInvitationsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationInvitations(realm, orgId, request, requestOptions)
-                .body();
-    }
-
-    public void addOrganizationInvitation(String realm, String orgId) {
-        this.rawClient.addOrganizationInvitation(realm, orgId).body();
-    }
-
-    public void addOrganizationInvitation(String realm, String orgId, InvitationRequestRepresentation request) {
-        this.rawClient.addOrganizationInvitation(realm, orgId, request).body();
-    }
-
-    public void addOrganizationInvitation(
-            String realm, String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
-        this.rawClient
-                .addOrganizationInvitation(realm, orgId, request, requestOptions)
-                .body();
-    }
-
-    /**
-     * Get a count of invitations to an organization
-     */
-    public int getOrganizationInvitationCount(String realm, String orgId) {
-        return this.rawClient.getOrganizationInvitationCount(realm, orgId).body();
-    }
-
-    /**
-     * Get a count of invitations to an organization
-     */
-    public int getOrganizationInvitationCount(String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationInvitationCount(realm, orgId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Get an invitation to an organization by its uuid.
-     */
-    public InvitationRepresentation getOrganizationInvitationById(String realm, String orgId, String invitationId) {
-        return this.rawClient
-                .getOrganizationInvitationById(realm, orgId, invitationId)
-                .body();
-    }
-
-    /**
-     * Get an invitation to an organization by its uuid.
-     */
-    public InvitationRepresentation getOrganizationInvitationById(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationInvitationById(realm, orgId, invitationId, requestOptions)
-                .body();
-    }
-
-    public void removeOrganizationInvitation(String realm, String orgId, String invitationId) {
-        this.rawClient.removeOrganizationInvitation(realm, orgId, invitationId).body();
-    }
-
-    public void removeOrganizationInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        this.rawClient
-                .removeOrganizationInvitation(realm, orgId, invitationId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Resend the email for an existing Organization Invitation
-     */
-    public void resendOrganizationInvitation(String realm, String orgId, String invitationId) {
-        this.rawClient.resendOrganizationInvitation(realm, orgId, invitationId).body();
-    }
-
-    /**
-     * Resend the email for an existing Organization Invitation
-     */
-    public void resendOrganizationInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        this.rawClient
-                .resendOrganizationInvitation(realm, orgId, invitationId, requestOptions)
-                .body();
-    }
-
     public List<OrganizationRoleRepresentation> getOrganizationRoles(String realm, String orgId) {
         return this.rawClient.getOrganizationRoles(realm, orgId).body();
     }
@@ -475,111 +253,19 @@ public class OrganizationsClient {
                 .body();
     }
 
-    public void deleteOrganizationRoles(String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        this.rawClient.deleteOrganizationRoles(realm, orgId, request).body();
+    public MembershipsClient memberships() {
+        return this.membershipsClient.get();
     }
 
-    public void deleteOrganizationRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
-        this.rawClient
-                .deleteOrganizationRoles(realm, orgId, request, requestOptions)
-                .body();
+    public DomainsClient domains() {
+        return this.domainsClient.get();
     }
 
-    public OrganizationRoleRepresentation getOrganizationRole(String realm, String orgId, String name) {
-        return this.rawClient.getOrganizationRole(realm, orgId, name).body();
+    public InvitationsClient invitations() {
+        return this.invitationsClient.get();
     }
 
-    public OrganizationRoleRepresentation getOrganizationRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationRole(realm, orgId, name, requestOptions)
-                .body();
-    }
-
-    public void updateOrganizationRole(String realm, String orgId, String name) {
-        this.rawClient.updateOrganizationRole(realm, orgId, name).body();
-    }
-
-    public void updateOrganizationRole(
-            String realm, String orgId, String name, OrganizationRoleRepresentation request) {
-        this.rawClient.updateOrganizationRole(realm, orgId, name, request).body();
-    }
-
-    public void updateOrganizationRole(
-            String realm,
-            String orgId,
-            String name,
-            OrganizationRoleRepresentation request,
-            RequestOptions requestOptions) {
-        this.rawClient
-                .updateOrganizationRole(realm, orgId, name, request, requestOptions)
-                .body();
-    }
-
-    public void deleteOrganizationRole(String realm, String orgId, String name) {
-        this.rawClient.deleteOrganizationRole(realm, orgId, name).body();
-    }
-
-    public void deleteOrganizationRole(String realm, String orgId, String name, RequestOptions requestOptions) {
-        this.rawClient
-                .deleteOrganizationRole(realm, orgId, name, requestOptions)
-                .body();
-    }
-
-    public List<UserRepresentation> getUserOrganizationRoles(String realm, String orgId, String name) {
-        return this.rawClient.getUserOrganizationRoles(realm, orgId, name).body();
-    }
-
-    public List<UserRepresentation> getUserOrganizationRoles(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient
-                .getUserOrganizationRoles(realm, orgId, name, requestOptions)
-                .body();
-    }
-
-    public void checkUserOrganizationRole(String realm, String orgId, String name, String userId) {
-        this.rawClient.checkUserOrganizationRole(realm, orgId, name, userId).body();
-    }
-
-    public void checkUserOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .checkUserOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Grant the specified user to the specified organization role
-     */
-    public void grantUserOrganizationRole(String realm, String orgId, String name, String userId) {
-        this.rawClient.grantUserOrganizationRole(realm, orgId, name, userId).body();
-    }
-
-    /**
-     * Grant the specified user to the specified organization role
-     */
-    public void grantUserOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .grantUserOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .body();
-    }
-
-    /**
-     * Revoke the specified organization role from the specified user
-     */
-    public void revokeUserOrganizationRole(String realm, String orgId, String name, String userId) {
-        this.rawClient.revokeUserOrganizationRole(realm, orgId, name, userId).body();
-    }
-
-    /**
-     * Revoke the specified organization role from the specified user
-     */
-    public void revokeUserOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .revokeUserOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .body();
+    public RolesClient roles() {
+        return this.rolesClient.get();
     }
 }
