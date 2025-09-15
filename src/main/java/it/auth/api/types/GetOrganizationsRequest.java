@@ -121,6 +121,9 @@ public final class GetOrganizationsRequest {
             return this;
         }
 
+        /**
+         * <p>search by name</p>
+         */
         @JsonSetter(value = "search", nulls = Nulls.SKIP)
         public Builder search(Optional<String> search) {
             this.search = search;
@@ -154,6 +157,9 @@ public final class GetOrganizationsRequest {
             return this;
         }
 
+        /**
+         * <p>search by attributes using the format (space separated) <code>k1:v1 k2:v2</code></p>
+         */
         @JsonSetter(value = "q", nulls = Nulls.SKIP)
         public Builder q(Optional<String> q) {
             this.q = q;

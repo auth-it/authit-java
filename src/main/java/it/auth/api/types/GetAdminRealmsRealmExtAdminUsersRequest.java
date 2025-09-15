@@ -305,6 +305,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>Boolean which defines whether brief representations are returned (default: false)</p>
+         */
         @JsonSetter(value = "briefRepresentation", nulls = Nulls.SKIP)
         public Builder briefRepresentation(Optional<Boolean> briefRepresentation) {
             this.briefRepresentation = briefRepresentation;
@@ -316,6 +319,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>A String contained in email, or the complete email, if param &quot;exact&quot; is true</p>
+         */
         @JsonSetter(value = "email", nulls = Nulls.SKIP)
         public Builder email(Optional<String> email) {
             this.email = email;
@@ -327,6 +333,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>whether the email has been verified</p>
+         */
         @JsonSetter(value = "emailVerified", nulls = Nulls.SKIP)
         public Builder emailVerified(Optional<Boolean> emailVerified) {
             this.emailVerified = emailVerified;
@@ -338,6 +347,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>Boolean representing if user is enabled or not</p>
+         */
         @JsonSetter(value = "enabled", nulls = Nulls.SKIP)
         public Builder enabled(Optional<Boolean> enabled) {
             this.enabled = enabled;
@@ -349,6 +361,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>Boolean which defines whether the params &quot;last&quot;, &quot;first&quot;, &quot;email&quot; and &quot;username&quot; must match exactly</p>
+         */
         @JsonSetter(value = "exact", nulls = Nulls.SKIP)
         public Builder exact(Optional<Boolean> exact) {
             this.exact = exact;
@@ -360,6 +375,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>Pagination offset</p>
+         */
         @JsonSetter(value = "first", nulls = Nulls.SKIP)
         public Builder first(Optional<Integer> first) {
             this.first = first;
@@ -371,6 +389,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>A String contained in firstName, or the complete firstName, if param &quot;exact&quot; is true</p>
+         */
         @JsonSetter(value = "firstName", nulls = Nulls.SKIP)
         public Builder firstName(Optional<String> firstName) {
             this.firstName = firstName;
@@ -382,6 +403,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>The alias of an Identity Provider linked to the user</p>
+         */
         @JsonSetter(value = "idpAlias", nulls = Nulls.SKIP)
         public Builder idpAlias(Optional<String> idpAlias) {
             this.idpAlias = idpAlias;
@@ -393,6 +417,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>The userId at an Identity Provider linked to the user</p>
+         */
         @JsonSetter(value = "idpUserId", nulls = Nulls.SKIP)
         public Builder idpUserId(Optional<String> idpUserId) {
             this.idpUserId = idpUserId;
@@ -404,6 +431,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>A String contained in lastName, or the complete lastName, if param &quot;exact&quot; is true</p>
+         */
         @JsonSetter(value = "lastName", nulls = Nulls.SKIP)
         public Builder lastName(Optional<String> lastName) {
             this.lastName = lastName;
@@ -415,6 +445,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>Maximum results size (defaults to 100)</p>
+         */
         @JsonSetter(value = "max", nulls = Nulls.SKIP)
         public Builder max(Optional<Integer> max) {
             this.max = max;
@@ -426,6 +459,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>A query to search for custom attributes, in the format 'key1:value2 key2:value2'</p>
+         */
         @JsonSetter(value = "q", nulls = Nulls.SKIP)
         public Builder q(Optional<String> q) {
             this.q = q;
@@ -437,6 +473,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>A String contained in username, first or last name, or email. Default search behavior is prefix-based (e.g., foo or foo*). Use <em>foo</em> for infix search and &quot;foo&quot; for exact search.</p>
+         */
         @JsonSetter(value = "search", nulls = Nulls.SKIP)
         public Builder search(Optional<String> search) {
             this.search = search;
@@ -448,6 +487,9 @@ public final class GetAdminRealmsRealmExtAdminUsersRequest {
             return this;
         }
 
+        /**
+         * <p>A String contained in username, or the complete username, if param &quot;exact&quot; is true</p>
+         */
         @JsonSetter(value = "username", nulls = Nulls.SKIP)
         public Builder username(Optional<String> username) {
             this.username = username;

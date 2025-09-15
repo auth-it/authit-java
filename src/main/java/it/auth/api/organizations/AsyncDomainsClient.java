@@ -26,70 +26,47 @@ public class AsyncDomainsClient {
         return this.rawClient;
     }
 
-    public CompletableFuture<List<OrganizationDomainRepresentation>> getDomains(String realm, String orgId) {
-        return this.rawClient.getDomains(realm, orgId).thenApply(response -> response.body());
+    /**
+     * Get details for all domains owned by an organization.
+     */
+    public CompletableFuture<List<OrganizationDomainRepresentation>> getDomains(String orgId) {
+        return this.rawClient.getDomains(orgId).thenApply(response -> response.body());
     }
 
+    /**
+     * Get details for all domains owned by an organization.
+     */
     public CompletableFuture<List<OrganizationDomainRepresentation>> getDomains(
-            String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient.getDomains(realm, orgId, requestOptions).thenApply(response -> response.body());
+            String orgId, RequestOptions requestOptions) {
+        return this.rawClient.getDomains(orgId, requestOptions).thenApply(response -> response.body());
     }
 
+    /**
+     * Get details for a domain owned by an organization.
+     */
+    public CompletableFuture<OrganizationDomainRepresentation> getDomain(String orgId, String domainName) {
+        return this.rawClient.getDomain(orgId, domainName).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get details for a domain owned by an organization.
+     */
     public CompletableFuture<OrganizationDomainRepresentation> getDomain(
-            String realm, String orgId, String domainName) {
-        return this.rawClient.getDomain(realm, orgId, domainName).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<OrganizationDomainRepresentation> getDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        return this.rawClient
-                .getDomain(realm, orgId, domainName, requestOptions)
-                .thenApply(response -> response.body());
+            String orgId, String domainName, RequestOptions requestOptions) {
+        return this.rawClient.getDomain(orgId, domainName, requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Initiate a verification check for the domain name owned by this organization
+     * Initiate a verification check for the domain name owned by this organization.
      */
-    public CompletableFuture<Void> verifyDomain(String realm, String orgId, String domainName) {
-        return this.rawClient.verifyDomain(realm, orgId, domainName).thenApply(response -> response.body());
+    public CompletableFuture<Void> verifyDomain(String orgId, String domainName) {
+        return this.rawClient.verifyDomain(orgId, domainName).thenApply(response -> response.body());
     }
 
     /**
-     * Initiate a verification check for the domain name owned by this organization
+     * Initiate a verification check for the domain name owned by this organization.
      */
-    public CompletableFuture<Void> verifyDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        return this.rawClient
-                .verifyDomain(realm, orgId, domainName, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public CompletableFuture<Void> addMember(String realm, String orgId, String userId) {
-        return this.rawClient.addMember(realm, orgId, userId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public CompletableFuture<Void> addMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient.addMember(realm, orgId, userId, requestOptions).thenApply(response -> response.body());
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public CompletableFuture<Void> removeMember(String realm, String orgId, String userId) {
-        return this.rawClient.removeMember(realm, orgId, userId).thenApply(response -> response.body());
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public CompletableFuture<Void> removeMember(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient.removeMember(realm, orgId, userId, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> verifyDomain(String orgId, String domainName, RequestOptions requestOptions) {
+        return this.rawClient.verifyDomain(orgId, domainName, requestOptions).thenApply(response -> response.body());
     }
 }

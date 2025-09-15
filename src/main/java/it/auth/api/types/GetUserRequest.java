@@ -80,6 +80,9 @@ public final class GetUserRequest {
             return this;
         }
 
+        /**
+         * <p>Indicates if the user profile metadata should be added to the response</p>
+         */
         @JsonSetter(value = "userProfileMetadata", nulls = Nulls.SKIP)
         public Builder userProfileMetadata(Optional<Boolean> userProfileMetadata) {
             this.userProfileMetadata = userProfileMetadata;

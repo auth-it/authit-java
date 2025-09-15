@@ -37,19 +37,19 @@ public class RawMappingsClient {
     /**
      * Get roles that have been mapped to this user.
      */
-    public AuthItClientHttpResponse<List<RoleRepresentation>> getRoleMappings(String realm, String userId) {
-        return getRoleMappings(realm, userId, null);
+    public AuthItClientHttpResponse<List<RoleRepresentation>> getRoleMappings(String userId) {
+        return getRoleMappings(userId, null);
     }
 
     /**
      * Get roles that have been mapped to this user.
      */
     public AuthItClientHttpResponse<List<RoleRepresentation>> getRoleMappings(
-            String realm, String userId, RequestOptions requestOptions) {
+            String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("role-mappings/realm")
@@ -58,7 +58,6 @@ public class RawMappingsClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -95,20 +94,19 @@ public class RawMappingsClient {
     /**
      * Add roles to this user.
      */
-    public AuthItClientHttpResponse<Void> addRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request) {
-        return addRoleMappings(realm, userId, request, null);
+    public AuthItClientHttpResponse<Void> addRoleMappings(String userId, List<RoleRepresentation> request) {
+        return addRoleMappings(userId, request, null);
     }
 
     /**
      * Add roles to this user.
      */
     public AuthItClientHttpResponse<Void> addRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
+            String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("role-mappings/realm")
@@ -168,20 +166,19 @@ public class RawMappingsClient {
     /**
      * Delete roles for this user.
      */
-    public AuthItClientHttpResponse<Void> deleteRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request) {
-        return deleteRoleMappings(realm, userId, request, null);
+    public AuthItClientHttpResponse<Void> deleteRoleMappings(String userId, List<RoleRepresentation> request) {
+        return deleteRoleMappings(userId, request, null);
     }
 
     /**
      * Delete roles for this user.
      */
     public AuthItClientHttpResponse<Void> deleteRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
+            String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("role-mappings/realm")
@@ -241,19 +238,19 @@ public class RawMappingsClient {
     /**
      * Get roles that can be mapped to this user.
      */
-    public AuthItClientHttpResponse<List<RoleRepresentation>> getAvailableRoles(String realm, String userId) {
-        return getAvailableRoles(realm, userId, null);
+    public AuthItClientHttpResponse<List<RoleRepresentation>> getAvailableRoles(String userId) {
+        return getAvailableRoles(userId, null);
     }
 
     /**
      * Get roles that can be mapped to this user.
      */
     public AuthItClientHttpResponse<List<RoleRepresentation>> getAvailableRoles(
-            String realm, String userId, RequestOptions requestOptions) {
+            String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("role-mappings/realm/available")
@@ -262,7 +259,6 @@ public class RawMappingsClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();

@@ -10,7 +10,6 @@ import it.auth.api.types.GetAdminRealmsRealmExtAdminUsersRequest;
 import it.auth.api.types.GetUserRequest;
 import it.auth.api.types.MagicLinkRequest;
 import it.auth.api.types.OrganizationRepresentation;
-import it.auth.api.types.OrganizationRoleRepresentation;
 import it.auth.api.types.SendActionEmailRequest;
 import it.auth.api.types.SendVerifyEmailRequest;
 import it.auth.api.types.UserRepresentation;
@@ -39,329 +38,225 @@ public class AsyncUsersClient {
     /**
      * Create a new user. Username must be unique.
      */
-    public CompletableFuture<Void> createUser(String realm) {
-        return this.rawClient.createUser(realm).thenApply(response -> response.body());
+    public CompletableFuture<Void> createUser() {
+        return this.rawClient.createUser().thenApply(response -> response.body());
     }
 
     /**
      * Create a new user. Username must be unique.
      */
-    public CompletableFuture<Void> createUser(String realm, UserRepresentation request) {
-        return this.rawClient.createUser(realm, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> createUser(UserRepresentation request) {
+        return this.rawClient.createUser(request).thenApply(response -> response.body());
     }
 
     /**
      * Create a new user. Username must be unique.
      */
-    public CompletableFuture<Void> createUser(String realm, UserRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient.createUser(realm, request, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> createUser(UserRepresentation request, RequestOptions requestOptions) {
+        return this.rawClient.createUser(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public CompletableFuture<Integer> countUsers(String realm) {
-        return this.rawClient.countUsers(realm).thenApply(response -> response.body());
+    public CompletableFuture<Integer> countUsers() {
+        return this.rawClient.countUsers().thenApply(response -> response.body());
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public CompletableFuture<Integer> countUsers(String realm, CountUsersRequest request) {
-        return this.rawClient.countUsers(realm, request).thenApply(response -> response.body());
+    public CompletableFuture<Integer> countUsers(CountUsersRequest request) {
+        return this.rawClient.countUsers(request).thenApply(response -> response.body());
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public CompletableFuture<Integer> countUsers(
-            String realm, CountUsersRequest request, RequestOptions requestOptions) {
-        return this.rawClient.countUsers(realm, request, requestOptions).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get representation of the user using the ID.
-     */
-    public CompletableFuture<UserRepresentation> getUser(String realm, String userId) {
-        return this.rawClient.getUser(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Integer> countUsers(CountUsersRequest request, RequestOptions requestOptions) {
+        return this.rawClient.countUsers(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Get representation of the user using the ID.
      */
-    public CompletableFuture<UserRepresentation> getUser(String realm, String userId, GetUserRequest request) {
-        return this.rawClient.getUser(realm, userId, request).thenApply(response -> response.body());
+    public CompletableFuture<UserRepresentation> getUser(String userId) {
+        return this.rawClient.getUser(userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get representation of the user using the ID.
+     */
+    public CompletableFuture<UserRepresentation> getUser(String userId, GetUserRequest request) {
+        return this.rawClient.getUser(userId, request).thenApply(response -> response.body());
     }
 
     /**
      * Get representation of the user using the ID.
      */
     public CompletableFuture<UserRepresentation> getUser(
-            String realm, String userId, GetUserRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getUser(realm, userId, request, requestOptions).thenApply(response -> response.body());
+            String userId, GetUserRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getUser(userId, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Update the user using the ID.
      */
-    public CompletableFuture<Void> updateUser(String realm, String userId) {
-        return this.rawClient.updateUser(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Void> updateUser(String userId) {
+        return this.rawClient.updateUser(userId).thenApply(response -> response.body());
     }
 
     /**
      * Update the user using the ID.
      */
-    public CompletableFuture<Void> updateUser(String realm, String userId, UserRepresentation request) {
-        return this.rawClient.updateUser(realm, userId, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> updateUser(String userId, UserRepresentation request) {
+        return this.rawClient.updateUser(userId, request).thenApply(response -> response.body());
     }
 
     /**
      * Update the user using the ID.
      */
     public CompletableFuture<Void> updateUser(
-            String realm, String userId, UserRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient.updateUser(realm, userId, request, requestOptions).thenApply(response -> response.body());
+            String userId, UserRepresentation request, RequestOptions requestOptions) {
+        return this.rawClient.updateUser(userId, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Delete the user using the ID.
      */
-    public CompletableFuture<Void> deleteUser(String realm, String userId) {
-        return this.rawClient.deleteUser(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteUser(String userId) {
+        return this.rawClient.deleteUser(userId).thenApply(response -> response.body());
     }
 
     /**
      * Delete the user using the ID.
      */
-    public CompletableFuture<Void> deleteUser(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.deleteUser(realm, userId, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteUser(String userId, RequestOptions requestOptions) {
+        return this.rawClient.deleteUser(userId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Send an email to the user with a link they can click to execute particular actions.An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
-    public CompletableFuture<Void> sendActionEmail(String realm, String userId, SendActionEmailRequest request) {
-        return this.rawClient.sendActionEmail(realm, userId, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> sendActionEmail(String userId, SendActionEmailRequest request) {
+        return this.rawClient.sendActionEmail(userId, request).thenApply(response -> response.body());
     }
 
     /**
      * Send an email to the user with a link they can click to execute particular actions.An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
     public CompletableFuture<Void> sendActionEmail(
-            String realm, String userId, SendActionEmailRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .sendActionEmail(realm, userId, request, requestOptions)
-                .thenApply(response -> response.body());
+            String userId, SendActionEmailRequest request, RequestOptions requestOptions) {
+        return this.rawClient.sendActionEmail(userId, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Impersonate the user. This will terminate any outstanding user sessions for this user, and log in to the account console.
      */
-    public CompletableFuture<Map<String, Object>> impersonateUser(String realm, String userId) {
-        return this.rawClient.impersonateUser(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Map<String, Object>> impersonateUser(String userId) {
+        return this.rawClient.impersonateUser(userId).thenApply(response -> response.body());
     }
 
     /**
      * Impersonate the user. This will terminate any outstanding user sessions for this user, and log in to the account console.
      */
-    public CompletableFuture<Map<String, Object>> impersonateUser(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.impersonateUser(realm, userId, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Map<String, Object>> impersonateUser(String userId, RequestOptions requestOptions) {
+        return this.rawClient.impersonateUser(userId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Remove all user sessions associated with the user Also send notification to all clients that have an admin URL to invalidate the sessions for the particular user.
      */
-    public CompletableFuture<Void> removeUserSessions(String realm, String userId) {
-        return this.rawClient.removeUserSessions(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Void> removeUserSessions(String userId) {
+        return this.rawClient.removeUserSessions(userId).thenApply(response -> response.body());
     }
 
     /**
      * Remove all user sessions associated with the user Also send notification to all clients that have an admin URL to invalidate the sessions for the particular user.
      */
-    public CompletableFuture<Void> removeUserSessions(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.removeUserSessions(realm, userId, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> removeUserSessions(String userId, RequestOptions requestOptions) {
+        return this.rawClient.removeUserSessions(userId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
-    public CompletableFuture<Void> sendVerifyEmail(String realm, String userId) {
-        return this.rawClient.sendVerifyEmail(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Void> sendVerifyEmail(String userId) {
+        return this.rawClient.sendVerifyEmail(userId).thenApply(response -> response.body());
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
-    public CompletableFuture<Void> sendVerifyEmail(String realm, String userId, SendVerifyEmailRequest request) {
-        return this.rawClient.sendVerifyEmail(realm, userId, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> sendVerifyEmail(String userId, SendVerifyEmailRequest request) {
+        return this.rawClient.sendVerifyEmail(userId, request).thenApply(response -> response.body());
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
     public CompletableFuture<Void> sendVerifyEmail(
-            String realm, String userId, SendVerifyEmailRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .sendVerifyEmail(realm, userId, request, requestOptions)
-                .thenApply(response -> response.body());
+            String userId, SendVerifyEmailRequest request, RequestOptions requestOptions) {
+        return this.rawClient.sendVerifyEmail(userId, request, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<List<UserSessionRepresentation>> getUserSessions(String realm, String userId) {
-        return this.rawClient.getUserSessions(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<List<UserSessionRepresentation>> getUserSessions(String userId) {
+        return this.rawClient.getUserSessions(userId).thenApply(response -> response.body());
     }
 
     public CompletableFuture<List<UserSessionRepresentation>> getUserSessions(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.getUserSessions(realm, userId, requestOptions).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(
-            String realm, String orgId, String name) {
-        return this.rawClient.getUserOrganizationRoles(realm, orgId, name).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient
-                .getUserOrganizationRoles(realm, orgId, name, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> hasOrganizationRole(String realm, String orgId, String name, String userId) {
-        return this.rawClient.hasOrganizationRole(realm, orgId, name, userId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> hasOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .hasOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .thenApply(response -> response.body());
+            String userId, RequestOptions requestOptions) {
+        return this.rawClient.getUserSessions(userId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Grant the specified user to the specified organization role
+     * Get organizations for the given user.
      */
-    public CompletableFuture<Void> grantOrganizationRole(String realm, String orgId, String name, String userId) {
-        return this.rawClient.grantOrganizationRole(realm, orgId, name, userId).thenApply(response -> response.body());
+    public CompletableFuture<List<OrganizationRepresentation>> getUserOrganizations(String userId) {
+        return this.rawClient.getUserOrganizations(userId).thenApply(response -> response.body());
     }
 
     /**
-     * Grant the specified user to the specified organization role
+     * Get organizations for the given user.
      */
-    public CompletableFuture<Void> grantOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .grantOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .thenApply(response -> response.body());
+    public CompletableFuture<List<OrganizationRepresentation>> getUserOrganizations(
+            String userId, RequestOptions requestOptions) {
+        return this.rawClient.getUserOrganizations(userId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Revoke the specified organization role from the specified user
+     * Create a magic link to log in a user.
      */
-    public CompletableFuture<Void> revokeOrganizationRole(String realm, String orgId, String name, String userId) {
-        return this.rawClient.revokeOrganizationRole(realm, orgId, name, userId).thenApply(response -> response.body());
+    public CompletableFuture<Void> createMagicLink(MagicLinkRequest request) {
+        return this.rawClient.createMagicLink(request).thenApply(response -> response.body());
     }
 
     /**
-     * Revoke the specified organization role from the specified user
+     * Create a magic link to log in a user.
      */
-    public CompletableFuture<Void> revokeOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .revokeOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<OrganizationRepresentation>> listOrganizationsForTheGivenUser(
-            String realm, String userId) {
-        return this.rawClient.listOrganizationsForTheGivenUser(realm, userId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<OrganizationRepresentation>> listOrganizationsForTheGivenUser(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .listOrganizationsForTheGivenUser(realm, userId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRoles(
-            String realm, String userId, String orgId) {
-        return this.rawClient.listOrganizationRoles(realm, userId, orgId).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRoles(
-            String realm, String userId, String orgId, RequestOptions requestOptions) {
-        return this.rawClient
-                .listOrganizationRoles(realm, userId, orgId, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> grantOrganizationRoles(
-            String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return this.rawClient
-                .grantOrganizationRoles(realm, userId, orgId, request)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> grantOrganizationRoles(
-            String realm,
-            String userId,
-            String orgId,
-            List<OrganizationRoleRepresentation> request,
-            RequestOptions requestOptions) {
-        return this.rawClient
-                .grantOrganizationRoles(realm, userId, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> revokeOrganizationRoles(
-            String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return this.rawClient
-                .revokeOrganizationRoles(realm, userId, orgId, request)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> revokeOrganizationRoles(
-            String realm,
-            String userId,
-            String orgId,
-            List<OrganizationRoleRepresentation> request,
-            RequestOptions requestOptions) {
-        return this.rawClient
-                .revokeOrganizationRoles(realm, userId, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> createMagicLink(String realm, MagicLinkRequest request) {
-        return this.rawClient.createMagicLink(realm, request).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> createMagicLink(
-            String realm, MagicLinkRequest request, RequestOptions requestOptions) {
-        return this.rawClient.createMagicLink(realm, request, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> createMagicLink(MagicLinkRequest request, RequestOptions requestOptions) {
+        return this.rawClient.createMagicLink(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
-    public CompletableFuture<List<UserRepresentation>> getUsers(String realm) {
-        return this.rawClient.getUsers(realm).thenApply(response -> response.body());
+    public CompletableFuture<List<UserRepresentation>> getUsers() {
+        return this.rawClient.getUsers().thenApply(response -> response.body());
+    }
+
+    /**
+     * Returns a stream of users, filtered according to query parameters.
+     */
+    public CompletableFuture<List<UserRepresentation>> getUsers(GetAdminRealmsRealmExtAdminUsersRequest request) {
+        return this.rawClient.getUsers(request).thenApply(response -> response.body());
     }
 
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
     public CompletableFuture<List<UserRepresentation>> getUsers(
-            String realm, GetAdminRealmsRealmExtAdminUsersRequest request) {
-        return this.rawClient.getUsers(realm, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Returns a stream of users, filtered according to query parameters.
-     */
-    public CompletableFuture<List<UserRepresentation>> getUsers(
-            String realm, GetAdminRealmsRealmExtAdminUsersRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getUsers(realm, request, requestOptions).thenApply(response -> response.body());
+            GetAdminRealmsRealmExtAdminUsersRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getUsers(request, requestOptions).thenApply(response -> response.body());
     }
 }

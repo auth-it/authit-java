@@ -10,7 +10,6 @@ import it.auth.api.types.GetAdminRealmsRealmExtAdminUsersRequest;
 import it.auth.api.types.GetUserRequest;
 import it.auth.api.types.MagicLinkRequest;
 import it.auth.api.types.OrganizationRepresentation;
-import it.auth.api.types.OrganizationRoleRepresentation;
 import it.auth.api.types.SendActionEmailRequest;
 import it.auth.api.types.SendVerifyEmailRequest;
 import it.auth.api.types.UserRepresentation;
@@ -38,312 +37,219 @@ public class UsersClient {
     /**
      * Create a new user. Username must be unique.
      */
-    public void createUser(String realm) {
-        this.rawClient.createUser(realm).body();
+    public void createUser() {
+        this.rawClient.createUser().body();
     }
 
     /**
      * Create a new user. Username must be unique.
      */
-    public void createUser(String realm, UserRepresentation request) {
-        this.rawClient.createUser(realm, request).body();
+    public void createUser(UserRepresentation request) {
+        this.rawClient.createUser(request).body();
     }
 
     /**
      * Create a new user. Username must be unique.
      */
-    public void createUser(String realm, UserRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.createUser(realm, request, requestOptions).body();
+    public void createUser(UserRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.createUser(request, requestOptions).body();
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public int countUsers(String realm) {
-        return this.rawClient.countUsers(realm).body();
+    public int countUsers() {
+        return this.rawClient.countUsers().body();
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public int countUsers(String realm, CountUsersRequest request) {
-        return this.rawClient.countUsers(realm, request).body();
+    public int countUsers(CountUsersRequest request) {
+        return this.rawClient.countUsers(request).body();
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public int countUsers(String realm, CountUsersRequest request, RequestOptions requestOptions) {
-        return this.rawClient.countUsers(realm, request, requestOptions).body();
-    }
-
-    /**
-     * Get representation of the user using the ID.
-     */
-    public UserRepresentation getUser(String realm, String userId) {
-        return this.rawClient.getUser(realm, userId).body();
+    public int countUsers(CountUsersRequest request, RequestOptions requestOptions) {
+        return this.rawClient.countUsers(request, requestOptions).body();
     }
 
     /**
      * Get representation of the user using the ID.
      */
-    public UserRepresentation getUser(String realm, String userId, GetUserRequest request) {
-        return this.rawClient.getUser(realm, userId, request).body();
+    public UserRepresentation getUser(String userId) {
+        return this.rawClient.getUser(userId).body();
     }
 
     /**
      * Get representation of the user using the ID.
      */
-    public UserRepresentation getUser(
-            String realm, String userId, GetUserRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getUser(realm, userId, request, requestOptions).body();
+    public UserRepresentation getUser(String userId, GetUserRequest request) {
+        return this.rawClient.getUser(userId, request).body();
+    }
+
+    /**
+     * Get representation of the user using the ID.
+     */
+    public UserRepresentation getUser(String userId, GetUserRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getUser(userId, request, requestOptions).body();
     }
 
     /**
      * Update the user using the ID.
      */
-    public void updateUser(String realm, String userId) {
-        this.rawClient.updateUser(realm, userId).body();
+    public void updateUser(String userId) {
+        this.rawClient.updateUser(userId).body();
     }
 
     /**
      * Update the user using the ID.
      */
-    public void updateUser(String realm, String userId, UserRepresentation request) {
-        this.rawClient.updateUser(realm, userId, request).body();
+    public void updateUser(String userId, UserRepresentation request) {
+        this.rawClient.updateUser(userId, request).body();
     }
 
     /**
      * Update the user using the ID.
      */
-    public void updateUser(String realm, String userId, UserRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.updateUser(realm, userId, request, requestOptions).body();
+    public void updateUser(String userId, UserRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.updateUser(userId, request, requestOptions).body();
     }
 
     /**
      * Delete the user using the ID.
      */
-    public void deleteUser(String realm, String userId) {
-        this.rawClient.deleteUser(realm, userId).body();
+    public void deleteUser(String userId) {
+        this.rawClient.deleteUser(userId).body();
     }
 
     /**
      * Delete the user using the ID.
      */
-    public void deleteUser(String realm, String userId, RequestOptions requestOptions) {
-        this.rawClient.deleteUser(realm, userId, requestOptions).body();
+    public void deleteUser(String userId, RequestOptions requestOptions) {
+        this.rawClient.deleteUser(userId, requestOptions).body();
     }
 
     /**
      * Send an email to the user with a link they can click to execute particular actions.An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
-    public void sendActionEmail(String realm, String userId, SendActionEmailRequest request) {
-        this.rawClient.sendActionEmail(realm, userId, request).body();
+    public void sendActionEmail(String userId, SendActionEmailRequest request) {
+        this.rawClient.sendActionEmail(userId, request).body();
     }
 
     /**
      * Send an email to the user with a link they can click to execute particular actions.An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
-    public void sendActionEmail(
-            String realm, String userId, SendActionEmailRequest request, RequestOptions requestOptions) {
-        this.rawClient.sendActionEmail(realm, userId, request, requestOptions).body();
+    public void sendActionEmail(String userId, SendActionEmailRequest request, RequestOptions requestOptions) {
+        this.rawClient.sendActionEmail(userId, request, requestOptions).body();
     }
 
     /**
      * Impersonate the user. This will terminate any outstanding user sessions for this user, and log in to the account console.
      */
-    public Map<String, Object> impersonateUser(String realm, String userId) {
-        return this.rawClient.impersonateUser(realm, userId).body();
+    public Map<String, Object> impersonateUser(String userId) {
+        return this.rawClient.impersonateUser(userId).body();
     }
 
     /**
      * Impersonate the user. This will terminate any outstanding user sessions for this user, and log in to the account console.
      */
-    public Map<String, Object> impersonateUser(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.impersonateUser(realm, userId, requestOptions).body();
+    public Map<String, Object> impersonateUser(String userId, RequestOptions requestOptions) {
+        return this.rawClient.impersonateUser(userId, requestOptions).body();
     }
 
     /**
      * Remove all user sessions associated with the user Also send notification to all clients that have an admin URL to invalidate the sessions for the particular user.
      */
-    public void removeUserSessions(String realm, String userId) {
-        this.rawClient.removeUserSessions(realm, userId).body();
+    public void removeUserSessions(String userId) {
+        this.rawClient.removeUserSessions(userId).body();
     }
 
     /**
      * Remove all user sessions associated with the user Also send notification to all clients that have an admin URL to invalidate the sessions for the particular user.
      */
-    public void removeUserSessions(String realm, String userId, RequestOptions requestOptions) {
-        this.rawClient.removeUserSessions(realm, userId, requestOptions).body();
+    public void removeUserSessions(String userId, RequestOptions requestOptions) {
+        this.rawClient.removeUserSessions(userId, requestOptions).body();
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
-    public void sendVerifyEmail(String realm, String userId) {
-        this.rawClient.sendVerifyEmail(realm, userId).body();
+    public void sendVerifyEmail(String userId) {
+        this.rawClient.sendVerifyEmail(userId).body();
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
-    public void sendVerifyEmail(String realm, String userId, SendVerifyEmailRequest request) {
-        this.rawClient.sendVerifyEmail(realm, userId, request).body();
+    public void sendVerifyEmail(String userId, SendVerifyEmailRequest request) {
+        this.rawClient.sendVerifyEmail(userId, request).body();
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
-    public void sendVerifyEmail(
-            String realm, String userId, SendVerifyEmailRequest request, RequestOptions requestOptions) {
-        this.rawClient.sendVerifyEmail(realm, userId, request, requestOptions).body();
+    public void sendVerifyEmail(String userId, SendVerifyEmailRequest request, RequestOptions requestOptions) {
+        this.rawClient.sendVerifyEmail(userId, request, requestOptions).body();
     }
 
-    public List<UserSessionRepresentation> getUserSessions(String realm, String userId) {
-        return this.rawClient.getUserSessions(realm, userId).body();
+    public List<UserSessionRepresentation> getUserSessions(String userId) {
+        return this.rawClient.getUserSessions(userId).body();
     }
 
-    public List<UserSessionRepresentation> getUserSessions(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.getUserSessions(realm, userId, requestOptions).body();
-    }
-
-    public List<UserRepresentation> getUserOrganizationRoles(String realm, String orgId, String name) {
-        return this.rawClient.getUserOrganizationRoles(realm, orgId, name).body();
-    }
-
-    public List<UserRepresentation> getUserOrganizationRoles(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient
-                .getUserOrganizationRoles(realm, orgId, name, requestOptions)
-                .body();
-    }
-
-    public void hasOrganizationRole(String realm, String orgId, String name, String userId) {
-        this.rawClient.hasOrganizationRole(realm, orgId, name, userId).body();
-    }
-
-    public void hasOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .hasOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .body();
+    public List<UserSessionRepresentation> getUserSessions(String userId, RequestOptions requestOptions) {
+        return this.rawClient.getUserSessions(userId, requestOptions).body();
     }
 
     /**
-     * Grant the specified user to the specified organization role
+     * Get organizations for the given user.
      */
-    public void grantOrganizationRole(String realm, String orgId, String name, String userId) {
-        this.rawClient.grantOrganizationRole(realm, orgId, name, userId).body();
+    public List<OrganizationRepresentation> getUserOrganizations(String userId) {
+        return this.rawClient.getUserOrganizations(userId).body();
     }
 
     /**
-     * Grant the specified user to the specified organization role
+     * Get organizations for the given user.
      */
-    public void grantOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .grantOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .body();
+    public List<OrganizationRepresentation> getUserOrganizations(String userId, RequestOptions requestOptions) {
+        return this.rawClient.getUserOrganizations(userId, requestOptions).body();
     }
 
     /**
-     * Revoke the specified organization role from the specified user
+     * Create a magic link to log in a user.
      */
-    public void revokeOrganizationRole(String realm, String orgId, String name, String userId) {
-        this.rawClient.revokeOrganizationRole(realm, orgId, name, userId).body();
+    public void createMagicLink(MagicLinkRequest request) {
+        this.rawClient.createMagicLink(request).body();
     }
 
     /**
-     * Revoke the specified organization role from the specified user
+     * Create a magic link to log in a user.
      */
-    public void revokeOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        this.rawClient
-                .revokeOrganizationRole(realm, orgId, name, userId, requestOptions)
-                .body();
-    }
-
-    public List<OrganizationRepresentation> listOrganizationsForTheGivenUser(String realm, String userId) {
-        return this.rawClient.listOrganizationsForTheGivenUser(realm, userId).body();
-    }
-
-    public List<OrganizationRepresentation> listOrganizationsForTheGivenUser(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .listOrganizationsForTheGivenUser(realm, userId, requestOptions)
-                .body();
-    }
-
-    public List<OrganizationRoleRepresentation> listOrganizationRoles(String realm, String userId, String orgId) {
-        return this.rawClient.listOrganizationRoles(realm, userId, orgId).body();
-    }
-
-    public List<OrganizationRoleRepresentation> listOrganizationRoles(
-            String realm, String userId, String orgId, RequestOptions requestOptions) {
-        return this.rawClient
-                .listOrganizationRoles(realm, userId, orgId, requestOptions)
-                .body();
-    }
-
-    public void grantOrganizationRoles(
-            String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        this.rawClient.grantOrganizationRoles(realm, userId, orgId, request).body();
-    }
-
-    public void grantOrganizationRoles(
-            String realm,
-            String userId,
-            String orgId,
-            List<OrganizationRoleRepresentation> request,
-            RequestOptions requestOptions) {
-        this.rawClient
-                .grantOrganizationRoles(realm, userId, orgId, request, requestOptions)
-                .body();
-    }
-
-    public void revokeOrganizationRoles(
-            String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        this.rawClient.revokeOrganizationRoles(realm, userId, orgId, request).body();
-    }
-
-    public void revokeOrganizationRoles(
-            String realm,
-            String userId,
-            String orgId,
-            List<OrganizationRoleRepresentation> request,
-            RequestOptions requestOptions) {
-        this.rawClient
-                .revokeOrganizationRoles(realm, userId, orgId, request, requestOptions)
-                .body();
-    }
-
-    public void createMagicLink(String realm, MagicLinkRequest request) {
-        this.rawClient.createMagicLink(realm, request).body();
-    }
-
-    public void createMagicLink(String realm, MagicLinkRequest request, RequestOptions requestOptions) {
-        this.rawClient.createMagicLink(realm, request, requestOptions).body();
+    public void createMagicLink(MagicLinkRequest request, RequestOptions requestOptions) {
+        this.rawClient.createMagicLink(request, requestOptions).body();
     }
 
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
-    public List<UserRepresentation> getUsers(String realm) {
-        return this.rawClient.getUsers(realm).body();
+    public List<UserRepresentation> getUsers() {
+        return this.rawClient.getUsers().body();
     }
 
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
-    public List<UserRepresentation> getUsers(String realm, GetAdminRealmsRealmExtAdminUsersRequest request) {
-        return this.rawClient.getUsers(realm, request).body();
+    public List<UserRepresentation> getUsers(GetAdminRealmsRealmExtAdminUsersRequest request) {
+        return this.rawClient.getUsers(request).body();
     }
 
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
     public List<UserRepresentation> getUsers(
-            String realm, GetAdminRealmsRealmExtAdminUsersRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getUsers(realm, request, requestOptions).body();
+            GetAdminRealmsRealmExtAdminUsersRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getUsers(request, requestOptions).body();
     }
 }

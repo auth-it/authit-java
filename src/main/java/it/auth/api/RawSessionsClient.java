@@ -32,28 +32,26 @@ public class RawSessionsClient {
     }
 
     /**
-     * Remove all user sessions for this realm. Any client that has an admin url will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
+     * Remove all user sessions for this realm. Any client that has an admin URL will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
      */
-    public AuthItClientHttpResponse<GlobalRequestResult> removeAllSessions(String realm) {
-        return removeAllSessions(realm, null);
+    public AuthItClientHttpResponse<GlobalRequestResult> removeAllSessions() {
+        return removeAllSessions(null);
     }
 
     /**
-     * Remove all user sessions for this realm. Any client that has an admin url will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
+     * Remove all user sessions for this realm. Any client that has an admin URL will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
      */
-    public AuthItClientHttpResponse<GlobalRequestResult> removeAllSessions(
-            String realm, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<GlobalRequestResult> removeAllSessions(RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("logout-all")
                 .build();
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -87,35 +85,33 @@ public class RawSessionsClient {
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
-    public AuthItClientHttpResponse<Void> removeUserSession(String realm, String session) {
-        return removeUserSession(
-                realm, session, RemoveUserSessionRequest.builder().build());
+    public AuthItClientHttpResponse<Void> removeUserSession(String session) {
+        return removeUserSession(session, RemoveUserSessionRequest.builder().build());
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
-    public AuthItClientHttpResponse<Void> removeUserSession(
-            String realm, String session, RemoveUserSessionRequest request) {
-        return removeUserSession(realm, session, request, null);
+    public AuthItClientHttpResponse<Void> removeUserSession(String session, RemoveUserSessionRequest request) {
+        return removeUserSession(session, request, null);
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
     public AuthItClientHttpResponse<Void> removeUserSession(
-            String realm, String session, RemoveUserSessionRequest request, RequestOptions requestOptions) {
+            String session, RemoveUserSessionRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("sessions")
                 .addPathSegment(session);
         if (request.getIsOffline().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "isOffline", request.getIsOffline().get().toString(), false);
+                    httpUrl, "isOffline", request.getIsOffline().get(), false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())

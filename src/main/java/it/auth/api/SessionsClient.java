@@ -26,40 +26,37 @@ public class SessionsClient {
     }
 
     /**
-     * Remove all user sessions for this realm. Any client that has an admin url will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
+     * Remove all user sessions for this realm. Any client that has an admin URL will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
      */
-    public GlobalRequestResult removeAllSessions(String realm) {
-        return this.rawClient.removeAllSessions(realm).body();
+    public GlobalRequestResult removeAllSessions() {
+        return this.rawClient.removeAllSessions().body();
     }
 
     /**
-     * Remove all user sessions for this realm. Any client that has an admin url will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
+     * Remove all user sessions for this realm. Any client that has an admin URL will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
      */
-    public GlobalRequestResult removeAllSessions(String realm, RequestOptions requestOptions) {
-        return this.rawClient.removeAllSessions(realm, requestOptions).body();
+    public GlobalRequestResult removeAllSessions(RequestOptions requestOptions) {
+        return this.rawClient.removeAllSessions(requestOptions).body();
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
-    public void removeUserSession(String realm, String session) {
-        this.rawClient.removeUserSession(realm, session).body();
+    public void removeUserSession(String session) {
+        this.rawClient.removeUserSession(session).body();
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
-    public void removeUserSession(String realm, String session, RemoveUserSessionRequest request) {
-        this.rawClient.removeUserSession(realm, session, request).body();
+    public void removeUserSession(String session, RemoveUserSessionRequest request) {
+        this.rawClient.removeUserSession(session, request).body();
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
-    public void removeUserSession(
-            String realm, String session, RemoveUserSessionRequest request, RequestOptions requestOptions) {
-        this.rawClient
-                .removeUserSession(realm, session, request, requestOptions)
-                .body();
+    public void removeUserSession(String session, RemoveUserSessionRequest request, RequestOptions requestOptions) {
+        this.rawClient.removeUserSession(session, request, requestOptions).body();
     }
 }

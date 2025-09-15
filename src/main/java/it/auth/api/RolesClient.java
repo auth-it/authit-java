@@ -37,116 +37,114 @@ public class RolesClient {
     /**
      * Get all roles for the given realm or client.
      */
-    public List<RoleRepresentation> getRoles(String realm) {
-        return this.rawClient.getRoles(realm).body();
+    public List<RoleRepresentation> getRoles() {
+        return this.rawClient.getRoles().body();
     }
 
     /**
      * Get all roles for the given realm or client.
      */
-    public List<RoleRepresentation> getRoles(String realm, GetRolesRequest request) {
-        return this.rawClient.getRoles(realm, request).body();
+    public List<RoleRepresentation> getRoles(GetRolesRequest request) {
+        return this.rawClient.getRoles(request).body();
     }
 
     /**
      * Get all roles for the given realm or client.
      */
-    public List<RoleRepresentation> getRoles(String realm, GetRolesRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getRoles(realm, request, requestOptions).body();
+    public List<RoleRepresentation> getRoles(GetRolesRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getRoles(request, requestOptions).body();
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public void createRole(String realm) {
-        this.rawClient.createRole(realm).body();
+    public void createRole() {
+        this.rawClient.createRole().body();
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public void createRole(String realm, RoleRepresentation request) {
-        this.rawClient.createRole(realm, request).body();
+    public void createRole(RoleRepresentation request) {
+        this.rawClient.createRole(request).body();
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public void createRole(String realm, RoleRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.createRole(realm, request, requestOptions).body();
+    public void createRole(RoleRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.createRole(request, requestOptions).body();
     }
 
     /**
      * Get a role by name.
      */
-    public RoleRepresentation getRole(String realm, String roleName) {
-        return this.rawClient.getRole(realm, roleName).body();
+    public RoleRepresentation getRole(String roleName) {
+        return this.rawClient.getRole(roleName).body();
     }
 
     /**
      * Get a role by name.
      */
-    public RoleRepresentation getRole(String realm, String roleName, RequestOptions requestOptions) {
-        return this.rawClient.getRole(realm, roleName, requestOptions).body();
+    public RoleRepresentation getRole(String roleName, RequestOptions requestOptions) {
+        return this.rawClient.getRole(roleName, requestOptions).body();
     }
 
     /**
      * Update a role by name.
      */
-    public void updateRole(String realm, String roleName) {
-        this.rawClient.updateRole(realm, roleName).body();
+    public void updateRole(String roleName) {
+        this.rawClient.updateRole(roleName).body();
     }
 
     /**
      * Update a role by name.
      */
-    public void updateRole(String realm, String roleName, RoleRepresentation request) {
-        this.rawClient.updateRole(realm, roleName, request).body();
+    public void updateRole(String roleName, RoleRepresentation request) {
+        this.rawClient.updateRole(roleName, request).body();
     }
 
     /**
      * Update a role by name.
      */
-    public void updateRole(String realm, String roleName, RoleRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.updateRole(realm, roleName, request, requestOptions).body();
+    public void updateRole(String roleName, RoleRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.updateRole(roleName, request, requestOptions).body();
     }
 
     /**
      * Delete a role by name.
      */
-    public void deleteRole(String realm, String roleName) {
-        this.rawClient.deleteRole(realm, roleName).body();
+    public void deleteRole(String roleName) {
+        this.rawClient.deleteRole(roleName).body();
     }
 
     /**
      * Delete a role by name.
      */
-    public void deleteRole(String realm, String roleName, RequestOptions requestOptions) {
-        this.rawClient.deleteRole(realm, roleName, requestOptions).body();
+    public void deleteRole(String roleName, RequestOptions requestOptions) {
+        this.rawClient.deleteRole(roleName, requestOptions).body();
     }
 
     /**
      * Get users that have the specified role name assigned.
      */
-    public List<UserRepresentation> getUsersByRole(String realm, String roleName) {
-        return this.rawClient.getUsersByRole(realm, roleName).body();
+    public List<UserRepresentation> getUsersByRole(String roleName) {
+        return this.rawClient.getUsersByRole(roleName).body();
     }
 
     /**
      * Get users that have the specified role name assigned.
      */
-    public List<UserRepresentation> getUsersByRole(String realm, String roleName, GetUsersByRoleRequest request) {
-        return this.rawClient.getUsersByRole(realm, roleName, request).body();
+    public List<UserRepresentation> getUsersByRole(String roleName, GetUsersByRoleRequest request) {
+        return this.rawClient.getUsersByRole(roleName, request).body();
     }
 
     /**
      * Get users that have the specified role name assigned.
      */
     public List<UserRepresentation> getUsersByRole(
-            String realm, String roleName, GetUsersByRoleRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getUsersByRole(realm, roleName, request, requestOptions)
-                .body();
+            String roleName, GetUsersByRoleRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getUsersByRole(roleName, request, requestOptions).body();
     }
 
     public MappingsClient mappings() {

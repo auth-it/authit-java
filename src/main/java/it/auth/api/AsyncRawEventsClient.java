@@ -43,21 +43,20 @@ public class AsyncRawEventsClient {
     }
 
     /**
-     * Delete all admin events in this realm
+     * Delete all admin events in this realm.
      */
-    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteAdminEvents(String realm) {
-        return deleteAdminEvents(realm, null);
+    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteAdminEvents() {
+        return deleteAdminEvents(null);
     }
 
     /**
-     * Delete all admin events in this realm
+     * Delete all admin events in this realm.
      */
-    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteAdminEvents(
-            String realm, RequestOptions requestOptions) {
+    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteAdminEvents(RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("admin-events")
                 .build();
         Request okhttpRequest = new Request.Builder()
@@ -109,20 +108,20 @@ public class AsyncRawEventsClient {
     }
 
     /**
-     * Delete all events in this realm
+     * Delete all events in this realm.
      */
-    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteEvents(String realm) {
-        return deleteEvents(realm, null);
+    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteEvents() {
+        return deleteEvents(null);
     }
 
     /**
-     * Delete all events in this realm
+     * Delete all events in this realm.
      */
-    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteEvents(String realm, RequestOptions requestOptions) {
+    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteEvents(RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("events")
                 .build();
         Request okhttpRequest = new Request.Builder()
@@ -173,21 +172,29 @@ public class AsyncRawEventsClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> createEvent(String realm) {
-        return createEvent(realm, AuditEventRepresentation.builder().build());
+    /**
+     * Create an custom audit log event.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> createEvent() {
+        return createEvent(AuditEventRepresentation.builder().build());
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> createEvent(
-            String realm, AuditEventRepresentation request) {
-        return createEvent(realm, request, null);
+    /**
+     * Create an custom audit log event.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> createEvent(AuditEventRepresentation request) {
+        return createEvent(request, null);
     }
 
+    /**
+     * Create an custom audit log event.
+     */
     public CompletableFuture<AuthItClientHttpResponse<Void>> createEvent(
-            String realm, AuditEventRepresentation request, RequestOptions requestOptions) {
+            AuditEventRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("events")
                 .build();
         RequestBody body;
@@ -261,27 +268,26 @@ public class AsyncRawEventsClient {
     /**
      * Get all events, or filters them based on URL query parameters.
      */
-    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents(String realm) {
-        return getEvents(realm, GetEventsRequest.builder().build());
+    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents() {
+        return getEvents(GetEventsRequest.builder().build());
+    }
+
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents(GetEventsRequest request) {
+        return getEvents(request, null);
     }
 
     /**
      * Get all events, or filters them based on URL query parameters.
      */
     public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents(
-            String realm, GetEventsRequest request) {
-        return getEvents(realm, request, null);
-    }
-
-    /**
-     * Get all events, or filters them based on URL query parameters.
-     */
-    public CompletableFuture<AuthItClientHttpResponse<List<EventRepresentation>>> getEvents(
-            String realm, GetEventsRequest request, RequestOptions requestOptions) {
+            GetEventsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("ext-admin/events/events");
         if (request.getClient().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -297,15 +303,14 @@ public class AsyncRawEventsClient {
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getIpAddress().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl, "ipAddress", request.getIpAddress().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         if (request.getUser().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -313,13 +318,12 @@ public class AsyncRawEventsClient {
         }
         if (request.getType().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "type", request.getType().get().toString(), false);
+                    httpUrl, "type", request.getType().get(), true);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -361,27 +365,27 @@ public class AsyncRawEventsClient {
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
-    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>> getAdminEvents(String realm) {
-        return getAdminEvents(realm, GetAdminEventsRequest.builder().build());
+    public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>> getAdminEvents() {
+        return getAdminEvents(GetAdminEventsRequest.builder().build());
     }
 
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
     public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>> getAdminEvents(
-            String realm, GetAdminEventsRequest request) {
-        return getAdminEvents(realm, request, null);
+            GetAdminEventsRequest request) {
+        return getAdminEvents(request, null);
     }
 
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
     public CompletableFuture<AuthItClientHttpResponse<List<AdminEventRepresentation>>> getAdminEvents(
-            String realm, GetAdminEventsRequest request, RequestOptions requestOptions) {
+            GetAdminEventsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("ext-admin/events/admin-events");
         if (request.getAuthClient().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -409,11 +413,10 @@ public class AsyncRawEventsClient {
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         if (request.getResourcePath().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -421,17 +424,16 @@ public class AsyncRawEventsClient {
         }
         if (request.getOperationTypes().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "operationTypes", request.getOperationTypes().get().toString(), false);
+                    httpUrl, "operationTypes", request.getOperationTypes().get(), true);
         }
         if (request.getResourceTypes().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "resourceTypes", request.getResourceTypes().get().toString(), false);
+                    httpUrl, "resourceTypes", request.getResourceTypes().get(), true);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();

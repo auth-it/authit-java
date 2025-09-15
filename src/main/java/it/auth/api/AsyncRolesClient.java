@@ -38,121 +38,116 @@ public class AsyncRolesClient {
     /**
      * Get all roles for the given realm or client.
      */
-    public CompletableFuture<List<RoleRepresentation>> getRoles(String realm) {
-        return this.rawClient.getRoles(realm).thenApply(response -> response.body());
+    public CompletableFuture<List<RoleRepresentation>> getRoles() {
+        return this.rawClient.getRoles().thenApply(response -> response.body());
     }
 
     /**
      * Get all roles for the given realm or client.
      */
-    public CompletableFuture<List<RoleRepresentation>> getRoles(String realm, GetRolesRequest request) {
-        return this.rawClient.getRoles(realm, request).thenApply(response -> response.body());
+    public CompletableFuture<List<RoleRepresentation>> getRoles(GetRolesRequest request) {
+        return this.rawClient.getRoles(request).thenApply(response -> response.body());
     }
 
     /**
      * Get all roles for the given realm or client.
      */
     public CompletableFuture<List<RoleRepresentation>> getRoles(
-            String realm, GetRolesRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getRoles(realm, request, requestOptions).thenApply(response -> response.body());
+            GetRolesRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getRoles(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public CompletableFuture<Void> createRole(String realm) {
-        return this.rawClient.createRole(realm).thenApply(response -> response.body());
+    public CompletableFuture<Void> createRole() {
+        return this.rawClient.createRole().thenApply(response -> response.body());
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public CompletableFuture<Void> createRole(String realm, RoleRepresentation request) {
-        return this.rawClient.createRole(realm, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> createRole(RoleRepresentation request) {
+        return this.rawClient.createRole(request).thenApply(response -> response.body());
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public CompletableFuture<Void> createRole(String realm, RoleRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient.createRole(realm, request, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> createRole(RoleRepresentation request, RequestOptions requestOptions) {
+        return this.rawClient.createRole(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Get a role by name.
      */
-    public CompletableFuture<RoleRepresentation> getRole(String realm, String roleName) {
-        return this.rawClient.getRole(realm, roleName).thenApply(response -> response.body());
+    public CompletableFuture<RoleRepresentation> getRole(String roleName) {
+        return this.rawClient.getRole(roleName).thenApply(response -> response.body());
     }
 
     /**
      * Get a role by name.
      */
-    public CompletableFuture<RoleRepresentation> getRole(String realm, String roleName, RequestOptions requestOptions) {
-        return this.rawClient.getRole(realm, roleName, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<RoleRepresentation> getRole(String roleName, RequestOptions requestOptions) {
+        return this.rawClient.getRole(roleName, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Update a role by name.
      */
-    public CompletableFuture<Void> updateRole(String realm, String roleName) {
-        return this.rawClient.updateRole(realm, roleName).thenApply(response -> response.body());
+    public CompletableFuture<Void> updateRole(String roleName) {
+        return this.rawClient.updateRole(roleName).thenApply(response -> response.body());
     }
 
     /**
      * Update a role by name.
      */
-    public CompletableFuture<Void> updateRole(String realm, String roleName, RoleRepresentation request) {
-        return this.rawClient.updateRole(realm, roleName, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> updateRole(String roleName, RoleRepresentation request) {
+        return this.rawClient.updateRole(roleName, request).thenApply(response -> response.body());
     }
 
     /**
      * Update a role by name.
      */
     public CompletableFuture<Void> updateRole(
-            String realm, String roleName, RoleRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient
-                .updateRole(realm, roleName, request, requestOptions)
-                .thenApply(response -> response.body());
+            String roleName, RoleRepresentation request, RequestOptions requestOptions) {
+        return this.rawClient.updateRole(roleName, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Delete a role by name.
      */
-    public CompletableFuture<Void> deleteRole(String realm, String roleName) {
-        return this.rawClient.deleteRole(realm, roleName).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteRole(String roleName) {
+        return this.rawClient.deleteRole(roleName).thenApply(response -> response.body());
     }
 
     /**
      * Delete a role by name.
      */
-    public CompletableFuture<Void> deleteRole(String realm, String roleName, RequestOptions requestOptions) {
-        return this.rawClient.deleteRole(realm, roleName, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteRole(String roleName, RequestOptions requestOptions) {
+        return this.rawClient.deleteRole(roleName, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Get users that have the specified role name assigned.
      */
-    public CompletableFuture<List<UserRepresentation>> getUsersByRole(String realm, String roleName) {
-        return this.rawClient.getUsersByRole(realm, roleName).thenApply(response -> response.body());
+    public CompletableFuture<List<UserRepresentation>> getUsersByRole(String roleName) {
+        return this.rawClient.getUsersByRole(roleName).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get users that have the specified role name assigned.
+     */
+    public CompletableFuture<List<UserRepresentation>> getUsersByRole(String roleName, GetUsersByRoleRequest request) {
+        return this.rawClient.getUsersByRole(roleName, request).thenApply(response -> response.body());
     }
 
     /**
      * Get users that have the specified role name assigned.
      */
     public CompletableFuture<List<UserRepresentation>> getUsersByRole(
-            String realm, String roleName, GetUsersByRoleRequest request) {
-        return this.rawClient.getUsersByRole(realm, roleName, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get users that have the specified role name assigned.
-     */
-    public CompletableFuture<List<UserRepresentation>> getUsersByRole(
-            String realm, String roleName, GetUsersByRoleRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getUsersByRole(realm, roleName, request, requestOptions)
-                .thenApply(response -> response.body());
+            String roleName, GetUsersByRoleRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getUsersByRole(roleName, request, requestOptions).thenApply(response -> response.body());
     }
 
     public AsyncMappingsClient mappings() {

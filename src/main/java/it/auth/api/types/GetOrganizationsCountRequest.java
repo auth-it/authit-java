@@ -103,6 +103,9 @@ public final class GetOrganizationsCountRequest {
             return this;
         }
 
+        /**
+         * <p>search by attributes using the format (space separated) <code>k1:v1 k2:v2</code></p>
+         */
         @JsonSetter(value = "q", nulls = Nulls.SKIP)
         public Builder q(Optional<String> q) {
             this.q = q;

@@ -13,9 +13,11 @@ import it.auth.api.core.QueryStringMapper;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.organizations.types.MembershipsCountMembershipsRequest;
 import it.auth.api.organizations.types.MembershipsGetMembershipsRequest;
+import it.auth.api.types.MyOrganizationRepresentation;
 import it.auth.api.types.UserWithOrgsBriefRepresentation;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -23,6 +25,7 @@ import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
@@ -35,31 +38,92 @@ public class AsyncRawMembershipsClient {
     }
 
     /**
-     * Get a paginated list of users who are a member of the specified organization.
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
      */
-    public CompletableFuture<AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>>> getMemberships(
-            String realm, String orgId) {
-        return getMemberships(
-                realm, orgId, MembershipsGetMembershipsRequest.builder().build());
+    public CompletableFuture<AuthItClientHttpResponse<Map<String, MyOrganizationRepresentation>>> getMemberInfo() {
+        return getMemberInfo(null);
+    }
+
+    /**
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Map<String, MyOrganizationRepresentation>>> getMemberInfo(
+            RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs/me")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Map<String, MyOrganizationRepresentation>>> future =
+                new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(),
+                                        new TypeReference<Map<String, MyOrganizationRepresentation>>() {}),
+                                response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public CompletableFuture<AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>>> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request) {
-        return getMemberships(realm, orgId, request, null);
+            String orgId) {
+        return getMemberships(orgId, MembershipsGetMembershipsRequest.builder().build());
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public CompletableFuture<AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>>> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
+            String orgId, MembershipsGetMembershipsRequest request) {
+        return getMemberships(orgId, request, null);
+    }
+
+    /**
+     * Get a paginated list of users who are a member of the specified organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>>> getMemberships(
+            String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("members");
@@ -69,28 +133,26 @@ public class AsyncRawMembershipsClient {
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         if (request.getExcludeAdminAccounts().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "excludeAdminAccounts",
-                    request.getExcludeAdminAccounts().get().toString(),
+                    request.getExcludeAdminAccounts().get(),
                     false);
         }
         if (request.getIncludeOrgs().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "includeOrgs", request.getIncludeOrgs().get().toString(), false);
+                    httpUrl, "includeOrgs", request.getIncludeOrgs().get(), false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -132,30 +194,30 @@ public class AsyncRawMembershipsClient {
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
-    public CompletableFuture<AuthItClientHttpResponse<Integer>> countMemberships(String realm, String orgId) {
+    public CompletableFuture<AuthItClientHttpResponse<Integer>> countMemberships(String orgId) {
         return countMemberships(
-                realm, orgId, MembershipsCountMembershipsRequest.builder().build());
+                orgId, MembershipsCountMembershipsRequest.builder().build());
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
     public CompletableFuture<AuthItClientHttpResponse<Integer>> countMemberships(
-            String realm, String orgId, MembershipsCountMembershipsRequest request) {
-        return countMemberships(realm, orgId, request, null);
+            String orgId, MembershipsCountMembershipsRequest request) {
+        return countMemberships(orgId, request, null);
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
     public CompletableFuture<AuthItClientHttpResponse<Integer>> countMemberships(
-            String realm, String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
+            String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("members/count");
@@ -163,14 +225,13 @@ public class AsyncRawMembershipsClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "excludeAdminAccounts",
-                    request.getExcludeAdminAccounts().get().toString(),
+                    request.getExcludeAdminAccounts().get(),
                     false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -207,16 +268,22 @@ public class AsyncRawMembershipsClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> isMember(String realm, String orgId, String userId) {
-        return isMember(realm, orgId, userId, null);
+    /**
+     * Check if a user is a member of an organization
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> isMember(String orgId, String userId) {
+        return isMember(orgId, userId, null);
     }
 
+    /**
+     * Check if a user is a member of an organization
+     */
     public CompletableFuture<AuthItClientHttpResponse<Void>> isMember(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
+            String orgId, String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("members")
@@ -225,6 +292,124 @@ public class AsyncRawMembershipsClient {
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
                 .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> addMember(String orgId, String userId) {
+        return addMember(orgId, userId, null);
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> addMember(
+            String orgId, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("members")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("PUT", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> removeMember(String orgId, String userId) {
+        return removeMember(orgId, userId, null);
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> removeMember(
+            String orgId, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("members")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .build();
         OkHttpClient client = clientOptions.httpClient();

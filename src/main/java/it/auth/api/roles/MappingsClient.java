@@ -28,60 +28,56 @@ public class MappingsClient {
     /**
      * Get roles that have been mapped to this user.
      */
-    public List<RoleRepresentation> getRoleMappings(String realm, String userId) {
-        return this.rawClient.getRoleMappings(realm, userId).body();
+    public List<RoleRepresentation> getRoleMappings(String userId) {
+        return this.rawClient.getRoleMappings(userId).body();
     }
 
     /**
      * Get roles that have been mapped to this user.
      */
-    public List<RoleRepresentation> getRoleMappings(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.getRoleMappings(realm, userId, requestOptions).body();
+    public List<RoleRepresentation> getRoleMappings(String userId, RequestOptions requestOptions) {
+        return this.rawClient.getRoleMappings(userId, requestOptions).body();
     }
 
     /**
      * Add roles to this user.
      */
-    public void addRoleMappings(String realm, String userId, List<RoleRepresentation> request) {
-        this.rawClient.addRoleMappings(realm, userId, request).body();
+    public void addRoleMappings(String userId, List<RoleRepresentation> request) {
+        this.rawClient.addRoleMappings(userId, request).body();
     }
 
     /**
      * Add roles to this user.
      */
-    public void addRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
-        this.rawClient.addRoleMappings(realm, userId, request, requestOptions).body();
+    public void addRoleMappings(String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
+        this.rawClient.addRoleMappings(userId, request, requestOptions).body();
     }
 
     /**
      * Delete roles for this user.
      */
-    public void deleteRoleMappings(String realm, String userId, List<RoleRepresentation> request) {
-        this.rawClient.deleteRoleMappings(realm, userId, request).body();
+    public void deleteRoleMappings(String userId, List<RoleRepresentation> request) {
+        this.rawClient.deleteRoleMappings(userId, request).body();
     }
 
     /**
      * Delete roles for this user.
      */
-    public void deleteRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
-        this.rawClient
-                .deleteRoleMappings(realm, userId, request, requestOptions)
-                .body();
+    public void deleteRoleMappings(String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
+        this.rawClient.deleteRoleMappings(userId, request, requestOptions).body();
     }
 
     /**
      * Get roles that can be mapped to this user.
      */
-    public List<RoleRepresentation> getAvailableRoles(String realm, String userId) {
-        return this.rawClient.getAvailableRoles(realm, userId).body();
+    public List<RoleRepresentation> getAvailableRoles(String userId) {
+        return this.rawClient.getAvailableRoles(userId).body();
     }
 
     /**
      * Get roles that can be mapped to this user.
      */
-    public List<RoleRepresentation> getAvailableRoles(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.getAvailableRoles(realm, userId, requestOptions).body();
+    public List<RoleRepresentation> getAvailableRoles(String userId, RequestOptions requestOptions) {
+        return this.rawClient.getAvailableRoles(userId, requestOptions).body();
     }
 }

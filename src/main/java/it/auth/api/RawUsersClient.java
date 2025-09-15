@@ -23,7 +23,6 @@ import it.auth.api.types.GetAdminRealmsRealmExtAdminUsersRequest;
 import it.auth.api.types.GetUserRequest;
 import it.auth.api.types.MagicLinkRequest;
 import it.auth.api.types.OrganizationRepresentation;
-import it.auth.api.types.OrganizationRoleRepresentation;
 import it.auth.api.types.SendActionEmailRequest;
 import it.auth.api.types.SendVerifyEmailRequest;
 import it.auth.api.types.UserRepresentation;
@@ -49,26 +48,25 @@ public class RawUsersClient {
     /**
      * Create a new user. Username must be unique.
      */
-    public AuthItClientHttpResponse<Void> createUser(String realm) {
-        return createUser(realm, UserRepresentation.builder().build());
+    public AuthItClientHttpResponse<Void> createUser() {
+        return createUser(UserRepresentation.builder().build());
     }
 
     /**
      * Create a new user. Username must be unique.
      */
-    public AuthItClientHttpResponse<Void> createUser(String realm, UserRepresentation request) {
-        return createUser(realm, request, null);
+    public AuthItClientHttpResponse<Void> createUser(UserRepresentation request) {
+        return createUser(request, null);
     }
 
     /**
      * Create a new user. Username must be unique.
      */
-    public AuthItClientHttpResponse<Void> createUser(
-            String realm, UserRepresentation request, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> createUser(UserRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .build();
         RequestBody body;
@@ -124,28 +122,27 @@ public class RawUsersClient {
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public AuthItClientHttpResponse<Integer> countUsers(String realm) {
-        return countUsers(realm, CountUsersRequest.builder().build());
+    public AuthItClientHttpResponse<Integer> countUsers() {
+        return countUsers(CountUsersRequest.builder().build());
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public AuthItClientHttpResponse<Integer> countUsers(String realm, CountUsersRequest request) {
-        return countUsers(realm, request, null);
+    public AuthItClientHttpResponse<Integer> countUsers(CountUsersRequest request) {
+        return countUsers(request, null);
     }
 
     /**
-     * Returns the number of users that match the given criteria. It can be called in three different ways. 1. Don’t specify any criteria and pass {@code null}. The number of all users within that realm will be returned. &lt;p&gt; 2. If {@code search} is specified other criteria such as {@code last} will be ignored even though you set them. The {@code search} string will be matched against the first and last name, the username and the email of a user. &lt;p&gt; 3. If {@code search} is unspecified but any of {@code last}, {@code first}, {@code email} or {@code username} those criteria are matched against their respective fields on a user entity. Combined with a logical and.
+     * Returns the number of users that match the given criteria.
      */
-    public AuthItClientHttpResponse<Integer> countUsers(
-            String realm, CountUsersRequest request, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Integer> countUsers(CountUsersRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users/count");
         if (request.getEmail().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -153,11 +150,11 @@ public class RawUsersClient {
         }
         if (request.getEmailVerified().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "emailVerified", request.getEmailVerified().get().toString(), false);
+                    httpUrl, "emailVerified", request.getEmailVerified().get(), false);
         }
         if (request.getEnabled().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "enabled", request.getEnabled().get().toString(), false);
+                    httpUrl, "enabled", request.getEnabled().get(), false);
         }
         if (request.getFirstName().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -182,7 +179,6 @@ public class RawUsersClient {
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -217,40 +213,39 @@ public class RawUsersClient {
     /**
      * Get representation of the user using the ID.
      */
-    public AuthItClientHttpResponse<UserRepresentation> getUser(String realm, String userId) {
-        return getUser(realm, userId, GetUserRequest.builder().build());
+    public AuthItClientHttpResponse<UserRepresentation> getUser(String userId) {
+        return getUser(userId, GetUserRequest.builder().build());
     }
 
     /**
      * Get representation of the user using the ID.
      */
-    public AuthItClientHttpResponse<UserRepresentation> getUser(String realm, String userId, GetUserRequest request) {
-        return getUser(realm, userId, request, null);
+    public AuthItClientHttpResponse<UserRepresentation> getUser(String userId, GetUserRequest request) {
+        return getUser(userId, request, null);
     }
 
     /**
      * Get representation of the user using the ID.
      */
     public AuthItClientHttpResponse<UserRepresentation> getUser(
-            String realm, String userId, GetUserRequest request, RequestOptions requestOptions) {
+            String userId, GetUserRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId);
         if (request.getUserProfileMetadata().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "userProfileMetadata",
-                    request.getUserProfileMetadata().get().toString(),
+                    request.getUserProfileMetadata().get(),
                     false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -285,26 +280,26 @@ public class RawUsersClient {
     /**
      * Update the user using the ID.
      */
-    public AuthItClientHttpResponse<Void> updateUser(String realm, String userId) {
-        return updateUser(realm, userId, UserRepresentation.builder().build());
+    public AuthItClientHttpResponse<Void> updateUser(String userId) {
+        return updateUser(userId, UserRepresentation.builder().build());
     }
 
     /**
      * Update the user using the ID.
      */
-    public AuthItClientHttpResponse<Void> updateUser(String realm, String userId, UserRepresentation request) {
-        return updateUser(realm, userId, request, null);
+    public AuthItClientHttpResponse<Void> updateUser(String userId, UserRepresentation request) {
+        return updateUser(userId, request, null);
     }
 
     /**
      * Update the user using the ID.
      */
     public AuthItClientHttpResponse<Void> updateUser(
-            String realm, String userId, UserRepresentation request, RequestOptions requestOptions) {
+            String userId, UserRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .build();
@@ -363,18 +358,18 @@ public class RawUsersClient {
     /**
      * Delete the user using the ID.
      */
-    public AuthItClientHttpResponse<Void> deleteUser(String realm, String userId) {
-        return deleteUser(realm, userId, null);
+    public AuthItClientHttpResponse<Void> deleteUser(String userId) {
+        return deleteUser(userId, null);
     }
 
     /**
      * Delete the user using the ID.
      */
-    public AuthItClientHttpResponse<Void> deleteUser(String realm, String userId, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> deleteUser(String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .build();
@@ -419,19 +414,19 @@ public class RawUsersClient {
     /**
      * Send an email to the user with a link they can click to execute particular actions.An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
-    public AuthItClientHttpResponse<Void> sendActionEmail(String realm, String userId, SendActionEmailRequest request) {
-        return sendActionEmail(realm, userId, request, null);
+    public AuthItClientHttpResponse<Void> sendActionEmail(String userId, SendActionEmailRequest request) {
+        return sendActionEmail(userId, request, null);
     }
 
     /**
      * Send an email to the user with a link they can click to execute particular actions.An email contains a link the user can click to perform a set of required actions. The redirectUri and clientId parameters are optional. If no redirect is given, then there will be no link back to click after actions have completed. Redirect uri must be a valid uri for the particular clientId.
      */
     public AuthItClientHttpResponse<Void> sendActionEmail(
-            String realm, String userId, SendActionEmailRequest request, RequestOptions requestOptions) {
+            String userId, SendActionEmailRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("execute-actions-email");
@@ -441,7 +436,7 @@ public class RawUsersClient {
         }
         if (request.getLifespan().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "lifespan", request.getLifespan().get().toString(), false);
+                    httpUrl, "lifespan", request.getLifespan().get(), false);
         }
         if (request.getRedirectUri().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -502,19 +497,18 @@ public class RawUsersClient {
     /**
      * Impersonate the user. This will terminate any outstanding user sessions for this user, and log in to the account console.
      */
-    public AuthItClientHttpResponse<Map<String, Object>> impersonateUser(String realm, String userId) {
-        return impersonateUser(realm, userId, null);
+    public AuthItClientHttpResponse<Map<String, Object>> impersonateUser(String userId) {
+        return impersonateUser(userId, null);
     }
 
     /**
      * Impersonate the user. This will terminate any outstanding user sessions for this user, and log in to the account console.
      */
-    public AuthItClientHttpResponse<Map<String, Object>> impersonateUser(
-            String realm, String userId, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Map<String, Object>> impersonateUser(String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("impersonation")
@@ -523,7 +517,6 @@ public class RawUsersClient {
                 .url(httpUrl)
                 .method("POST", RequestBody.create("", null))
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -564,19 +557,18 @@ public class RawUsersClient {
     /**
      * Remove all user sessions associated with the user Also send notification to all clients that have an admin URL to invalidate the sessions for the particular user.
      */
-    public AuthItClientHttpResponse<Void> removeUserSessions(String realm, String userId) {
-        return removeUserSessions(realm, userId, null);
+    public AuthItClientHttpResponse<Void> removeUserSessions(String userId) {
+        return removeUserSessions(userId, null);
     }
 
     /**
      * Remove all user sessions associated with the user Also send notification to all clients that have an admin URL to invalidate the sessions for the particular user.
      */
-    public AuthItClientHttpResponse<Void> removeUserSessions(
-            String realm, String userId, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> removeUserSessions(String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("logout")
@@ -618,26 +610,26 @@ public class RawUsersClient {
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
-    public AuthItClientHttpResponse<Void> sendVerifyEmail(String realm, String userId) {
-        return sendVerifyEmail(realm, userId, SendVerifyEmailRequest.builder().build());
+    public AuthItClientHttpResponse<Void> sendVerifyEmail(String userId) {
+        return sendVerifyEmail(userId, SendVerifyEmailRequest.builder().build());
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
-    public AuthItClientHttpResponse<Void> sendVerifyEmail(String realm, String userId, SendVerifyEmailRequest request) {
-        return sendVerifyEmail(realm, userId, request, null);
+    public AuthItClientHttpResponse<Void> sendVerifyEmail(String userId, SendVerifyEmailRequest request) {
+        return sendVerifyEmail(userId, request, null);
     }
 
     /**
      * Send an email-verification email to the user An email contains a link the user can click to verify their email address. The redirectUri, clientId and lifespan parameters are optional. The default for the redirect is the account client. The default for the lifespan is 12 hours
      */
     public AuthItClientHttpResponse<Void> sendVerifyEmail(
-            String realm, String userId, SendVerifyEmailRequest request, RequestOptions requestOptions) {
+            String userId, SendVerifyEmailRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("send-verify-email");
@@ -647,7 +639,7 @@ public class RawUsersClient {
         }
         if (request.getLifespan().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "lifespan", request.getLifespan().get().toString(), false);
+                    httpUrl, "lifespan", request.getLifespan().get(), false);
         }
         if (request.getRedirectUri().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -694,16 +686,16 @@ public class RawUsersClient {
         }
     }
 
-    public AuthItClientHttpResponse<List<UserSessionRepresentation>> getUserSessions(String realm, String userId) {
-        return getUserSessions(realm, userId, null);
+    public AuthItClientHttpResponse<List<UserSessionRepresentation>> getUserSessions(String userId) {
+        return getUserSessions(userId, null);
     }
 
     public AuthItClientHttpResponse<List<UserSessionRepresentation>> getUserSessions(
-            String realm, String userId, RequestOptions requestOptions) {
+            String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("sessions")
@@ -712,7 +704,6 @@ public class RawUsersClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -746,204 +737,22 @@ public class RawUsersClient {
         }
     }
 
-    public AuthItClientHttpResponse<List<UserRepresentation>> getUserOrganizationRoles(
-            String realm, String orgId, String name) {
-        return getUserOrganizationRoles(realm, orgId, name, null);
-    }
-
-    public AuthItClientHttpResponse<List<UserRepresentation>> getUserOrganizationRoles(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .addPathSegment(name)
-                .addPathSegments("users")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(
-                                responseBody.string(), new TypeReference<List<UserRepresentation>>() {}),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<Void> hasOrganizationRole(String realm, String orgId, String name, String userId) {
-        return hasOrganizationRole(realm, orgId, name, userId, null);
-    }
-
-    public AuthItClientHttpResponse<Void> hasOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .addPathSegment(name)
-                .addPathSegments("users")
-                .addPathSegment(userId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
+    /**
+     * Get organizations for the given user.
+     */
+    public AuthItClientHttpResponse<List<OrganizationRepresentation>> getUserOrganizations(String userId) {
+        return getUserOrganizations(userId, null);
     }
 
     /**
-     * Grant the specified user to the specified organization role
+     * Get organizations for the given user.
      */
-    public AuthItClientHttpResponse<Void> grantOrganizationRole(
-            String realm, String orgId, String name, String userId) {
-        return grantOrganizationRole(realm, orgId, name, userId, null);
-    }
-
-    /**
-     * Grant the specified user to the specified organization role
-     */
-    public AuthItClientHttpResponse<Void> grantOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<List<OrganizationRepresentation>> getUserOrganizations(
+            String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .addPathSegment(name)
-                .addPathSegments("users")
-                .addPathSegment(userId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("PUT", RequestBody.create("", null))
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Revoke the specified organization role from the specified user
-     */
-    public AuthItClientHttpResponse<Void> revokeOrganizationRole(
-            String realm, String orgId, String name, String userId) {
-        return revokeOrganizationRole(realm, orgId, name, userId, null);
-    }
-
-    /**
-     * Revoke the specified organization role from the specified user
-     */
-    public AuthItClientHttpResponse<Void> revokeOrganizationRole(
-            String realm, String orgId, String name, String userId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .addPathSegment(name)
-                .addPathSegments("users")
-                .addPathSegment(userId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("DELETE", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<List<OrganizationRepresentation>> listOrganizationsForTheGivenUser(
-            String realm, String userId) {
-        return listOrganizationsForTheGivenUser(realm, userId, null);
-    }
-
-    public AuthItClientHttpResponse<List<OrganizationRepresentation>> listOrganizationsForTheGivenUser(
-            String realm, String userId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("users")
                 .addPathSegment(userId)
                 .addPathSegments("orgs")
@@ -952,7 +761,6 @@ public class RawUsersClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -978,171 +786,21 @@ public class RawUsersClient {
         }
     }
 
-    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRoles(
-            String realm, String userId, String orgId) {
-        return listOrganizationRoles(realm, userId, orgId, null);
+    /**
+     * Create a magic link to log in a user.
+     */
+    public AuthItClientHttpResponse<Void> createMagicLink(MagicLinkRequest request) {
+        return createMagicLink(request, null);
     }
 
-    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRoles(
-            String realm, String userId, String orgId, RequestOptions requestOptions) {
+    /**
+     * Create a magic link to log in a user.
+     */
+    public AuthItClientHttpResponse<Void> createMagicLink(MagicLinkRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("users")
-                .addPathSegment(userId)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(
-                                responseBody.string(), new TypeReference<List<OrganizationRoleRepresentation>>() {}),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<Void> grantOrganizationRoles(
-            String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return grantOrganizationRoles(realm, userId, orgId, request, null);
-    }
-
-    public AuthItClientHttpResponse<Void> grantOrganizationRoles(
-            String realm,
-            String userId,
-            String orgId,
-            List<OrganizationRoleRepresentation> request,
-            RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("users")
-                .addPathSegment(userId)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .build();
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new AuthItException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("PUT", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<Void> revokeOrganizationRoles(
-            String realm, String userId, String orgId, List<OrganizationRoleRepresentation> request) {
-        return revokeOrganizationRoles(realm, userId, orgId, request, null);
-    }
-
-    public AuthItClientHttpResponse<Void> revokeOrganizationRoles(
-            String realm,
-            String userId,
-            String orgId,
-            List<OrganizationRoleRepresentation> request,
-            RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("users")
-                .addPathSegment(userId)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .build();
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new AuthItException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("PATCH", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<Void> createMagicLink(String realm, MagicLinkRequest request) {
-        return createMagicLink(realm, request, null);
-    }
-
-    public AuthItClientHttpResponse<Void> createMagicLink(
-            String realm, MagicLinkRequest request, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("magic-link")
                 .build();
         RequestBody body;
@@ -1194,33 +852,33 @@ public class RawUsersClient {
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
-    public AuthItClientHttpResponse<List<UserRepresentation>> getUsers(String realm) {
-        return getUsers(realm, GetAdminRealmsRealmExtAdminUsersRequest.builder().build());
+    public AuthItClientHttpResponse<List<UserRepresentation>> getUsers() {
+        return getUsers(GetAdminRealmsRealmExtAdminUsersRequest.builder().build());
     }
 
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
     public AuthItClientHttpResponse<List<UserRepresentation>> getUsers(
-            String realm, GetAdminRealmsRealmExtAdminUsersRequest request) {
-        return getUsers(realm, request, null);
+            GetAdminRealmsRealmExtAdminUsersRequest request) {
+        return getUsers(request, null);
     }
 
     /**
      * Returns a stream of users, filtered according to query parameters.
      */
     public AuthItClientHttpResponse<List<UserRepresentation>> getUsers(
-            String realm, GetAdminRealmsRealmExtAdminUsersRequest request, RequestOptions requestOptions) {
+            GetAdminRealmsRealmExtAdminUsersRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("ext-admin/users");
         if (request.getBriefRepresentation().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "briefRepresentation",
-                    request.getBriefRepresentation().get().toString(),
+                    request.getBriefRepresentation().get(),
                     false);
         }
         if (request.getEmail().isPresent()) {
@@ -1229,19 +887,19 @@ public class RawUsersClient {
         }
         if (request.getEmailVerified().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "emailVerified", request.getEmailVerified().get().toString(), false);
+                    httpUrl, "emailVerified", request.getEmailVerified().get(), false);
         }
         if (request.getEnabled().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "enabled", request.getEnabled().get().toString(), false);
+                    httpUrl, "enabled", request.getEnabled().get(), false);
         }
         if (request.getExact().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "exact", request.getExact().get().toString(), false);
+                    httpUrl, "exact", request.getExact().get(), false);
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getFirstName().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -1260,8 +918,7 @@ public class RawUsersClient {
                     httpUrl, "lastName", request.getLastName().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         if (request.getQ().isPresent()) {
             QueryStringMapper.addQueryParameter(httpUrl, "q", request.getQ().get(), false);
@@ -1278,7 +935,6 @@ public class RawUsersClient {
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();

@@ -13,13 +13,9 @@ import it.auth.api.organizations.RolesClient;
 import it.auth.api.types.CreatePortalLinkRequest;
 import it.auth.api.types.GetOrganizationsCountRequest;
 import it.auth.api.types.GetOrganizationsRequest;
-import it.auth.api.types.InvitationRepresentation;
-import it.auth.api.types.MyOrganizationRepresentation;
 import it.auth.api.types.OrganizationRepresentation;
-import it.auth.api.types.OrganizationRoleRepresentation;
 import it.auth.api.types.PortalLinkRepresentation;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class OrganizationsClient {
@@ -29,9 +25,9 @@ public class OrganizationsClient {
 
     protected final Supplier<MembershipsClient> membershipsClient;
 
-    protected final Supplier<DomainsClient> domainsClient;
-
     protected final Supplier<InvitationsClient> invitationsClient;
+
+    protected final Supplier<DomainsClient> domainsClient;
 
     protected final Supplier<RolesClient> rolesClient;
 
@@ -39,8 +35,8 @@ public class OrganizationsClient {
         this.clientOptions = clientOptions;
         this.rawClient = new RawOrganizationsClient(clientOptions);
         this.membershipsClient = Suppliers.memoize(() -> new MembershipsClient(clientOptions));
-        this.domainsClient = Suppliers.memoize(() -> new DomainsClient(clientOptions));
         this.invitationsClient = Suppliers.memoize(() -> new InvitationsClient(clientOptions));
+        this.domainsClient = Suppliers.memoize(() -> new DomainsClient(clientOptions));
         this.rolesClient = Suppliers.memoize(() -> new RolesClient(clientOptions));
     }
 
@@ -54,224 +50,127 @@ public class OrganizationsClient {
     /**
      * Get a paginated list of organizations using optional search query parameters.
      */
-    public List<OrganizationRepresentation> getOrganizations(String realm) {
-        return this.rawClient.getOrganizations(realm).body();
+    public List<OrganizationRepresentation> getOrganizations() {
+        return this.rawClient.getOrganizations().body();
     }
 
     /**
      * Get a paginated list of organizations using optional search query parameters.
      */
-    public List<OrganizationRepresentation> getOrganizations(String realm, GetOrganizationsRequest request) {
-        return this.rawClient.getOrganizations(realm, request).body();
+    public List<OrganizationRepresentation> getOrganizations(GetOrganizationsRequest request) {
+        return this.rawClient.getOrganizations(request).body();
     }
 
     /**
      * Get a paginated list of organizations using optional search query parameters.
      */
     public List<OrganizationRepresentation> getOrganizations(
-            String realm, GetOrganizationsRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getOrganizations(realm, request, requestOptions).body();
+            GetOrganizationsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getOrganizations(request, requestOptions).body();
     }
 
     /**
      * Create a new organization from a representation. Must include name.
      */
-    public void createOrganization(String realm) {
-        this.rawClient.createOrganization(realm).body();
+    public void createOrganization() {
+        this.rawClient.createOrganization().body();
     }
 
     /**
      * Create a new organization from a representation. Must include name.
      */
-    public void createOrganization(String realm, OrganizationRepresentation request) {
-        this.rawClient.createOrganization(realm, request).body();
+    public void createOrganization(OrganizationRepresentation request) {
+        this.rawClient.createOrganization(request).body();
     }
 
     /**
      * Create a new organization from a representation. Must include name.
      */
-    public void createOrganization(String realm, OrganizationRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.createOrganization(realm, request, requestOptions).body();
+    public void createOrganization(OrganizationRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.createOrganization(request, requestOptions).body();
     }
 
     /**
      * Get a count of organizations using an optional search query.
      */
-    public int getOrganizationsCount(String realm) {
-        return this.rawClient.getOrganizationsCount(realm).body();
+    public int getOrganizationsCount() {
+        return this.rawClient.getOrganizationsCount().body();
     }
 
     /**
      * Get a count of organizations using an optional search query.
      */
-    public int getOrganizationsCount(String realm, GetOrganizationsCountRequest request) {
-        return this.rawClient.getOrganizationsCount(realm, request).body();
+    public int getOrganizationsCount(GetOrganizationsCountRequest request) {
+        return this.rawClient.getOrganizationsCount(request).body();
     }
 
     /**
      * Get a count of organizations using an optional search query.
      */
-    public int getOrganizationsCount(
-            String realm, GetOrganizationsCountRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getOrganizationsCount(realm, request, requestOptions)
-                .body();
+    public int getOrganizationsCount(GetOrganizationsCountRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getOrganizationsCount(request, requestOptions).body();
     }
 
-    /**
-     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
-     */
-    public Map<String, MyOrganizationRepresentation> getMe(String realm) {
-        return this.rawClient.getMe(realm).body();
+    public OrganizationRepresentation getOrganization(String orgId) {
+        return this.rawClient.getOrganization(orgId).body();
     }
 
-    /**
-     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
-     */
-    public Map<String, MyOrganizationRepresentation> getMe(String realm, RequestOptions requestOptions) {
-        return this.rawClient.getMe(realm, requestOptions).body();
+    public OrganizationRepresentation getOrganization(String orgId, RequestOptions requestOptions) {
+        return this.rawClient.getOrganization(orgId, requestOptions).body();
     }
 
-    /**
-     * Get a list of all invitations for the user.
-     */
-    public InvitationRepresentation invitations(String realm) {
-        return this.rawClient.invitations(realm).body();
+    public void updateOrganization(String orgId) {
+        this.rawClient.updateOrganization(orgId).body();
     }
 
-    /**
-     * Get a list of all invitations for the user.
-     */
-    public InvitationRepresentation invitations(String realm, RequestOptions requestOptions) {
-        return this.rawClient.invitations(realm, requestOptions).body();
+    public void updateOrganization(String orgId, OrganizationRepresentation request) {
+        this.rawClient.updateOrganization(orgId, request).body();
     }
 
-    /**
-     * Accept invitation for authenticated user.
-     */
-    public void acceptInvitation(String realm, String invitationId) {
-        this.rawClient.acceptInvitation(realm, invitationId).body();
+    public void updateOrganization(String orgId, OrganizationRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.updateOrganization(orgId, request, requestOptions).body();
     }
 
-    /**
-     * Accept invitation for authenticated user.
-     */
-    public void acceptInvitation(String realm, String invitationId, RequestOptions requestOptions) {
-        this.rawClient.acceptInvitation(realm, invitationId, requestOptions).body();
+    public void deleteOrganization(String orgId) {
+        this.rawClient.deleteOrganization(orgId).body();
     }
 
-    /**
-     * Reject invitation for authenticated user.
-     */
-    public void rejectInvitation(String realm, String invitationId) {
-        this.rawClient.rejectInvitation(realm, invitationId).body();
-    }
-
-    /**
-     * Reject invitation for authenticated user.
-     */
-    public void rejectInvitation(String realm, String invitationId, RequestOptions requestOptions) {
-        this.rawClient.rejectInvitation(realm, invitationId, requestOptions).body();
-    }
-
-    public OrganizationRepresentation getOrganizationById(String realm, String orgId) {
-        return this.rawClient.getOrganizationById(realm, orgId).body();
-    }
-
-    public OrganizationRepresentation getOrganizationById(String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient.getOrganizationById(realm, orgId, requestOptions).body();
-    }
-
-    public void updateOrganization(String realm, String orgId) {
-        this.rawClient.updateOrganization(realm, orgId).body();
-    }
-
-    public void updateOrganization(String realm, String orgId, OrganizationRepresentation request) {
-        this.rawClient.updateOrganization(realm, orgId, request).body();
-    }
-
-    public void updateOrganization(
-            String realm, String orgId, OrganizationRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.updateOrganization(realm, orgId, request, requestOptions).body();
-    }
-
-    public void deleteOrganization(String realm, String orgId) {
-        this.rawClient.deleteOrganization(realm, orgId).body();
-    }
-
-    public void deleteOrganization(String realm, String orgId, RequestOptions requestOptions) {
-        this.rawClient.deleteOrganization(realm, orgId, requestOptions).body();
+    public void deleteOrganization(String orgId, RequestOptions requestOptions) {
+        this.rawClient.deleteOrganization(orgId, requestOptions).body();
     }
 
     /**
      * Create a link for this organizations admin portal. This link encodes an action token on behalf of the organization's default admin user, or the user that is optionally specified in this request. The user specified must be a member of this organization, and have full organization admin roles.
      */
-    public PortalLinkRepresentation createPortalLink(String realm, String orgId) {
-        return this.rawClient.createPortalLink(realm, orgId).body();
+    public PortalLinkRepresentation createPortalLink(String orgId) {
+        return this.rawClient.createPortalLink(orgId).body();
     }
 
     /**
      * Create a link for this organizations admin portal. This link encodes an action token on behalf of the organization's default admin user, or the user that is optionally specified in this request. The user specified must be a member of this organization, and have full organization admin roles.
      */
-    public PortalLinkRepresentation createPortalLink(String realm, String orgId, CreatePortalLinkRequest request) {
-        return this.rawClient.createPortalLink(realm, orgId, request).body();
+    public PortalLinkRepresentation createPortalLink(String orgId, CreatePortalLinkRequest request) {
+        return this.rawClient.createPortalLink(orgId, request).body();
     }
 
     /**
      * Create a link for this organizations admin portal. This link encodes an action token on behalf of the organization's default admin user, or the user that is optionally specified in this request. The user specified must be a member of this organization, and have full organization admin roles.
      */
     public PortalLinkRepresentation createPortalLink(
-            String realm, String orgId, CreatePortalLinkRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .createPortalLink(realm, orgId, request, requestOptions)
-                .body();
-    }
-
-    public List<OrganizationRoleRepresentation> getOrganizationRoles(String realm, String orgId) {
-        return this.rawClient.getOrganizationRoles(realm, orgId).body();
-    }
-
-    public List<OrganizationRoleRepresentation> getOrganizationRoles(
-            String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient.getOrganizationRoles(realm, orgId, requestOptions).body();
-    }
-
-    public void createOrganizationRole(String realm, String orgId) {
-        this.rawClient.createOrganizationRole(realm, orgId).body();
-    }
-
-    public void createOrganizationRole(String realm, String orgId, OrganizationRoleRepresentation request) {
-        this.rawClient.createOrganizationRole(realm, orgId, request).body();
-    }
-
-    public void createOrganizationRole(
-            String realm, String orgId, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
-        this.rawClient
-                .createOrganizationRole(realm, orgId, request, requestOptions)
-                .body();
-    }
-
-    public void createOrganizationRoles(String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        this.rawClient.createOrganizationRoles(realm, orgId, request).body();
-    }
-
-    public void createOrganizationRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
-        this.rawClient
-                .createOrganizationRoles(realm, orgId, request, requestOptions)
-                .body();
+            String orgId, CreatePortalLinkRequest request, RequestOptions requestOptions) {
+        return this.rawClient.createPortalLink(orgId, request, requestOptions).body();
     }
 
     public MembershipsClient memberships() {
         return this.membershipsClient.get();
     }
 
-    public DomainsClient domains() {
-        return this.domainsClient.get();
-    }
-
     public InvitationsClient invitations() {
         return this.invitationsClient.get();
+    }
+
+    public DomainsClient domains() {
+        return this.domainsClient.get();
     }
 
     public RolesClient roles() {

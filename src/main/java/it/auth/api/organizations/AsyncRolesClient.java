@@ -6,6 +6,7 @@ package it.auth.api.organizations;
 import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.types.OrganizationRoleRepresentation;
+import it.auth.api.types.UserRepresentation;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -26,50 +27,178 @@ public class AsyncRolesClient {
         return this.rawClient;
     }
 
-    public CompletableFuture<Void> deleteRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        return this.rawClient.deleteRoles(realm, orgId, request).thenApply(response -> response.body());
+    /**
+     * Get a list of roles for this organization.
+     */
+    public CompletableFuture<List<OrganizationRoleRepresentation>> getOrganizationRoles(String orgId) {
+        return this.rawClient.getOrganizationRoles(orgId).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> deleteRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
-        return this.rawClient.deleteRoles(realm, orgId, request, requestOptions).thenApply(response -> response.body());
+    /**
+     * Get a list of roles for this organization.
+     */
+    public CompletableFuture<List<OrganizationRoleRepresentation>> getOrganizationRoles(
+            String orgId, RequestOptions requestOptions) {
+        return this.rawClient.getOrganizationRoles(orgId, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<OrganizationRoleRepresentation> getRole(String realm, String orgId, String name) {
-        return this.rawClient.getRole(realm, orgId, name).thenApply(response -> response.body());
+    /**
+     * Create a new role for this organization.
+     */
+    public CompletableFuture<Void> createOrganizationRole(String orgId) {
+        return this.rawClient.createOrganizationRole(orgId).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<OrganizationRoleRepresentation> getRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient.getRole(realm, orgId, name, requestOptions).thenApply(response -> response.body());
+    /**
+     * Create a new role for this organization.
+     */
+    public CompletableFuture<Void> createOrganizationRole(String orgId, OrganizationRoleRepresentation request) {
+        return this.rawClient.createOrganizationRole(orgId, request).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> updateRole(String realm, String orgId, String name) {
-        return this.rawClient.updateRole(realm, orgId, name).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> updateRole(
-            String realm, String orgId, String name, OrganizationRoleRepresentation request) {
-        return this.rawClient.updateRole(realm, orgId, name, request).thenApply(response -> response.body());
-    }
-
-    public CompletableFuture<Void> updateRole(
-            String realm,
-            String orgId,
-            String name,
-            OrganizationRoleRepresentation request,
-            RequestOptions requestOptions) {
+    /**
+     * Create a new role for this organization.
+     */
+    public CompletableFuture<Void> createOrganizationRole(
+            String orgId, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
         return this.rawClient
-                .updateRole(realm, orgId, name, request, requestOptions)
+                .createOrganizationRole(orgId, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> deleteRole(String realm, String orgId, String name) {
-        return this.rawClient.deleteRole(realm, orgId, name).thenApply(response -> response.body());
+    /**
+     * Get role for this organization by name.
+     */
+    public CompletableFuture<OrganizationRoleRepresentation> getRole(String orgId, String name) {
+        return this.rawClient.getRole(orgId, name).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> deleteRole(String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient.deleteRole(realm, orgId, name, requestOptions).thenApply(response -> response.body());
+    /**
+     * Get role for this organization by name.
+     */
+    public CompletableFuture<OrganizationRoleRepresentation> getRole(
+            String orgId, String name, RequestOptions requestOptions) {
+        return this.rawClient.getRole(orgId, name, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update role for this organization.
+     */
+    public CompletableFuture<Void> updateRole(String orgId, String name) {
+        return this.rawClient.updateRole(orgId, name).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update role for this organization.
+     */
+    public CompletableFuture<Void> updateRole(String orgId, String name, OrganizationRoleRepresentation request) {
+        return this.rawClient.updateRole(orgId, name, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Update role for this organization.
+     */
+    public CompletableFuture<Void> updateRole(
+            String orgId, String name, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
+        return this.rawClient.updateRole(orgId, name, request, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete role for this organization
+     */
+    public CompletableFuture<Void> deleteRole(String orgId, String name) {
+        return this.rawClient.deleteRole(orgId, name).thenApply(response -> response.body());
+    }
+
+    /**
+     * Delete role for this organization
+     */
+    public CompletableFuture<Void> deleteRole(String orgId, String name, RequestOptions requestOptions) {
+        return this.rawClient.deleteRole(orgId, name, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(String orgId, String name) {
+        return this.rawClient.getUserOrganizationRoles(orgId, name).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public CompletableFuture<List<UserRepresentation>> getUserOrganizationRoles(
+            String orgId, String name, RequestOptions requestOptions) {
+        return this.rawClient
+                .getUserOrganizationRoles(orgId, name, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public CompletableFuture<Void> hasOrganizationRole(String orgId, String name, String userId) {
+        return this.rawClient.hasOrganizationRole(orgId, name, userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public CompletableFuture<Void> hasOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        return this.rawClient
+                .hasOrganizationRole(orgId, name, userId, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public CompletableFuture<Void> grantOrganizationRole(String orgId, String name, String userId) {
+        return this.rawClient.grantOrganizationRole(orgId, name, userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public CompletableFuture<Void> grantOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        return this.rawClient
+                .grantOrganizationRole(orgId, name, userId, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public CompletableFuture<Void> revokeOrganizationRole(String orgId, String name, String userId) {
+        return this.rawClient.revokeOrganizationRole(orgId, name, userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public CompletableFuture<Void> revokeOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        return this.rawClient
+                .revokeOrganizationRole(orgId, name, userId, requestOptions)
+                .thenApply(response -> response.body());
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRoles(String userId, String orgId) {
+        return this.rawClient.listOrganizationRoles(userId, orgId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public CompletableFuture<List<OrganizationRoleRepresentation>> listOrganizationRoles(
+            String userId, String orgId, RequestOptions requestOptions) {
+        return this.rawClient
+                .listOrganizationRoles(userId, orgId, requestOptions)
+                .thenApply(response -> response.body());
     }
 }

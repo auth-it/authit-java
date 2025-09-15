@@ -7,8 +7,10 @@ import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.organizations.types.MembershipsCountMembershipsRequest;
 import it.auth.api.organizations.types.MembershipsGetMembershipsRequest;
+import it.auth.api.types.MyOrganizationRepresentation;
 import it.auth.api.types.UserWithOrgsBriefRepresentation;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class AsyncMembershipsClient {
@@ -29,60 +31,103 @@ public class AsyncMembershipsClient {
     }
 
     /**
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
+     */
+    public CompletableFuture<Map<String, MyOrganizationRepresentation>> getMemberInfo() {
+        return this.rawClient.getMemberInfo().thenApply(response -> response.body());
+    }
+
+    /**
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
+     */
+    public CompletableFuture<Map<String, MyOrganizationRepresentation>> getMemberInfo(RequestOptions requestOptions) {
+        return this.rawClient.getMemberInfo(requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
      * Get a paginated list of users who are a member of the specified organization.
      */
-    public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getMemberships(String realm, String orgId) {
-        return this.rawClient.getMemberships(realm, orgId).thenApply(response -> response.body());
+    public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getMemberships(String orgId) {
+        return this.rawClient.getMemberships(orgId).thenApply(response -> response.body());
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request) {
-        return this.rawClient.getMemberships(realm, orgId, request).thenApply(response -> response.body());
+            String orgId, MembershipsGetMembershipsRequest request) {
+        return this.rawClient.getMemberships(orgId, request).thenApply(response -> response.body());
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public CompletableFuture<List<UserWithOrgsBriefRepresentation>> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getMemberships(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
+            String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getMemberships(orgId, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
-    public CompletableFuture<Integer> countMemberships(String realm, String orgId) {
-        return this.rawClient.countMemberships(realm, orgId).thenApply(response -> response.body());
+    public CompletableFuture<Integer> countMemberships(String orgId) {
+        return this.rawClient.countMemberships(orgId).thenApply(response -> response.body());
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
-    public CompletableFuture<Integer> countMemberships(
-            String realm, String orgId, MembershipsCountMembershipsRequest request) {
-        return this.rawClient.countMemberships(realm, orgId, request).thenApply(response -> response.body());
+    public CompletableFuture<Integer> countMemberships(String orgId, MembershipsCountMembershipsRequest request) {
+        return this.rawClient.countMemberships(orgId, request).thenApply(response -> response.body());
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
     public CompletableFuture<Integer> countMemberships(
-            String realm, String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .countMemberships(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
+            String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.countMemberships(orgId, request, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> isMember(String realm, String orgId, String userId) {
-        return this.rawClient.isMember(realm, orgId, userId).thenApply(response -> response.body());
+    /**
+     * Check if a user is a member of an organization
+     */
+    public CompletableFuture<Void> isMember(String orgId, String userId) {
+        return this.rawClient.isMember(orgId, userId).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> isMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        return this.rawClient.isMember(realm, orgId, userId, requestOptions).thenApply(response -> response.body());
+    /**
+     * Check if a user is a member of an organization
+     */
+    public CompletableFuture<Void> isMember(String orgId, String userId, RequestOptions requestOptions) {
+        return this.rawClient.isMember(orgId, userId, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public CompletableFuture<Void> addMember(String orgId, String userId) {
+        return this.rawClient.addMember(orgId, userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public CompletableFuture<Void> addMember(String orgId, String userId, RequestOptions requestOptions) {
+        return this.rawClient.addMember(orgId, userId, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public CompletableFuture<Void> removeMember(String orgId, String userId) {
+        return this.rawClient.removeMember(orgId, userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public CompletableFuture<Void> removeMember(String orgId, String userId, RequestOptions requestOptions) {
+        return this.rawClient.removeMember(orgId, userId, requestOptions).thenApply(response -> response.body());
     }
 }

@@ -5,8 +5,6 @@ package it.auth.api;
 
 import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
-import it.auth.api.core.Suppliers;
-import it.auth.api.events.AsyncWebhooksClient;
 import it.auth.api.types.AdminEventRepresentation;
 import it.auth.api.types.AuditEventRepresentation;
 import it.auth.api.types.EventRepresentation;
@@ -14,19 +12,15 @@ import it.auth.api.types.GetAdminEventsRequest;
 import it.auth.api.types.GetEventsRequest;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 public class AsyncEventsClient {
     protected final ClientOptions clientOptions;
 
     private final AsyncRawEventsClient rawClient;
 
-    protected final Supplier<AsyncWebhooksClient> webhooksClient;
-
     public AsyncEventsClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new AsyncRawEventsClient(clientOptions);
-        this.webhooksClient = Suppliers.memoize(() -> new AsyncWebhooksClient(clientOptions));
     }
 
     /**
@@ -37,92 +31,95 @@ public class AsyncEventsClient {
     }
 
     /**
-     * Delete all admin events in this realm
+     * Delete all admin events in this realm.
      */
-    public CompletableFuture<Void> deleteAdminEvents(String realm) {
-        return this.rawClient.deleteAdminEvents(realm).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteAdminEvents() {
+        return this.rawClient.deleteAdminEvents().thenApply(response -> response.body());
     }
 
     /**
-     * Delete all admin events in this realm
+     * Delete all admin events in this realm.
      */
-    public CompletableFuture<Void> deleteAdminEvents(String realm, RequestOptions requestOptions) {
-        return this.rawClient.deleteAdminEvents(realm, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteAdminEvents(RequestOptions requestOptions) {
+        return this.rawClient.deleteAdminEvents(requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Delete all events in this realm
+     * Delete all events in this realm.
      */
-    public CompletableFuture<Void> deleteEvents(String realm) {
-        return this.rawClient.deleteEvents(realm).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteEvents() {
+        return this.rawClient.deleteEvents().thenApply(response -> response.body());
     }
 
     /**
-     * Delete all events in this realm
+     * Delete all events in this realm.
      */
-    public CompletableFuture<Void> deleteEvents(String realm, RequestOptions requestOptions) {
-        return this.rawClient.deleteEvents(realm, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteEvents(RequestOptions requestOptions) {
+        return this.rawClient.deleteEvents(requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> createEvent(String realm) {
-        return this.rawClient.createEvent(realm).thenApply(response -> response.body());
+    /**
+     * Create an custom audit log event.
+     */
+    public CompletableFuture<Void> createEvent() {
+        return this.rawClient.createEvent().thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> createEvent(String realm, AuditEventRepresentation request) {
-        return this.rawClient.createEvent(realm, request).thenApply(response -> response.body());
+    /**
+     * Create an custom audit log event.
+     */
+    public CompletableFuture<Void> createEvent(AuditEventRepresentation request) {
+        return this.rawClient.createEvent(request).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> createEvent(
-            String realm, AuditEventRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient.createEvent(realm, request, requestOptions).thenApply(response -> response.body());
+    /**
+     * Create an custom audit log event.
+     */
+    public CompletableFuture<Void> createEvent(AuditEventRepresentation request, RequestOptions requestOptions) {
+        return this.rawClient.createEvent(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Get all events, or filters them based on URL query parameters.
      */
-    public CompletableFuture<List<EventRepresentation>> getEvents(String realm) {
-        return this.rawClient.getEvents(realm).thenApply(response -> response.body());
+    public CompletableFuture<List<EventRepresentation>> getEvents() {
+        return this.rawClient.getEvents().thenApply(response -> response.body());
     }
 
     /**
      * Get all events, or filters them based on URL query parameters.
      */
-    public CompletableFuture<List<EventRepresentation>> getEvents(String realm, GetEventsRequest request) {
-        return this.rawClient.getEvents(realm, request).thenApply(response -> response.body());
+    public CompletableFuture<List<EventRepresentation>> getEvents(GetEventsRequest request) {
+        return this.rawClient.getEvents(request).thenApply(response -> response.body());
     }
 
     /**
      * Get all events, or filters them based on URL query parameters.
      */
     public CompletableFuture<List<EventRepresentation>> getEvents(
-            String realm, GetEventsRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getEvents(realm, request, requestOptions).thenApply(response -> response.body());
+            GetEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getEvents(request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
-    public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents(String realm) {
-        return this.rawClient.getAdminEvents(realm).thenApply(response -> response.body());
+    public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents() {
+        return this.rawClient.getAdminEvents().thenApply(response -> response.body());
+    }
+
+    /**
+     * Get all admin events, or filters events based on URL query parameters.
+     */
+    public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents(GetAdminEventsRequest request) {
+        return this.rawClient.getAdminEvents(request).thenApply(response -> response.body());
     }
 
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
     public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents(
-            String realm, GetAdminEventsRequest request) {
-        return this.rawClient.getAdminEvents(realm, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get all admin events, or filters events based on URL query parameters.
-     */
-    public CompletableFuture<List<AdminEventRepresentation>> getAdminEvents(
-            String realm, GetAdminEventsRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getAdminEvents(realm, request, requestOptions).thenApply(response -> response.body());
-    }
-
-    public AsyncWebhooksClient webhooks() {
-        return this.webhooksClient.get();
+            GetAdminEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getAdminEvents(request, requestOptions).thenApply(response -> response.body());
     }
 }

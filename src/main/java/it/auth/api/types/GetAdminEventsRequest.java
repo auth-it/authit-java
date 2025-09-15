@@ -293,6 +293,9 @@ public final class GetAdminEventsRequest {
             return this;
         }
 
+        /**
+         * <p>user id</p>
+         */
         @JsonSetter(value = "authUser", nulls = Nulls.SKIP)
         public Builder authUser(Optional<String> authUser) {
             this.authUser = authUser;
@@ -337,6 +340,9 @@ public final class GetAdminEventsRequest {
             return this;
         }
 
+        /**
+         * <p>Maximum results size (defaults to 100)</p>
+         */
         @JsonSetter(value = "max", nulls = Nulls.SKIP)
         public Builder max(Optional<Integer> max) {
             this.max = max;

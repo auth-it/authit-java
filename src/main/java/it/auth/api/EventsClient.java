@@ -5,27 +5,21 @@ package it.auth.api;
 
 import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
-import it.auth.api.core.Suppliers;
-import it.auth.api.events.WebhooksClient;
 import it.auth.api.types.AdminEventRepresentation;
 import it.auth.api.types.AuditEventRepresentation;
 import it.auth.api.types.EventRepresentation;
 import it.auth.api.types.GetAdminEventsRequest;
 import it.auth.api.types.GetEventsRequest;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class EventsClient {
     protected final ClientOptions clientOptions;
 
     private final RawEventsClient rawClient;
 
-    protected final Supplier<WebhooksClient> webhooksClient;
-
     public EventsClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.rawClient = new RawEventsClient(clientOptions);
-        this.webhooksClient = Suppliers.memoize(() -> new WebhooksClient(clientOptions));
     }
 
     /**
@@ -36,89 +30,93 @@ public class EventsClient {
     }
 
     /**
-     * Delete all admin events in this realm
+     * Delete all admin events in this realm.
      */
-    public void deleteAdminEvents(String realm) {
-        this.rawClient.deleteAdminEvents(realm).body();
+    public void deleteAdminEvents() {
+        this.rawClient.deleteAdminEvents().body();
     }
 
     /**
-     * Delete all admin events in this realm
+     * Delete all admin events in this realm.
      */
-    public void deleteAdminEvents(String realm, RequestOptions requestOptions) {
-        this.rawClient.deleteAdminEvents(realm, requestOptions).body();
+    public void deleteAdminEvents(RequestOptions requestOptions) {
+        this.rawClient.deleteAdminEvents(requestOptions).body();
     }
 
     /**
-     * Delete all events in this realm
+     * Delete all events in this realm.
      */
-    public void deleteEvents(String realm) {
-        this.rawClient.deleteEvents(realm).body();
+    public void deleteEvents() {
+        this.rawClient.deleteEvents().body();
     }
 
     /**
-     * Delete all events in this realm
+     * Delete all events in this realm.
      */
-    public void deleteEvents(String realm, RequestOptions requestOptions) {
-        this.rawClient.deleteEvents(realm, requestOptions).body();
-    }
-
-    public void createEvent(String realm) {
-        this.rawClient.createEvent(realm).body();
-    }
-
-    public void createEvent(String realm, AuditEventRepresentation request) {
-        this.rawClient.createEvent(realm, request).body();
-    }
-
-    public void createEvent(String realm, AuditEventRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.createEvent(realm, request, requestOptions).body();
+    public void deleteEvents(RequestOptions requestOptions) {
+        this.rawClient.deleteEvents(requestOptions).body();
     }
 
     /**
-     * Get all events, or filters them based on URL query parameters.
+     * Create an custom audit log event.
      */
-    public List<EventRepresentation> getEvents(String realm) {
-        return this.rawClient.getEvents(realm).body();
+    public void createEvent() {
+        this.rawClient.createEvent().body();
     }
 
     /**
-     * Get all events, or filters them based on URL query parameters.
+     * Create an custom audit log event.
      */
-    public List<EventRepresentation> getEvents(String realm, GetEventsRequest request) {
-        return this.rawClient.getEvents(realm, request).body();
+    public void createEvent(AuditEventRepresentation request) {
+        this.rawClient.createEvent(request).body();
+    }
+
+    /**
+     * Create an custom audit log event.
+     */
+    public void createEvent(AuditEventRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.createEvent(request, requestOptions).body();
     }
 
     /**
      * Get all events, or filters them based on URL query parameters.
      */
-    public List<EventRepresentation> getEvents(String realm, GetEventsRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getEvents(realm, request, requestOptions).body();
+    public List<EventRepresentation> getEvents() {
+        return this.rawClient.getEvents().body();
+    }
+
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public List<EventRepresentation> getEvents(GetEventsRequest request) {
+        return this.rawClient.getEvents(request).body();
+    }
+
+    /**
+     * Get all events, or filters them based on URL query parameters.
+     */
+    public List<EventRepresentation> getEvents(GetEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getEvents(request, requestOptions).body();
     }
 
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
-    public List<AdminEventRepresentation> getAdminEvents(String realm) {
-        return this.rawClient.getAdminEvents(realm).body();
+    public List<AdminEventRepresentation> getAdminEvents() {
+        return this.rawClient.getAdminEvents().body();
     }
 
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
-    public List<AdminEventRepresentation> getAdminEvents(String realm, GetAdminEventsRequest request) {
-        return this.rawClient.getAdminEvents(realm, request).body();
+    public List<AdminEventRepresentation> getAdminEvents(GetAdminEventsRequest request) {
+        return this.rawClient.getAdminEvents(request).body();
     }
 
     /**
      * Get all admin events, or filters events based on URL query parameters.
      */
-    public List<AdminEventRepresentation> getAdminEvents(
-            String realm, GetAdminEventsRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getAdminEvents(realm, request, requestOptions).body();
-    }
-
-    public WebhooksClient webhooks() {
-        return this.webhooksClient.get();
+    public List<AdminEventRepresentation> getAdminEvents(GetAdminEventsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getAdminEvents(request, requestOptions).body();
     }
 }

@@ -30,95 +30,127 @@ public class InvitationsClient {
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
-    public List<InvitationRepresentation> getInvitations(String realm, String orgId) {
-        return this.rawClient.getInvitations(realm, orgId).body();
+    public List<InvitationRepresentation> getInvitations(String orgId) {
+        return this.rawClient.getInvitations(orgId).body();
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public List<InvitationRepresentation> getInvitations(String orgId, InvitationsGetInvitationsRequest request) {
+        return this.rawClient.getInvitations(orgId, request).body();
     }
 
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
     public List<InvitationRepresentation> getInvitations(
-            String realm, String orgId, InvitationsGetInvitationsRequest request) {
-        return this.rawClient.getInvitations(realm, orgId, request).body();
+            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getInvitations(orgId, request, requestOptions).body();
     }
 
     /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     * Accept invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
      */
-    public List<InvitationRepresentation> getInvitations(
-            String realm, String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getInvitations(realm, orgId, request, requestOptions)
-                .body();
-    }
-
-    public void invite(String realm, String orgId) {
-        this.rawClient.invite(realm, orgId).body();
-    }
-
-    public void invite(String realm, String orgId, InvitationRequestRepresentation request) {
-        this.rawClient.invite(realm, orgId, request).body();
-    }
-
-    public void invite(
-            String realm, String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
-        this.rawClient.invite(realm, orgId, request, requestOptions).body();
+    public void acceptInvitation(String invitationId) {
+        this.rawClient.acceptInvitation(invitationId).body();
     }
 
     /**
-     * Get a count of invitations to an organization
+     * Accept invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
      */
-    public int getInvitationsCount(String realm, String orgId) {
-        return this.rawClient.getInvitationsCount(realm, orgId).body();
+    public void acceptInvitation(String invitationId, RequestOptions requestOptions) {
+        this.rawClient.acceptInvitation(invitationId, requestOptions).body();
     }
 
     /**
-     * Get a count of invitations to an organization
+     * Reject invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
      */
-    public int getInvitationsCount(String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient.getInvitationsCount(realm, orgId, requestOptions).body();
+    public void rejectInvitation(String invitationId) {
+        this.rawClient.rejectInvitation(invitationId).body();
     }
 
     /**
-     * Get an invitation to an organization by its uuid.
+     * Reject invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
      */
-    public InvitationRepresentation getInvitation(String realm, String orgId, String invitationId) {
-        return this.rawClient.getInvitation(realm, orgId, invitationId).body();
+    public void rejectInvitation(String invitationId, RequestOptions requestOptions) {
+        this.rawClient.rejectInvitation(invitationId, requestOptions).body();
     }
 
     /**
-     * Get an invitation to an organization by its uuid.
+     * Create an invitation to an organization.
      */
-    public InvitationRepresentation getInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getInvitation(realm, orgId, invitationId, requestOptions)
-                .body();
-    }
-
-    public void removeInvitation(String realm, String orgId, String invitationId) {
-        this.rawClient.removeInvitation(realm, orgId, invitationId).body();
-    }
-
-    public void removeInvitation(String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        this.rawClient
-                .removeInvitation(realm, orgId, invitationId, requestOptions)
-                .body();
+    public void invite(String orgId) {
+        this.rawClient.invite(orgId).body();
     }
 
     /**
-     * Resend the email for an existing Organization Invitation
+     * Create an invitation to an organization.
      */
-    public void resendInvitation(String realm, String orgId, String invitationId) {
-        this.rawClient.resendInvitation(realm, orgId, invitationId).body();
+    public void invite(String orgId, InvitationRequestRepresentation request) {
+        this.rawClient.invite(orgId, request).body();
     }
 
     /**
-     * Resend the email for an existing Organization Invitation
+     * Create an invitation to an organization.
      */
-    public void resendInvitation(String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        this.rawClient
-                .resendInvitation(realm, orgId, invitationId, requestOptions)
-                .body();
+    public void invite(String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.invite(orgId, request, requestOptions).body();
+    }
+
+    /**
+     * Get a count of invitations to an organization.
+     */
+    public int getInvitationsCount(String orgId) {
+        return this.rawClient.getInvitationsCount(orgId).body();
+    }
+
+    /**
+     * Get a count of invitations to an organization.
+     */
+    public int getInvitationsCount(String orgId, RequestOptions requestOptions) {
+        return this.rawClient.getInvitationsCount(orgId, requestOptions).body();
+    }
+
+    /**
+     * Get an invitation to an organization.
+     */
+    public InvitationRepresentation getInvitation(String orgId, String invitationId) {
+        return this.rawClient.getInvitation(orgId, invitationId).body();
+    }
+
+    /**
+     * Get an invitation to an organization.
+     */
+    public InvitationRepresentation getInvitation(String orgId, String invitationId, RequestOptions requestOptions) {
+        return this.rawClient.getInvitation(orgId, invitationId, requestOptions).body();
+    }
+
+    /**
+     * Remove a pending invitation to an organization.
+     */
+    public void removeInvitation(String orgId, String invitationId) {
+        this.rawClient.removeInvitation(orgId, invitationId).body();
+    }
+
+    /**
+     * Remove a pending invitation to an organization.
+     */
+    public void removeInvitation(String orgId, String invitationId, RequestOptions requestOptions) {
+        this.rawClient.removeInvitation(orgId, invitationId, requestOptions).body();
+    }
+
+    /**
+     * Resend the email for an existing organization invitation.
+     */
+    public void resendInvitation(String orgId, String invitationId) {
+        this.rawClient.resendInvitation(orgId, invitationId).body();
+    }
+
+    /**
+     * Resend the email for an existing organization invitation.
+     */
+    public void resendInvitation(String orgId, String invitationId, RequestOptions requestOptions) {
+        this.rawClient.resendInvitation(orgId, invitationId, requestOptions).body();
     }
 }

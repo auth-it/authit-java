@@ -41,29 +41,27 @@ public class AsyncRawInvitationsClient {
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
-    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(
-            String realm, String orgId) {
-        return getInvitations(
-                realm, orgId, InvitationsGetInvitationsRequest.builder().build());
+    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(String orgId) {
+        return getInvitations(orgId, InvitationsGetInvitationsRequest.builder().build());
     }
 
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
     public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(
-            String realm, String orgId, InvitationsGetInvitationsRequest request) {
-        return getInvitations(realm, orgId, request, null);
+            String orgId, InvitationsGetInvitationsRequest request) {
+        return getInvitations(orgId, request, null);
     }
 
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
     public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(
-            String realm, String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
+            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("invitations");
@@ -73,17 +71,15 @@ public class AsyncRawInvitationsClient {
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -122,21 +118,144 @@ public class AsyncRawInvitationsClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> invite(String realm, String orgId) {
-        return invite(realm, orgId, InvitationRequestRepresentation.builder().build());
+    /**
+     * Accept invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> acceptInvitation(String invitationId) {
+        return acceptInvitation(invitationId, null);
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> invite(
-            String realm, String orgId, InvitationRequestRepresentation request) {
-        return invite(realm, orgId, request, null);
-    }
-
-    public CompletableFuture<AuthItClientHttpResponse<Void>> invite(
-            String realm, String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
+    /**
+     * Accept invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> acceptInvitation(
+            String invitationId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs/me/invitations")
+                .addPathSegment(invitationId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("POST", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Reject invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> rejectInvitation(String invitationId) {
+        return rejectInvitation(invitationId, null);
+    }
+
+    /**
+     * Reject invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> rejectInvitation(
+            String invitationId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs/me/invitations")
+                .addPathSegment(invitationId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Create an invitation to an organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> invite(String orgId) {
+        return invite(orgId, InvitationRequestRepresentation.builder().build());
+    }
+
+    /**
+     * Create an invitation to an organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> invite(
+            String orgId, InvitationRequestRepresentation request) {
+        return invite(orgId, request, null);
+    }
+
+    /**
+     * Create an invitation to an organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> invite(
+            String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("invitations")
@@ -198,21 +317,21 @@ public class AsyncRawInvitationsClient {
     }
 
     /**
-     * Get a count of invitations to an organization
+     * Get a count of invitations to an organization.
      */
-    public CompletableFuture<AuthItClientHttpResponse<Integer>> getInvitationsCount(String realm, String orgId) {
-        return getInvitationsCount(realm, orgId, null);
+    public CompletableFuture<AuthItClientHttpResponse<Integer>> getInvitationsCount(String orgId) {
+        return getInvitationsCount(orgId, null);
     }
 
     /**
-     * Get a count of invitations to an organization
+     * Get a count of invitations to an organization.
      */
     public CompletableFuture<AuthItClientHttpResponse<Integer>> getInvitationsCount(
-            String realm, String orgId, RequestOptions requestOptions) {
+            String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("invitations/count")
@@ -221,7 +340,6 @@ public class AsyncRawInvitationsClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -259,22 +377,22 @@ public class AsyncRawInvitationsClient {
     }
 
     /**
-     * Get an invitation to an organization by its uuid.
+     * Get an invitation to an organization.
      */
     public CompletableFuture<AuthItClientHttpResponse<InvitationRepresentation>> getInvitation(
-            String realm, String orgId, String invitationId) {
-        return getInvitation(realm, orgId, invitationId, null);
+            String orgId, String invitationId) {
+        return getInvitation(orgId, invitationId, null);
     }
 
     /**
-     * Get an invitation to an organization by its uuid.
+     * Get an invitation to an organization.
      */
     public CompletableFuture<AuthItClientHttpResponse<InvitationRepresentation>> getInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
+            String orgId, String invitationId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("invitations")
@@ -284,7 +402,6 @@ public class AsyncRawInvitationsClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -323,17 +440,22 @@ public class AsyncRawInvitationsClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> removeInvitation(
-            String realm, String orgId, String invitationId) {
-        return removeInvitation(realm, orgId, invitationId, null);
+    /**
+     * Remove a pending invitation to an organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> removeInvitation(String orgId, String invitationId) {
+        return removeInvitation(orgId, invitationId, null);
     }
 
+    /**
+     * Remove a pending invitation to an organization.
+     */
     public CompletableFuture<AuthItClientHttpResponse<Void>> removeInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
+            String orgId, String invitationId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("invitations")
@@ -378,22 +500,21 @@ public class AsyncRawInvitationsClient {
     }
 
     /**
-     * Resend the email for an existing Organization Invitation
+     * Resend the email for an existing organization invitation.
      */
-    public CompletableFuture<AuthItClientHttpResponse<Void>> resendInvitation(
-            String realm, String orgId, String invitationId) {
-        return resendInvitation(realm, orgId, invitationId, null);
+    public CompletableFuture<AuthItClientHttpResponse<Void>> resendInvitation(String orgId, String invitationId) {
+        return resendInvitation(orgId, invitationId, null);
     }
 
     /**
-     * Resend the email for an existing Organization Invitation
+     * Resend the email for an existing organization invitation.
      */
     public CompletableFuture<AuthItClientHttpResponse<Void>> resendInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
+            String orgId, String invitationId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("invitations")
