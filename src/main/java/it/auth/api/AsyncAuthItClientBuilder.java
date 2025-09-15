@@ -26,6 +26,8 @@ public class AsyncAuthItClientBuilder {
 
     private OkHttpClient httpClient;
 
+    private String realm = null;
+
     /**
      * Sets clientId.
      * Defaults to the AUTHIT_API_CLIENT_ID environment variable.
@@ -92,7 +94,7 @@ public class AsyncAuthItClientBuilder {
     }
 
     public AsyncAuthItClientBuilder realm(String realm) {
-        clientOptionsBuilder.realm(realm);
+        this.realm = realm;
         return this;
     }
 
@@ -139,7 +141,7 @@ public class AsyncAuthItClientBuilder {
     protected void setAuthentication(ClientOptions.Builder builder) {
         if (this.clientId != null && this.clientSecret != null) {
             AuthClient authClient = new AuthClient(
-                    ClientOptions.builder().environment(this.environment).build());
+                    ClientOptions.builder().environment(this.environment).realm(this.realm).build());
             OAuthTokenSupplier oAuthTokenSupplier =
                     new OAuthTokenSupplier(this.clientId, this.clientSecret, authClient);
             builder.addHeader("Authorization", oAuthTokenSupplier);
@@ -152,7 +154,11 @@ public class AsyncAuthItClientBuilder {
      *
      * @param builder The ClientOptions.Builder to configure
      */
-    protected void setVariables(ClientOptions.Builder builder) {}
+    protected void setVariables(ClientOptions.Builder builder) {
+        if (this.realm != null) {
+            builder.realm(this.realm);
+        }
+    }
 
     /**
      * Sets the request timeout configuration.
