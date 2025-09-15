@@ -29,18 +29,18 @@ public class RawAttackDetectionClient {
     /**
      * Clear user login failures for all users. This can release temporarily disabled users.
      */
-    public AuthItClientHttpResponse<Void> clearAllLoginFailures(String realm) {
-        return clearAllLoginFailures(realm, null);
+    public AuthItClientHttpResponse<Void> clearAllLoginFailures() {
+        return clearAllLoginFailures(null);
     }
 
     /**
      * Clear user login failures for all users. This can release temporarily disabled users.
      */
-    public AuthItClientHttpResponse<Void> clearAllLoginFailures(String realm, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> clearAllLoginFailures(RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("attack-detection/brute-force/users")
                 .build();
         Request okhttpRequest = new Request.Builder()
@@ -69,21 +69,21 @@ public class RawAttackDetectionClient {
     }
 
     /**
-     * Get lockout status of a user in brute force detection
+     * Get lockout status of a user in brute force detection.
      */
-    public AuthItClientHttpResponse<Map<String, Object>> userLockoutStatus(String realm, String userId) {
-        return userLockoutStatus(realm, userId, null);
+    public AuthItClientHttpResponse<Map<String, Object>> userLockoutStatus(String userId) {
+        return userLockoutStatus(userId, null);
     }
 
     /**
-     * Get lockout status of a user in brute force detection
+     * Get lockout status of a user in brute force detection.
      */
     public AuthItClientHttpResponse<Map<String, Object>> userLockoutStatus(
-            String realm, String userId, RequestOptions requestOptions) {
+            String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("attack-detection/brute-force/users")
                 .addPathSegment(userId)
                 .build();
@@ -91,7 +91,6 @@ public class RawAttackDetectionClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -120,19 +119,18 @@ public class RawAttackDetectionClient {
     /**
      * Clear any user login failures for the user. This can release a temporarily disabled user.
      */
-    public AuthItClientHttpResponse<Void> clearUserLoginFailures(String realm, String userId) {
-        return clearUserLoginFailures(realm, userId, null);
+    public AuthItClientHttpResponse<Void> clearUserLoginFailures(String userId) {
+        return clearUserLoginFailures(userId, null);
     }
 
     /**
      * Clear any user login failures for the user. This can release a temporarily disabled user.
      */
-    public AuthItClientHttpResponse<Void> clearUserLoginFailures(
-            String realm, String userId, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> clearUserLoginFailures(String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("attack-detection/brute-force/users")
                 .addPathSegment(userId)
                 .build();

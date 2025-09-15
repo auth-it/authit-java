@@ -13,13 +13,16 @@ import it.auth.api.core.QueryStringMapper;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.organizations.types.MembershipsCountMembershipsRequest;
 import it.auth.api.organizations.types.MembershipsGetMembershipsRequest;
+import it.auth.api.types.MyOrganizationRepresentation;
 import it.auth.api.types.UserWithOrgsBriefRepresentation;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -31,30 +34,77 @@ public class RawMembershipsClient {
     }
 
     /**
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
+     */
+    public AuthItClientHttpResponse<Map<String, MyOrganizationRepresentation>> getMemberInfo() {
+        return getMemberInfo(null);
+    }
+
+    /**
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
+     */
+    public AuthItClientHttpResponse<Map<String, MyOrganizationRepresentation>> getMemberInfo(
+            RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs/me")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(
+                                responseBody.string(),
+                                new TypeReference<Map<String, MyOrganizationRepresentation>>() {}),
+                        response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
      * Get a paginated list of users who are a member of the specified organization.
      */
-    public AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>> getMemberships(String realm, String orgId) {
-        return getMemberships(
-                realm, orgId, MembershipsGetMembershipsRequest.builder().build());
+    public AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>> getMemberships(String orgId) {
+        return getMemberships(orgId, MembershipsGetMembershipsRequest.builder().build());
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request) {
-        return getMemberships(realm, orgId, request, null);
+            String orgId, MembershipsGetMembershipsRequest request) {
+        return getMemberships(orgId, request, null);
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public AuthItClientHttpResponse<List<UserWithOrgsBriefRepresentation>> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
+            String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("members");
@@ -64,28 +114,26 @@ public class RawMembershipsClient {
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         if (request.getExcludeAdminAccounts().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "excludeAdminAccounts",
-                    request.getExcludeAdminAccounts().get().toString(),
+                    request.getExcludeAdminAccounts().get(),
                     false);
         }
         if (request.getIncludeOrgs().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "includeOrgs", request.getIncludeOrgs().get().toString(), false);
+                    httpUrl, "includeOrgs", request.getIncludeOrgs().get(), false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -112,30 +160,30 @@ public class RawMembershipsClient {
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
-    public AuthItClientHttpResponse<Integer> countMemberships(String realm, String orgId) {
+    public AuthItClientHttpResponse<Integer> countMemberships(String orgId) {
         return countMemberships(
-                realm, orgId, MembershipsCountMembershipsRequest.builder().build());
+                orgId, MembershipsCountMembershipsRequest.builder().build());
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
     public AuthItClientHttpResponse<Integer> countMemberships(
-            String realm, String orgId, MembershipsCountMembershipsRequest request) {
-        return countMemberships(realm, orgId, request, null);
+            String orgId, MembershipsCountMembershipsRequest request) {
+        return countMemberships(orgId, request, null);
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
     public AuthItClientHttpResponse<Integer> countMemberships(
-            String realm, String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
+            String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("members/count");
@@ -143,14 +191,13 @@ public class RawMembershipsClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "excludeAdminAccounts",
-                    request.getExcludeAdminAccounts().get().toString(),
+                    request.getExcludeAdminAccounts().get(),
                     false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -174,16 +221,21 @@ public class RawMembershipsClient {
         }
     }
 
-    public AuthItClientHttpResponse<Void> isMember(String realm, String orgId, String userId) {
-        return isMember(realm, orgId, userId, null);
+    /**
+     * Check if a user is a member of an organization
+     */
+    public AuthItClientHttpResponse<Void> isMember(String orgId, String userId) {
+        return isMember(orgId, userId, null);
     }
 
-    public AuthItClientHttpResponse<Void> isMember(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
+    /**
+     * Check if a user is a member of an organization
+     */
+    public AuthItClientHttpResponse<Void> isMember(String orgId, String userId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("members")
@@ -192,6 +244,96 @@ public class RawMembershipsClient {
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
                 .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public AuthItClientHttpResponse<Void> addMember(String orgId, String userId) {
+        return addMember(orgId, userId, null);
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public AuthItClientHttpResponse<Void> addMember(String orgId, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("members")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("PUT", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public AuthItClientHttpResponse<Void> removeMember(String orgId, String userId) {
+        return removeMember(orgId, userId, null);
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public AuthItClientHttpResponse<Void> removeMember(String orgId, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("members")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .build();
         OkHttpClient client = clientOptions.httpClient();

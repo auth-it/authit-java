@@ -42,41 +42,40 @@ public class RawRolesClient {
     /**
      * Get all roles for the given realm or client.
      */
-    public AuthItClientHttpResponse<List<RoleRepresentation>> getRoles(String realm) {
-        return getRoles(realm, GetRolesRequest.builder().build());
+    public AuthItClientHttpResponse<List<RoleRepresentation>> getRoles() {
+        return getRoles(GetRolesRequest.builder().build());
     }
 
     /**
      * Get all roles for the given realm or client.
      */
-    public AuthItClientHttpResponse<List<RoleRepresentation>> getRoles(String realm, GetRolesRequest request) {
-        return getRoles(realm, request, null);
+    public AuthItClientHttpResponse<List<RoleRepresentation>> getRoles(GetRolesRequest request) {
+        return getRoles(request, null);
     }
 
     /**
      * Get all roles for the given realm or client.
      */
     public AuthItClientHttpResponse<List<RoleRepresentation>> getRoles(
-            String realm, GetRolesRequest request, RequestOptions requestOptions) {
+            GetRolesRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("roles");
         if (request.getBriefRepresentation().isPresent()) {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "briefRepresentation",
-                    request.getBriefRepresentation().get().toString(),
+                    request.getBriefRepresentation().get(),
                     false);
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         if (request.getSearch().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -86,7 +85,6 @@ public class RawRolesClient {
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -123,26 +121,25 @@ public class RawRolesClient {
     /**
      * Create a new role for the realm or client.
      */
-    public AuthItClientHttpResponse<Void> createRole(String realm) {
-        return createRole(realm, RoleRepresentation.builder().build());
+    public AuthItClientHttpResponse<Void> createRole() {
+        return createRole(RoleRepresentation.builder().build());
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public AuthItClientHttpResponse<Void> createRole(String realm, RoleRepresentation request) {
-        return createRole(realm, request, null);
+    public AuthItClientHttpResponse<Void> createRole(RoleRepresentation request) {
+        return createRole(request, null);
     }
 
     /**
      * Create a new role for the realm or client.
      */
-    public AuthItClientHttpResponse<Void> createRole(
-            String realm, RoleRepresentation request, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> createRole(RoleRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("roles")
                 .build();
         RequestBody body;
@@ -200,19 +197,18 @@ public class RawRolesClient {
     /**
      * Get a role by name.
      */
-    public AuthItClientHttpResponse<RoleRepresentation> getRole(String realm, String roleName) {
-        return getRole(realm, roleName, null);
+    public AuthItClientHttpResponse<RoleRepresentation> getRole(String roleName) {
+        return getRole(roleName, null);
     }
 
     /**
      * Get a role by name.
      */
-    public AuthItClientHttpResponse<RoleRepresentation> getRole(
-            String realm, String roleName, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<RoleRepresentation> getRole(String roleName, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("roles")
                 .addPathSegment(roleName)
                 .build();
@@ -220,7 +216,6 @@ public class RawRolesClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -259,26 +254,26 @@ public class RawRolesClient {
     /**
      * Update a role by name.
      */
-    public AuthItClientHttpResponse<Void> updateRole(String realm, String roleName) {
-        return updateRole(realm, roleName, RoleRepresentation.builder().build());
+    public AuthItClientHttpResponse<Void> updateRole(String roleName) {
+        return updateRole(roleName, RoleRepresentation.builder().build());
     }
 
     /**
      * Update a role by name.
      */
-    public AuthItClientHttpResponse<Void> updateRole(String realm, String roleName, RoleRepresentation request) {
-        return updateRole(realm, roleName, request, null);
+    public AuthItClientHttpResponse<Void> updateRole(String roleName, RoleRepresentation request) {
+        return updateRole(roleName, request, null);
     }
 
     /**
      * Update a role by name.
      */
     public AuthItClientHttpResponse<Void> updateRole(
-            String realm, String roleName, RoleRepresentation request, RequestOptions requestOptions) {
+            String roleName, RoleRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("roles")
                 .addPathSegment(roleName)
                 .build();
@@ -334,18 +329,18 @@ public class RawRolesClient {
     /**
      * Delete a role by name.
      */
-    public AuthItClientHttpResponse<Void> deleteRole(String realm, String roleName) {
-        return deleteRole(realm, roleName, null);
+    public AuthItClientHttpResponse<Void> deleteRole(String roleName) {
+        return deleteRole(roleName, null);
     }
 
     /**
      * Delete a role by name.
      */
-    public AuthItClientHttpResponse<Void> deleteRole(String realm, String roleName, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> deleteRole(String roleName, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("roles")
                 .addPathSegment(roleName)
                 .build();
@@ -393,27 +388,27 @@ public class RawRolesClient {
     /**
      * Get users that have the specified role name assigned.
      */
-    public AuthItClientHttpResponse<List<UserRepresentation>> getUsersByRole(String realm, String roleName) {
-        return getUsersByRole(realm, roleName, GetUsersByRoleRequest.builder().build());
+    public AuthItClientHttpResponse<List<UserRepresentation>> getUsersByRole(String roleName) {
+        return getUsersByRole(roleName, GetUsersByRoleRequest.builder().build());
     }
 
     /**
      * Get users that have the specified role name assigned.
      */
     public AuthItClientHttpResponse<List<UserRepresentation>> getUsersByRole(
-            String realm, String roleName, GetUsersByRoleRequest request) {
-        return getUsersByRole(realm, roleName, request, null);
+            String roleName, GetUsersByRoleRequest request) {
+        return getUsersByRole(roleName, request, null);
     }
 
     /**
      * Get users that have the specified role name assigned.
      */
     public AuthItClientHttpResponse<List<UserRepresentation>> getUsersByRole(
-            String realm, String roleName, GetUsersByRoleRequest request, RequestOptions requestOptions) {
+            String roleName, GetUsersByRoleRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("admin/realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("roles")
                 .addPathSegment(roleName)
                 .addPathSegments("users");
@@ -421,22 +416,20 @@ public class RawRolesClient {
             QueryStringMapper.addQueryParameter(
                     httpUrl,
                     "briefRepresentation",
-                    request.getBriefRepresentation().get().toString(),
+                    request.getBriefRepresentation().get(),
                     false);
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         Request.Builder _requestBuilder = new Request.Builder()
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();

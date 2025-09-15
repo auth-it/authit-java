@@ -25,65 +25,45 @@ public class DomainsClient {
         return this.rawClient;
     }
 
-    public List<OrganizationDomainRepresentation> getDomains(String realm, String orgId) {
-        return this.rawClient.getDomains(realm, orgId).body();
-    }
-
-    public List<OrganizationDomainRepresentation> getDomains(
-            String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient.getDomains(realm, orgId, requestOptions).body();
-    }
-
-    public OrganizationDomainRepresentation getDomain(String realm, String orgId, String domainName) {
-        return this.rawClient.getDomain(realm, orgId, domainName).body();
-    }
-
-    public OrganizationDomainRepresentation getDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        return this.rawClient
-                .getDomain(realm, orgId, domainName, requestOptions)
-                .body();
+    /**
+     * Get details for all domains owned by an organization.
+     */
+    public List<OrganizationDomainRepresentation> getDomains(String orgId) {
+        return this.rawClient.getDomains(orgId).body();
     }
 
     /**
-     * Initiate a verification check for the domain name owned by this organization
+     * Get details for all domains owned by an organization.
      */
-    public void verifyDomain(String realm, String orgId, String domainName) {
-        this.rawClient.verifyDomain(realm, orgId, domainName).body();
+    public List<OrganizationDomainRepresentation> getDomains(String orgId, RequestOptions requestOptions) {
+        return this.rawClient.getDomains(orgId, requestOptions).body();
     }
 
     /**
-     * Initiate a verification check for the domain name owned by this organization
+     * Get details for a domain owned by an organization.
      */
-    public void verifyDomain(String realm, String orgId, String domainName, RequestOptions requestOptions) {
-        this.rawClient.verifyDomain(realm, orgId, domainName, requestOptions).body();
+    public OrganizationDomainRepresentation getDomain(String orgId, String domainName) {
+        return this.rawClient.getDomain(orgId, domainName).body();
     }
 
     /**
-     * Add the specified user to the specified organization as a member
+     * Get details for a domain owned by an organization.
      */
-    public void addMember(String realm, String orgId, String userId) {
-        this.rawClient.addMember(realm, orgId, userId).body();
+    public OrganizationDomainRepresentation getDomain(String orgId, String domainName, RequestOptions requestOptions) {
+        return this.rawClient.getDomain(orgId, domainName, requestOptions).body();
     }
 
     /**
-     * Add the specified user to the specified organization as a member
+     * Initiate a verification check for the domain name owned by this organization.
      */
-    public void addMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        this.rawClient.addMember(realm, orgId, userId, requestOptions).body();
+    public void verifyDomain(String orgId, String domainName) {
+        this.rawClient.verifyDomain(orgId, domainName).body();
     }
 
     /**
-     * Remove the specified user from the specified organization as a member
+     * Initiate a verification check for the domain name owned by this organization.
      */
-    public void removeMember(String realm, String orgId, String userId) {
-        this.rawClient.removeMember(realm, orgId, userId).body();
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public void removeMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        this.rawClient.removeMember(realm, orgId, userId, requestOptions).body();
+    public void verifyDomain(String orgId, String domainName, RequestOptions requestOptions) {
+        this.rawClient.verifyDomain(orgId, domainName, requestOptions).body();
     }
 }

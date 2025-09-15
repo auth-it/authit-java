@@ -22,6 +22,10 @@ public class AuthItClient {
 
     protected final Supplier<OrganizationsClient> organizationsClient;
 
+    protected final Supplier<WebhooksClient> webhooksClient;
+
+    protected final Supplier<AuthClient> authClient;
+
     public AuthItClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.eventsClient = Suppliers.memoize(() -> new EventsClient(clientOptions));
@@ -30,6 +34,8 @@ public class AuthItClient {
         this.rolesClient = Suppliers.memoize(() -> new RolesClient(clientOptions));
         this.usersClient = Suppliers.memoize(() -> new UsersClient(clientOptions));
         this.organizationsClient = Suppliers.memoize(() -> new OrganizationsClient(clientOptions));
+        this.webhooksClient = Suppliers.memoize(() -> new WebhooksClient(clientOptions));
+        this.authClient = Suppliers.memoize(() -> new AuthClient(clientOptions));
     }
 
     public EventsClient events() {
@@ -54,6 +60,14 @@ public class AuthItClient {
 
     public OrganizationsClient organizations() {
         return this.organizationsClient.get();
+    }
+
+    public WebhooksClient webhooks() {
+        return this.webhooksClient.get();
+    }
+
+    public AuthClient auth() {
+        return this.authClient.get();
     }
 
     public static AuthItClientBuilder builder() {

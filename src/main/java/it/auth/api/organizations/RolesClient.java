@@ -6,6 +6,7 @@ package it.auth.api.organizations;
 import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.types.OrganizationRoleRepresentation;
+import it.auth.api.types.UserRepresentation;
 import java.util.List;
 
 public class RolesClient {
@@ -25,46 +26,168 @@ public class RolesClient {
         return this.rawClient;
     }
 
-    public void deleteRoles(String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        this.rawClient.deleteRoles(realm, orgId, request).body();
+    /**
+     * Get a list of roles for this organization.
+     */
+    public List<OrganizationRoleRepresentation> getOrganizationRoles(String orgId) {
+        return this.rawClient.getOrganizationRoles(orgId).body();
     }
 
-    public void deleteRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
-        this.rawClient.deleteRoles(realm, orgId, request, requestOptions).body();
+    /**
+     * Get a list of roles for this organization.
+     */
+    public List<OrganizationRoleRepresentation> getOrganizationRoles(String orgId, RequestOptions requestOptions) {
+        return this.rawClient.getOrganizationRoles(orgId, requestOptions).body();
     }
 
-    public OrganizationRoleRepresentation getRole(String realm, String orgId, String name) {
-        return this.rawClient.getRole(realm, orgId, name).body();
+    /**
+     * Create a new role for this organization.
+     */
+    public void createOrganizationRole(String orgId) {
+        this.rawClient.createOrganizationRole(orgId).body();
     }
 
-    public OrganizationRoleRepresentation getRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
-        return this.rawClient.getRole(realm, orgId, name, requestOptions).body();
+    /**
+     * Create a new role for this organization.
+     */
+    public void createOrganizationRole(String orgId, OrganizationRoleRepresentation request) {
+        this.rawClient.createOrganizationRole(orgId, request).body();
     }
 
-    public void updateRole(String realm, String orgId, String name) {
-        this.rawClient.updateRole(realm, orgId, name).body();
+    /**
+     * Create a new role for this organization.
+     */
+    public void createOrganizationRole(
+            String orgId, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.createOrganizationRole(orgId, request, requestOptions).body();
     }
 
-    public void updateRole(String realm, String orgId, String name, OrganizationRoleRepresentation request) {
-        this.rawClient.updateRole(realm, orgId, name, request).body();
+    /**
+     * Get role for this organization by name.
+     */
+    public OrganizationRoleRepresentation getRole(String orgId, String name) {
+        return this.rawClient.getRole(orgId, name).body();
     }
 
+    /**
+     * Get role for this organization by name.
+     */
+    public OrganizationRoleRepresentation getRole(String orgId, String name, RequestOptions requestOptions) {
+        return this.rawClient.getRole(orgId, name, requestOptions).body();
+    }
+
+    /**
+     * Update role for this organization.
+     */
+    public void updateRole(String orgId, String name) {
+        this.rawClient.updateRole(orgId, name).body();
+    }
+
+    /**
+     * Update role for this organization.
+     */
+    public void updateRole(String orgId, String name, OrganizationRoleRepresentation request) {
+        this.rawClient.updateRole(orgId, name, request).body();
+    }
+
+    /**
+     * Update role for this organization.
+     */
     public void updateRole(
-            String realm,
-            String orgId,
-            String name,
-            OrganizationRoleRepresentation request,
-            RequestOptions requestOptions) {
-        this.rawClient.updateRole(realm, orgId, name, request, requestOptions).body();
+            String orgId, String name, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
+        this.rawClient.updateRole(orgId, name, request, requestOptions).body();
     }
 
-    public void deleteRole(String realm, String orgId, String name) {
-        this.rawClient.deleteRole(realm, orgId, name).body();
+    /**
+     * Delete role for this organization
+     */
+    public void deleteRole(String orgId, String name) {
+        this.rawClient.deleteRole(orgId, name).body();
     }
 
-    public void deleteRole(String realm, String orgId, String name, RequestOptions requestOptions) {
-        this.rawClient.deleteRole(realm, orgId, name, requestOptions).body();
+    /**
+     * Delete role for this organization
+     */
+    public void deleteRole(String orgId, String name, RequestOptions requestOptions) {
+        this.rawClient.deleteRole(orgId, name, requestOptions).body();
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public List<UserRepresentation> getUserOrganizationRoles(String orgId, String name) {
+        return this.rawClient.getUserOrganizationRoles(orgId, name).body();
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public List<UserRepresentation> getUserOrganizationRoles(String orgId, String name, RequestOptions requestOptions) {
+        return this.rawClient
+                .getUserOrganizationRoles(orgId, name, requestOptions)
+                .body();
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public void hasOrganizationRole(String orgId, String name, String userId) {
+        this.rawClient.hasOrganizationRole(orgId, name, userId).body();
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public void hasOrganizationRole(String orgId, String name, String userId, RequestOptions requestOptions) {
+        this.rawClient.hasOrganizationRole(orgId, name, userId, requestOptions).body();
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public void grantOrganizationRole(String orgId, String name, String userId) {
+        this.rawClient.grantOrganizationRole(orgId, name, userId).body();
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public void grantOrganizationRole(String orgId, String name, String userId, RequestOptions requestOptions) {
+        this.rawClient
+                .grantOrganizationRole(orgId, name, userId, requestOptions)
+                .body();
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public void revokeOrganizationRole(String orgId, String name, String userId) {
+        this.rawClient.revokeOrganizationRole(orgId, name, userId).body();
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public void revokeOrganizationRole(String orgId, String name, String userId, RequestOptions requestOptions) {
+        this.rawClient
+                .revokeOrganizationRole(orgId, name, userId, requestOptions)
+                .body();
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public List<OrganizationRoleRepresentation> listOrganizationRoles(String userId, String orgId) {
+        return this.rawClient.listOrganizationRoles(userId, orgId).body();
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public List<OrganizationRoleRepresentation> listOrganizationRoles(
+            String userId, String orgId, RequestOptions requestOptions) {
+        return this.rawClient
+                .listOrganizationRoles(userId, orgId, requestOptions)
+                .body();
     }
 }

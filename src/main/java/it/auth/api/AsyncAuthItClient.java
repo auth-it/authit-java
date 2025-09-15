@@ -22,6 +22,10 @@ public class AsyncAuthItClient {
 
     protected final Supplier<AsyncOrganizationsClient> organizationsClient;
 
+    protected final Supplier<AsyncWebhooksClient> webhooksClient;
+
+    protected final Supplier<AsyncAuthClient> authClient;
+
     public AsyncAuthItClient(ClientOptions clientOptions) {
         this.clientOptions = clientOptions;
         this.eventsClient = Suppliers.memoize(() -> new AsyncEventsClient(clientOptions));
@@ -30,6 +34,8 @@ public class AsyncAuthItClient {
         this.rolesClient = Suppliers.memoize(() -> new AsyncRolesClient(clientOptions));
         this.usersClient = Suppliers.memoize(() -> new AsyncUsersClient(clientOptions));
         this.organizationsClient = Suppliers.memoize(() -> new AsyncOrganizationsClient(clientOptions));
+        this.webhooksClient = Suppliers.memoize(() -> new AsyncWebhooksClient(clientOptions));
+        this.authClient = Suppliers.memoize(() -> new AsyncAuthClient(clientOptions));
     }
 
     public AsyncEventsClient events() {
@@ -54,6 +60,14 @@ public class AsyncAuthItClient {
 
     public AsyncOrganizationsClient organizations() {
         return this.organizationsClient.get();
+    }
+
+    public AsyncWebhooksClient webhooks() {
+        return this.webhooksClient.get();
+    }
+
+    public AsyncAuthClient auth() {
+        return this.authClient.get();
     }
 
     public static AsyncAuthItClientBuilder builder() {

@@ -7,8 +7,10 @@ import it.auth.api.core.ClientOptions;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.organizations.types.MembershipsCountMembershipsRequest;
 import it.auth.api.organizations.types.MembershipsGetMembershipsRequest;
+import it.auth.api.types.MyOrganizationRepresentation;
 import it.auth.api.types.UserWithOrgsBriefRepresentation;
 import java.util.List;
+import java.util.Map;
 
 public class MembershipsClient {
     protected final ClientOptions clientOptions;
@@ -28,59 +30,103 @@ public class MembershipsClient {
     }
 
     /**
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
+     */
+    public Map<String, MyOrganizationRepresentation> getMemberInfo() {
+        return this.rawClient.getMemberInfo().body();
+    }
+
+    /**
+     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
+     */
+    public Map<String, MyOrganizationRepresentation> getMemberInfo(RequestOptions requestOptions) {
+        return this.rawClient.getMemberInfo(requestOptions).body();
+    }
+
+    /**
      * Get a paginated list of users who are a member of the specified organization.
      */
-    public List<UserWithOrgsBriefRepresentation> getMemberships(String realm, String orgId) {
-        return this.rawClient.getMemberships(realm, orgId).body();
+    public List<UserWithOrgsBriefRepresentation> getMemberships(String orgId) {
+        return this.rawClient.getMemberships(orgId).body();
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public List<UserWithOrgsBriefRepresentation> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request) {
-        return this.rawClient.getMemberships(realm, orgId, request).body();
+            String orgId, MembershipsGetMembershipsRequest request) {
+        return this.rawClient.getMemberships(orgId, request).body();
     }
 
     /**
      * Get a paginated list of users who are a member of the specified organization.
      */
     public List<UserWithOrgsBriefRepresentation> getMemberships(
-            String realm, String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getMemberships(realm, orgId, request, requestOptions)
-                .body();
+            String orgId, MembershipsGetMembershipsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getMemberships(orgId, request, requestOptions).body();
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
-    public int countMemberships(String realm, String orgId) {
-        return this.rawClient.countMemberships(realm, orgId).body();
+    public int countMemberships(String orgId) {
+        return this.rawClient.countMemberships(orgId).body();
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
-    public int countMemberships(String realm, String orgId, MembershipsCountMembershipsRequest request) {
-        return this.rawClient.countMemberships(realm, orgId, request).body();
+    public int countMemberships(String orgId, MembershipsCountMembershipsRequest request) {
+        return this.rawClient.countMemberships(orgId, request).body();
     }
 
     /**
-     * Get total number of members of a given organization
+     * Get total number of members of a given organization.
      */
     public int countMemberships(
-            String realm, String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .countMemberships(realm, orgId, request, requestOptions)
-                .body();
+            String orgId, MembershipsCountMembershipsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.countMemberships(orgId, request, requestOptions).body();
     }
 
-    public void isMember(String realm, String orgId, String userId) {
-        this.rawClient.isMember(realm, orgId, userId).body();
+    /**
+     * Check if a user is a member of an organization
+     */
+    public void isMember(String orgId, String userId) {
+        this.rawClient.isMember(orgId, userId).body();
     }
 
-    public void isMember(String realm, String orgId, String userId, RequestOptions requestOptions) {
-        this.rawClient.isMember(realm, orgId, userId, requestOptions).body();
+    /**
+     * Check if a user is a member of an organization
+     */
+    public void isMember(String orgId, String userId, RequestOptions requestOptions) {
+        this.rawClient.isMember(orgId, userId, requestOptions).body();
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public void addMember(String orgId, String userId) {
+        this.rawClient.addMember(orgId, userId).body();
+    }
+
+    /**
+     * Add the specified user to the specified organization as a member.
+     */
+    public void addMember(String orgId, String userId, RequestOptions requestOptions) {
+        this.rawClient.addMember(orgId, userId, requestOptions).body();
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public void removeMember(String orgId, String userId) {
+        this.rawClient.removeMember(orgId, userId).body();
+    }
+
+    /**
+     * Remove the specified user from the specified organization as a member.
+     */
+    public void removeMember(String orgId, String userId, RequestOptions requestOptions) {
+        this.rawClient.removeMember(orgId, userId, requestOptions).body();
     }
 }

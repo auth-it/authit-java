@@ -114,6 +114,9 @@ public final class SendVerifyEmailRequest {
             return this;
         }
 
+        /**
+         * <p>Client id</p>
+         */
         @JsonSetter(value = "client_id", nulls = Nulls.SKIP)
         public Builder clientId(Optional<String> clientId) {
             this.clientId = clientId;
@@ -125,6 +128,9 @@ public final class SendVerifyEmailRequest {
             return this;
         }
 
+        /**
+         * <p>Number of seconds after which the generated token expires</p>
+         */
         @JsonSetter(value = "lifespan", nulls = Nulls.SKIP)
         public Builder lifespan(Optional<Integer> lifespan) {
             this.lifespan = lifespan;
@@ -136,6 +142,9 @@ public final class SendVerifyEmailRequest {
             return this;
         }
 
+        /**
+         * <p>Redirect uri</p>
+         */
         @JsonSetter(value = "redirect_uri", nulls = Nulls.SKIP)
         public Builder redirectUri(Optional<String> redirectUri) {
             this.redirectUri = redirectUri;

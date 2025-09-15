@@ -4,6 +4,7 @@
 package it.auth.api.organizations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import it.auth.api.core.AuthItApiException;
 import it.auth.api.core.AuthItClientHttpResponse;
 import it.auth.api.core.AuthItException;
@@ -12,6 +13,7 @@ import it.auth.api.core.MediaTypes;
 import it.auth.api.core.ObjectMappers;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.types.OrganizationRoleRepresentation;
+import it.auth.api.types.UserRepresentation;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,17 +35,96 @@ public class AsyncRawRolesClient {
         this.clientOptions = clientOptions;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        return deleteRoles(realm, orgId, request, null);
+    /**
+     * Get a list of roles for this organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<OrganizationRoleRepresentation>>> getOrganizationRoles(
+            String orgId) {
+        return getOrganizationRoles(orgId, null);
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
+    /**
+     * Get a list of roles for this organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<OrganizationRoleRepresentation>>> getOrganizationRoles(
+            String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<List<OrganizationRoleRepresentation>>> future =
+                new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(),
+                                        new TypeReference<List<OrganizationRoleRepresentation>>() {}),
+                                response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Create a new role for this organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> createOrganizationRole(String orgId) {
+        return createOrganizationRole(
+                orgId, OrganizationRoleRepresentation.builder().build());
+    }
+
+    /**
+     * Create a new role for this organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> createOrganizationRole(
+            String orgId, OrganizationRoleRepresentation request) {
+        return createOrganizationRole(orgId, request, null);
+    }
+
+    /**
+     * Create a new role for this organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> createOrganizationRole(
+            String orgId, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -57,7 +138,7 @@ public class AsyncRawRolesClient {
         }
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
-                .method("PATCH", body)
+                .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -94,17 +175,23 @@ public class AsyncRawRolesClient {
         return future;
     }
 
+    /**
+     * Get role for this organization by name.
+     */
     public CompletableFuture<AuthItClientHttpResponse<OrganizationRoleRepresentation>> getRole(
-            String realm, String orgId, String name) {
-        return getRole(realm, orgId, name, null);
+            String orgId, String name) {
+        return getRole(orgId, name, null);
     }
 
+    /**
+     * Get role for this organization by name.
+     */
     public CompletableFuture<AuthItClientHttpResponse<OrganizationRoleRepresentation>> getRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
+            String orgId, String name, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -114,7 +201,6 @@ public class AsyncRawRolesClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -153,26 +239,30 @@ public class AsyncRawRolesClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> updateRole(String realm, String orgId, String name) {
-        return updateRole(
-                realm, orgId, name, OrganizationRoleRepresentation.builder().build());
+    /**
+     * Update role for this organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> updateRole(String orgId, String name) {
+        return updateRole(orgId, name, OrganizationRoleRepresentation.builder().build());
     }
 
+    /**
+     * Update role for this organization.
+     */
     public CompletableFuture<AuthItClientHttpResponse<Void>> updateRole(
-            String realm, String orgId, String name, OrganizationRoleRepresentation request) {
-        return updateRole(realm, orgId, name, request, null);
+            String orgId, String name, OrganizationRoleRepresentation request) {
+        return updateRole(orgId, name, request, null);
     }
 
+    /**
+     * Update role for this organization.
+     */
     public CompletableFuture<AuthItClientHttpResponse<Void>> updateRole(
-            String realm,
-            String orgId,
-            String name,
-            OrganizationRoleRepresentation request,
-            RequestOptions requestOptions) {
+            String orgId, String name, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -224,16 +314,22 @@ public class AsyncRawRolesClient {
         return future;
     }
 
-    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteRole(String realm, String orgId, String name) {
-        return deleteRole(realm, orgId, name, null);
+    /**
+     * Delete role for this organization
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> deleteRole(String orgId, String name) {
+        return deleteRole(orgId, name, null);
     }
 
+    /**
+     * Delete role for this organization
+     */
     public CompletableFuture<AuthItClientHttpResponse<Void>> deleteRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
+            String orgId, String name, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -255,6 +351,324 @@ public class AsyncRawRolesClient {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.isSuccessful()) {
                         future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<UserRepresentation>>> getUserOrganizationRoles(
+            String orgId, String name) {
+        return getUserOrganizationRoles(orgId, name, null);
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<UserRepresentation>>> getUserOrganizationRoles(
+            String orgId, String name, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<List<UserRepresentation>>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(), new TypeReference<List<UserRepresentation>>() {}),
+                                response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> hasOrganizationRole(
+            String orgId, String name, String userId) {
+        return hasOrganizationRole(orgId, name, userId, null);
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> hasOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> grantOrganizationRole(
+            String orgId, String name, String userId) {
+        return grantOrganizationRole(orgId, name, userId, null);
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> grantOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("PUT", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> revokeOrganizationRole(
+            String orgId, String name, String userId) {
+        return revokeOrganizationRole(orgId, name, userId, null);
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<Void>> revokeOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<Void>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<OrganizationRoleRepresentation>>> listOrganizationRoles(
+            String userId, String orgId) {
+        return listOrganizationRoles(userId, orgId, null);
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<OrganizationRoleRepresentation>>> listOrganizationRoles(
+            String userId, String orgId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<List<OrganizationRoleRepresentation>>> future =
+                new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(),
+                                        new TypeReference<List<OrganizationRoleRepresentation>>() {}),
+                                response));
                         return;
                     }
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";

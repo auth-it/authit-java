@@ -197,6 +197,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>The types of events to return</p>
+         */
         @JsonSetter(value = "type", nulls = Nulls.SKIP)
         public Builder type(Optional<List<String>> type) {
             this.type = type;
@@ -213,6 +216,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>App or oauth client name</p>
+         */
         @JsonSetter(value = "client", nulls = Nulls.SKIP)
         public Builder client(Optional<String> client) {
             this.client = client;
@@ -224,6 +230,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>From date</p>
+         */
         @JsonSetter(value = "dateFrom", nulls = Nulls.SKIP)
         public Builder dateFrom(Optional<String> dateFrom) {
             this.dateFrom = dateFrom;
@@ -235,6 +244,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>To date</p>
+         */
         @JsonSetter(value = "dateTo", nulls = Nulls.SKIP)
         public Builder dateTo(Optional<String> dateTo) {
             this.dateTo = dateTo;
@@ -246,6 +258,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>Paging offset</p>
+         */
         @JsonSetter(value = "first", nulls = Nulls.SKIP)
         public Builder first(Optional<Integer> first) {
             this.first = first;
@@ -257,6 +272,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>IP Address</p>
+         */
         @JsonSetter(value = "ipAddress", nulls = Nulls.SKIP)
         public Builder ipAddress(Optional<String> ipAddress) {
             this.ipAddress = ipAddress;
@@ -268,6 +286,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>Maximum results size (defaults to 100)</p>
+         */
         @JsonSetter(value = "max", nulls = Nulls.SKIP)
         public Builder max(Optional<Integer> max) {
             this.max = max;
@@ -279,6 +300,9 @@ public final class GetEventsRequest {
             return this;
         }
 
+        /**
+         * <p>User id</p>
+         */
         @JsonSetter(value = "user", nulls = Nulls.SKIP)
         public Builder user(Optional<String> user) {
             this.user = user;

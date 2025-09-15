@@ -4,6 +4,7 @@
 package it.auth.api.organizations;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import it.auth.api.core.AuthItApiException;
 import it.auth.api.core.AuthItClientHttpResponse;
 import it.auth.api.core.AuthItException;
@@ -12,6 +13,7 @@ import it.auth.api.core.MediaTypes;
 import it.auth.api.core.ObjectMappers;
 import it.auth.api.core.RequestOptions;
 import it.auth.api.types.OrganizationRoleRepresentation;
+import it.auth.api.types.UserRepresentation;
 import java.io.IOException;
 import java.util.List;
 import okhttp3.Headers;
@@ -29,17 +31,79 @@ public class RawRolesClient {
         this.clientOptions = clientOptions;
     }
 
-    public AuthItClientHttpResponse<Void> deleteRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        return deleteRoles(realm, orgId, request, null);
+    /**
+     * Get a list of roles for this organization.
+     */
+    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> getOrganizationRoles(String orgId) {
+        return getOrganizationRoles(orgId, null);
     }
 
-    public AuthItClientHttpResponse<Void> deleteRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
+    /**
+     * Get a list of roles for this organization.
+     */
+    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> getOrganizationRoles(
+            String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(
+                                responseBody.string(), new TypeReference<List<OrganizationRoleRepresentation>>() {}),
+                        response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Create a new role for this organization.
+     */
+    public AuthItClientHttpResponse<Void> createOrganizationRole(String orgId) {
+        return createOrganizationRole(
+                orgId, OrganizationRoleRepresentation.builder().build());
+    }
+
+    /**
+     * Create a new role for this organization.
+     */
+    public AuthItClientHttpResponse<Void> createOrganizationRole(String orgId, OrganizationRoleRepresentation request) {
+        return createOrganizationRole(orgId, request, null);
+    }
+
+    /**
+     * Create a new role for this organization.
+     */
+    public AuthItClientHttpResponse<Void> createOrganizationRole(
+            String orgId, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -53,7 +117,7 @@ public class RawRolesClient {
         }
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
-                .method("PATCH", body)
+                .method("POST", body)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .addHeader("Content-Type", "application/json")
                 .build();
@@ -77,16 +141,22 @@ public class RawRolesClient {
         }
     }
 
-    public AuthItClientHttpResponse<OrganizationRoleRepresentation> getRole(String realm, String orgId, String name) {
-        return getRole(realm, orgId, name, null);
+    /**
+     * Get role for this organization by name.
+     */
+    public AuthItClientHttpResponse<OrganizationRoleRepresentation> getRole(String orgId, String name) {
+        return getRole(orgId, name, null);
     }
 
+    /**
+     * Get role for this organization by name.
+     */
     public AuthItClientHttpResponse<OrganizationRoleRepresentation> getRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
+            String orgId, String name, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -96,7 +166,6 @@ public class RawRolesClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -122,26 +191,30 @@ public class RawRolesClient {
         }
     }
 
-    public AuthItClientHttpResponse<Void> updateRole(String realm, String orgId, String name) {
-        return updateRole(
-                realm, orgId, name, OrganizationRoleRepresentation.builder().build());
+    /**
+     * Update role for this organization.
+     */
+    public AuthItClientHttpResponse<Void> updateRole(String orgId, String name) {
+        return updateRole(orgId, name, OrganizationRoleRepresentation.builder().build());
     }
 
+    /**
+     * Update role for this organization.
+     */
     public AuthItClientHttpResponse<Void> updateRole(
-            String realm, String orgId, String name, OrganizationRoleRepresentation request) {
-        return updateRole(realm, orgId, name, request, null);
+            String orgId, String name, OrganizationRoleRepresentation request) {
+        return updateRole(orgId, name, request, null);
     }
 
+    /**
+     * Update role for this organization.
+     */
     public AuthItClientHttpResponse<Void> updateRole(
-            String realm,
-            String orgId,
-            String name,
-            OrganizationRoleRepresentation request,
-            RequestOptions requestOptions) {
+            String orgId, String name, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -180,16 +253,21 @@ public class RawRolesClient {
         }
     }
 
-    public AuthItClientHttpResponse<Void> deleteRole(String realm, String orgId, String name) {
-        return deleteRole(realm, orgId, name, null);
+    /**
+     * Delete role for this organization
+     */
+    public AuthItClientHttpResponse<Void> deleteRole(String orgId, String name) {
+        return deleteRole(orgId, name, null);
     }
 
-    public AuthItClientHttpResponse<Void> deleteRole(
-            String realm, String orgId, String name, RequestOptions requestOptions) {
+    /**
+     * Delete role for this organization
+     */
+    public AuthItClientHttpResponse<Void> deleteRole(String orgId, String name, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("roles")
@@ -208,6 +286,253 @@ public class RawRolesClient {
             ResponseBody responseBody = response.body();
             if (response.isSuccessful()) {
                 return new AuthItClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public AuthItClientHttpResponse<List<UserRepresentation>> getUserOrganizationRoles(String orgId, String name) {
+        return getUserOrganizationRoles(orgId, name, null);
+    }
+
+    /**
+     * Get users with this organization role.
+     */
+    public AuthItClientHttpResponse<List<UserRepresentation>> getUserOrganizationRoles(
+            String orgId, String name, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(
+                                responseBody.string(), new TypeReference<List<UserRepresentation>>() {}),
+                        response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public AuthItClientHttpResponse<Void> hasOrganizationRole(String orgId, String name, String userId) {
+        return hasOrganizationRole(orgId, name, userId, null);
+    }
+
+    /**
+     * Check if a user has an organization role.
+     */
+    public AuthItClientHttpResponse<Void> hasOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public AuthItClientHttpResponse<Void> grantOrganizationRole(String orgId, String name, String userId) {
+        return grantOrganizationRole(orgId, name, userId, null);
+    }
+
+    /**
+     * Grant the specified user to the specified organization role.
+     */
+    public AuthItClientHttpResponse<Void> grantOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("PUT", RequestBody.create("", null))
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public AuthItClientHttpResponse<Void> revokeOrganizationRole(String orgId, String name, String userId) {
+        return revokeOrganizationRole(orgId, name, userId, null);
+    }
+
+    /**
+     * Revoke the specified organization role from the specified user.
+     */
+    public AuthItClientHttpResponse<Void> revokeOrganizationRole(
+            String orgId, String name, String userId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .addPathSegment(name)
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("DELETE", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(null, response);
+            }
+            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+            throw new AuthItApiException(
+                    "Error with status code " + response.code(),
+                    response.code(),
+                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                    response);
+        } catch (IOException e) {
+            throw new AuthItException("Network error executing HTTP request", e);
+        }
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRoles(
+            String userId, String orgId) {
+        return listOrganizationRoles(userId, orgId, null);
+    }
+
+    /**
+     * Get organization roles for the given user and organization.
+     */
+    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> listOrganizationRoles(
+            String userId, String orgId, RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("users")
+                .addPathSegment(userId)
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("roles")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json")
+                .build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        try (Response response = client.newCall(okhttpRequest).execute()) {
+            ResponseBody responseBody = response.body();
+            if (response.isSuccessful()) {
+                return new AuthItClientHttpResponse<>(
+                        ObjectMappers.JSON_MAPPER.readValue(
+                                responseBody.string(), new TypeReference<List<OrganizationRoleRepresentation>>() {}),
+                        response);
             }
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             throw new AuthItApiException(

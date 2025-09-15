@@ -28,16 +28,22 @@ public class RawDomainsClient {
         this.clientOptions = clientOptions;
     }
 
-    public AuthItClientHttpResponse<List<OrganizationDomainRepresentation>> getDomains(String realm, String orgId) {
-        return getDomains(realm, orgId, null);
+    /**
+     * Get details for all domains owned by an organization.
+     */
+    public AuthItClientHttpResponse<List<OrganizationDomainRepresentation>> getDomains(String orgId) {
+        return getDomains(orgId, null);
     }
 
+    /**
+     * Get details for all domains owned by an organization.
+     */
     public AuthItClientHttpResponse<List<OrganizationDomainRepresentation>> getDomains(
-            String realm, String orgId, RequestOptions requestOptions) {
+            String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("domains")
@@ -46,7 +52,6 @@ public class RawDomainsClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -72,17 +77,22 @@ public class RawDomainsClient {
         }
     }
 
-    public AuthItClientHttpResponse<OrganizationDomainRepresentation> getDomain(
-            String realm, String orgId, String domainName) {
-        return getDomain(realm, orgId, domainName, null);
+    /**
+     * Get details for a domain owned by an organization.
+     */
+    public AuthItClientHttpResponse<OrganizationDomainRepresentation> getDomain(String orgId, String domainName) {
+        return getDomain(orgId, domainName, null);
     }
 
+    /**
+     * Get details for a domain owned by an organization.
+     */
     public AuthItClientHttpResponse<OrganizationDomainRepresentation> getDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
+            String orgId, String domainName, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("domains")
@@ -92,7 +102,6 @@ public class RawDomainsClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -119,21 +128,20 @@ public class RawDomainsClient {
     }
 
     /**
-     * Initiate a verification check for the domain name owned by this organization
+     * Initiate a verification check for the domain name owned by this organization.
      */
-    public AuthItClientHttpResponse<Void> verifyDomain(String realm, String orgId, String domainName) {
-        return verifyDomain(realm, orgId, domainName, null);
+    public AuthItClientHttpResponse<Void> verifyDomain(String orgId, String domainName) {
+        return verifyDomain(orgId, domainName, null);
     }
 
     /**
-     * Initiate a verification check for the domain name owned by this organization
+     * Initiate a verification check for the domain name owned by this organization.
      */
-    public AuthItClientHttpResponse<Void> verifyDomain(
-            String realm, String orgId, String domainName, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> verifyDomain(String orgId, String domainName, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("domains")
@@ -143,98 +151,6 @@ public class RawDomainsClient {
         Request okhttpRequest = new Request.Builder()
                 .url(httpUrl)
                 .method("POST", RequestBody.create("", null))
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public AuthItClientHttpResponse<Void> addMember(String realm, String orgId, String userId) {
-        return addMember(realm, orgId, userId, null);
-    }
-
-    /**
-     * Add the specified user to the specified organization as a member
-     */
-    public AuthItClientHttpResponse<Void> addMember(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("members")
-                .addPathSegment(userId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("PUT", RequestBody.create("", null))
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public AuthItClientHttpResponse<Void> removeMember(String realm, String orgId, String userId) {
-        return removeMember(realm, orgId, userId, null);
-    }
-
-    /**
-     * Remove the specified user from the specified organization as a member
-     */
-    public AuthItClientHttpResponse<Void> removeMember(
-            String realm, String orgId, String userId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("members")
-                .addPathSegment(userId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("DELETE", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
                 .build();
         OkHttpClient client = clientOptions.httpClient();

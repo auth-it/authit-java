@@ -16,14 +16,10 @@ import it.auth.api.core.RequestOptions;
 import it.auth.api.types.CreatePortalLinkRequest;
 import it.auth.api.types.GetOrganizationsCountRequest;
 import it.auth.api.types.GetOrganizationsRequest;
-import it.auth.api.types.InvitationRepresentation;
-import it.auth.api.types.MyOrganizationRepresentation;
 import it.auth.api.types.OrganizationRepresentation;
-import it.auth.api.types.OrganizationRoleRepresentation;
 import it.auth.api.types.PortalLinkRepresentation;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
@@ -43,27 +39,27 @@ public class RawOrganizationsClient {
     /**
      * Get a paginated list of organizations using optional search query parameters.
      */
-    public AuthItClientHttpResponse<List<OrganizationRepresentation>> getOrganizations(String realm) {
-        return getOrganizations(realm, GetOrganizationsRequest.builder().build());
+    public AuthItClientHttpResponse<List<OrganizationRepresentation>> getOrganizations() {
+        return getOrganizations(GetOrganizationsRequest.builder().build());
     }
 
     /**
      * Get a paginated list of organizations using optional search query parameters.
      */
     public AuthItClientHttpResponse<List<OrganizationRepresentation>> getOrganizations(
-            String realm, GetOrganizationsRequest request) {
-        return getOrganizations(realm, request, null);
+            GetOrganizationsRequest request) {
+        return getOrganizations(request, null);
     }
 
     /**
      * Get a paginated list of organizations using optional search query parameters.
      */
     public AuthItClientHttpResponse<List<OrganizationRepresentation>> getOrganizations(
-            String realm, GetOrganizationsRequest request, RequestOptions requestOptions) {
+            GetOrganizationsRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs");
         if (request.getSearch().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -71,11 +67,10 @@ public class RawOrganizationsClient {
         }
         if (request.getFirst().isPresent()) {
             QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get().toString(), false);
+                    httpUrl, "first", request.getFirst().get(), false);
         }
         if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "max", request.getMax().get().toString(), false);
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
         }
         if (request.getQ().isPresent()) {
             QueryStringMapper.addQueryParameter(httpUrl, "q", request.getQ().get(), false);
@@ -84,7 +79,6 @@ public class RawOrganizationsClient {
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -113,26 +107,26 @@ public class RawOrganizationsClient {
     /**
      * Create a new organization from a representation. Must include name.
      */
-    public AuthItClientHttpResponse<Void> createOrganization(String realm) {
-        return createOrganization(realm, OrganizationRepresentation.builder().build());
+    public AuthItClientHttpResponse<Void> createOrganization() {
+        return createOrganization(OrganizationRepresentation.builder().build());
     }
 
     /**
      * Create a new organization from a representation. Must include name.
      */
-    public AuthItClientHttpResponse<Void> createOrganization(String realm, OrganizationRepresentation request) {
-        return createOrganization(realm, request, null);
+    public AuthItClientHttpResponse<Void> createOrganization(OrganizationRepresentation request) {
+        return createOrganization(request, null);
     }
 
     /**
      * Create a new organization from a representation. Must include name.
      */
     public AuthItClientHttpResponse<Void> createOrganization(
-            String realm, OrganizationRepresentation request, RequestOptions requestOptions) {
+            OrganizationRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .build();
         RequestBody body;
@@ -171,27 +165,26 @@ public class RawOrganizationsClient {
     /**
      * Get a count of organizations using an optional search query.
      */
-    public AuthItClientHttpResponse<Integer> getOrganizationsCount(String realm) {
-        return getOrganizationsCount(
-                realm, GetOrganizationsCountRequest.builder().build());
+    public AuthItClientHttpResponse<Integer> getOrganizationsCount() {
+        return getOrganizationsCount(GetOrganizationsCountRequest.builder().build());
     }
 
     /**
      * Get a count of organizations using an optional search query.
      */
-    public AuthItClientHttpResponse<Integer> getOrganizationsCount(String realm, GetOrganizationsCountRequest request) {
-        return getOrganizationsCount(realm, request, null);
+    public AuthItClientHttpResponse<Integer> getOrganizationsCount(GetOrganizationsCountRequest request) {
+        return getOrganizationsCount(request, null);
     }
 
     /**
      * Get a count of organizations using an optional search query.
      */
     public AuthItClientHttpResponse<Integer> getOrganizationsCount(
-            String realm, GetOrganizationsCountRequest request, RequestOptions requestOptions) {
+            GetOrganizationsCountRequest request, RequestOptions requestOptions) {
         HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs/count");
         if (request.getSearch().isPresent()) {
             QueryStringMapper.addQueryParameter(
@@ -204,7 +197,6 @@ public class RawOrganizationsClient {
                 .url(httpUrl.build())
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json");
         Request okhttpRequest = _requestBuilder.build();
         OkHttpClient client = clientOptions.httpClient();
@@ -228,199 +220,16 @@ public class RawOrganizationsClient {
         }
     }
 
-    /**
-     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
-     */
-    public AuthItClientHttpResponse<Map<String, MyOrganizationRepresentation>> getMe(String realm) {
-        return getMe(realm, null);
+    public AuthItClientHttpResponse<OrganizationRepresentation> getOrganization(String orgId) {
+        return getOrganization(orgId, null);
     }
 
-    /**
-     * Get a list of all organizations that the user is a member and their roles in those organizations. Similar idea to /userinfo in OIDC.
-     */
-    public AuthItClientHttpResponse<Map<String, MyOrganizationRepresentation>> getMe(
-            String realm, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<OrganizationRepresentation> getOrganization(
+            String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs/me")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(
-                                responseBody.string(),
-                                new TypeReference<Map<String, MyOrganizationRepresentation>>() {}),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Get a list of all invitations for the user.
-     */
-    public AuthItClientHttpResponse<InvitationRepresentation> invitations(String realm) {
-        return invitations(realm, null);
-    }
-
-    /**
-     * Get a list of all invitations for the user.
-     */
-    public AuthItClientHttpResponse<InvitationRepresentation> invitations(String realm, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs/me/invitations")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), InvitationRepresentation.class),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Accept invitation for authenticated user.
-     */
-    public AuthItClientHttpResponse<Void> acceptInvitation(String realm, String invitationId) {
-        return acceptInvitation(realm, invitationId, null);
-    }
-
-    /**
-     * Accept invitation for authenticated user.
-     */
-    public AuthItClientHttpResponse<Void> acceptInvitation(
-            String realm, String invitationId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs/me/invitations")
-                .addPathSegment(invitationId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("POST", RequestBody.create("", null))
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    /**
-     * Reject invitation for authenticated user.
-     */
-    public AuthItClientHttpResponse<Void> rejectInvitation(String realm, String invitationId) {
-        return rejectInvitation(realm, invitationId, null);
-    }
-
-    /**
-     * Reject invitation for authenticated user.
-     */
-    public AuthItClientHttpResponse<Void> rejectInvitation(
-            String realm, String invitationId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs/me/invitations")
-                .addPathSegment(invitationId)
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("DELETE", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<OrganizationRepresentation> getOrganizationById(String realm, String orgId) {
-        return getOrganizationById(realm, orgId, null);
-    }
-
-    public AuthItClientHttpResponse<OrganizationRepresentation> getOrganizationById(
-            String realm, String orgId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .build();
@@ -428,7 +237,6 @@ public class RawOrganizationsClient {
                 .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
                 .build();
         OkHttpClient client = clientOptions.httpClient();
@@ -453,22 +261,20 @@ public class RawOrganizationsClient {
         }
     }
 
-    public AuthItClientHttpResponse<Void> updateOrganization(String realm, String orgId) {
-        return updateOrganization(
-                realm, orgId, OrganizationRepresentation.builder().build());
+    public AuthItClientHttpResponse<Void> updateOrganization(String orgId) {
+        return updateOrganization(orgId, OrganizationRepresentation.builder().build());
+    }
+
+    public AuthItClientHttpResponse<Void> updateOrganization(String orgId, OrganizationRepresentation request) {
+        return updateOrganization(orgId, request, null);
     }
 
     public AuthItClientHttpResponse<Void> updateOrganization(
-            String realm, String orgId, OrganizationRepresentation request) {
-        return updateOrganization(realm, orgId, request, null);
-    }
-
-    public AuthItClientHttpResponse<Void> updateOrganization(
-            String realm, String orgId, OrganizationRepresentation request, RequestOptions requestOptions) {
+            String orgId, OrganizationRepresentation request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .build();
@@ -505,16 +311,15 @@ public class RawOrganizationsClient {
         }
     }
 
-    public AuthItClientHttpResponse<Void> deleteOrganization(String realm, String orgId) {
-        return deleteOrganization(realm, orgId, null);
+    public AuthItClientHttpResponse<Void> deleteOrganization(String orgId) {
+        return deleteOrganization(orgId, null);
     }
 
-    public AuthItClientHttpResponse<Void> deleteOrganization(
-            String realm, String orgId, RequestOptions requestOptions) {
+    public AuthItClientHttpResponse<Void> deleteOrganization(String orgId, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .build();
@@ -546,27 +351,27 @@ public class RawOrganizationsClient {
     /**
      * Create a link for this organizations admin portal. This link encodes an action token on behalf of the organization's default admin user, or the user that is optionally specified in this request. The user specified must be a member of this organization, and have full organization admin roles.
      */
-    public AuthItClientHttpResponse<PortalLinkRepresentation> createPortalLink(String realm, String orgId) {
-        return createPortalLink(realm, orgId, CreatePortalLinkRequest.builder().build());
+    public AuthItClientHttpResponse<PortalLinkRepresentation> createPortalLink(String orgId) {
+        return createPortalLink(orgId, CreatePortalLinkRequest.builder().build());
     }
 
     /**
      * Create a link for this organizations admin portal. This link encodes an action token on behalf of the organization's default admin user, or the user that is optionally specified in this request. The user specified must be a member of this organization, and have full organization admin roles.
      */
     public AuthItClientHttpResponse<PortalLinkRepresentation> createPortalLink(
-            String realm, String orgId, CreatePortalLinkRequest request) {
-        return createPortalLink(realm, orgId, request, null);
+            String orgId, CreatePortalLinkRequest request) {
+        return createPortalLink(orgId, request, null);
     }
 
     /**
      * Create a link for this organizations admin portal. This link encodes an action token on behalf of the organization's default admin user, or the user that is optionally specified in this request. The user specified must be a member of this organization, and have full organization admin roles.
      */
     public AuthItClientHttpResponse<PortalLinkRepresentation> createPortalLink(
-            String realm, String orgId, CreatePortalLinkRequest request, RequestOptions requestOptions) {
+            String orgId, CreatePortalLinkRequest request, RequestOptions requestOptions) {
         HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
-                .addPathSegment(realm)
+                .addPathSegment(clientOptions.realm())
                 .addPathSegments("orgs")
                 .addPathSegment(orgId)
                 .addPathSegments("portal-link")
@@ -596,152 +401,6 @@ public class RawOrganizationsClient {
                 return new AuthItClientHttpResponse<>(
                         ObjectMappers.JSON_MAPPER.readValue(responseBody.string(), PortalLinkRepresentation.class),
                         response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> getOrganizationRoles(
-            String realm, String orgId) {
-        return getOrganizationRoles(realm, orgId, null);
-    }
-
-    public AuthItClientHttpResponse<List<OrganizationRoleRepresentation>> getOrganizationRoles(
-            String realm, String orgId, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .build();
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("GET", null)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Accept", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(
-                        ObjectMappers.JSON_MAPPER.readValue(
-                                responseBody.string(), new TypeReference<List<OrganizationRoleRepresentation>>() {}),
-                        response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<Void> createOrganizationRole(String realm, String orgId) {
-        return createOrganizationRole(
-                realm, orgId, OrganizationRoleRepresentation.builder().build());
-    }
-
-    public AuthItClientHttpResponse<Void> createOrganizationRole(
-            String realm, String orgId, OrganizationRoleRepresentation request) {
-        return createOrganizationRole(realm, orgId, request, null);
-    }
-
-    public AuthItClientHttpResponse<Void> createOrganizationRole(
-            String realm, String orgId, OrganizationRoleRepresentation request, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .build();
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new AuthItException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("POST", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
-            }
-            String responseBodyString = responseBody != null ? responseBody.string() : "{}";
-            throw new AuthItApiException(
-                    "Error with status code " + response.code(),
-                    response.code(),
-                    ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
-                    response);
-        } catch (IOException e) {
-            throw new AuthItException("Network error executing HTTP request", e);
-        }
-    }
-
-    public AuthItClientHttpResponse<Void> createOrganizationRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request) {
-        return createOrganizationRoles(realm, orgId, request, null);
-    }
-
-    public AuthItClientHttpResponse<Void> createOrganizationRoles(
-            String realm, String orgId, List<OrganizationRoleRepresentation> request, RequestOptions requestOptions) {
-        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
-                .newBuilder()
-                .addPathSegments("realms")
-                .addPathSegment(realm)
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("roles")
-                .build();
-        RequestBody body;
-        try {
-            body = RequestBody.create(
-                    ObjectMappers.JSON_MAPPER.writeValueAsBytes(request), MediaTypes.APPLICATION_JSON);
-        } catch (JsonProcessingException e) {
-            throw new AuthItException("Failed to serialize request", e);
-        }
-        Request okhttpRequest = new Request.Builder()
-                .url(httpUrl)
-                .method("PUT", body)
-                .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Content-Type", "application/json")
-                .build();
-        OkHttpClient client = clientOptions.httpClient();
-        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
-            client = clientOptions.httpClientWithTimeout(requestOptions);
-        }
-        try (Response response = client.newCall(okhttpRequest).execute()) {
-            ResponseBody responseBody = response.body();
-            if (response.isSuccessful()) {
-                return new AuthItClientHttpResponse<>(null, response);
             }
             String responseBodyString = responseBody != null ? responseBody.string() : "{}";
             throw new AuthItApiException(

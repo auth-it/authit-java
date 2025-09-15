@@ -27,40 +27,40 @@ public class AsyncSessionsClient {
     }
 
     /**
-     * Remove all user sessions for this realm. Any client that has an admin url will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
+     * Remove all user sessions for this realm. Any client that has an admin URL will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
      */
-    public CompletableFuture<GlobalRequestResult> removeAllSessions(String realm) {
-        return this.rawClient.removeAllSessions(realm).thenApply(response -> response.body());
+    public CompletableFuture<GlobalRequestResult> removeAllSessions() {
+        return this.rawClient.removeAllSessions().thenApply(response -> response.body());
     }
 
     /**
-     * Remove all user sessions for this realm. Any client that has an admin url will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
+     * Remove all user sessions for this realm. Any client that has an admin URL will also be told to invalidate any sessions they have. For large numbers of sessions, this can take a long period to execute.
      */
-    public CompletableFuture<GlobalRequestResult> removeAllSessions(String realm, RequestOptions requestOptions) {
-        return this.rawClient.removeAllSessions(realm, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<GlobalRequestResult> removeAllSessions(RequestOptions requestOptions) {
+        return this.rawClient.removeAllSessions(requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
-    public CompletableFuture<Void> removeUserSession(String realm, String session) {
-        return this.rawClient.removeUserSession(realm, session).thenApply(response -> response.body());
+    public CompletableFuture<Void> removeUserSession(String session) {
+        return this.rawClient.removeUserSession(session).thenApply(response -> response.body());
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
-    public CompletableFuture<Void> removeUserSession(String realm, String session, RemoveUserSessionRequest request) {
-        return this.rawClient.removeUserSession(realm, session, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> removeUserSession(String session, RemoveUserSessionRequest request) {
+        return this.rawClient.removeUserSession(session, request).thenApply(response -> response.body());
     }
 
     /**
-     * Remove a specific user session. Any client that has an admin url will also be told to invalidate this particular session.
+     * Remove a specific user session. Any client that has an admin URL will also be told to invalidate this particular session.
      */
     public CompletableFuture<Void> removeUserSession(
-            String realm, String session, RemoveUserSessionRequest request, RequestOptions requestOptions) {
+            String session, RemoveUserSessionRequest request, RequestOptions requestOptions) {
         return this.rawClient
-                .removeUserSession(realm, session, request, requestOptions)
+                .removeUserSession(session, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 }

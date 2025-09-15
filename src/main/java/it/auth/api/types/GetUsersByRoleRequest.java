@@ -114,6 +114,9 @@ public final class GetUsersByRoleRequest {
             return this;
         }
 
+        /**
+         * <p>Boolean which defines whether brief representations are returned (default: false)</p>
+         */
         @JsonSetter(value = "briefRepresentation", nulls = Nulls.SKIP)
         public Builder briefRepresentation(Optional<Boolean> briefRepresentation) {
             this.briefRepresentation = briefRepresentation;
@@ -125,6 +128,9 @@ public final class GetUsersByRoleRequest {
             return this;
         }
 
+        /**
+         * <p>first result to return. Ignored if negative or {@code null}.</p>
+         */
         @JsonSetter(value = "first", nulls = Nulls.SKIP)
         public Builder first(Optional<Integer> first) {
             this.first = first;
@@ -136,6 +142,9 @@ public final class GetUsersByRoleRequest {
             return this;
         }
 
+        /**
+         * <p>maximum number of results to return. Ignored if negative or {@code null}.</p>
+         */
         @JsonSetter(value = "max", nulls = Nulls.SKIP)
         public Builder max(Optional<Integer> max) {
             this.max = max;

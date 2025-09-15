@@ -21,26 +21,30 @@ public final class ClientOptions {
 
     private final int timeout;
 
+    private String realm;
+
     private ClientOptions(
             Environment environment,
             Map<String, String> headers,
             Map<String, Supplier<String>> headerSuppliers,
             OkHttpClient httpClient,
-            int timeout) {
+            int timeout,
+            String realm) {
         this.environment = environment;
         this.headers = new HashMap<>();
         this.headers.putAll(headers);
         this.headers.putAll(new HashMap<String, String>() {
             {
-                put("User-Agent", "it.auth:authit-java/0.0.14");
+                put("User-Agent", "it.auth:authit-java/0.0.11");
                 put("X-Fern-Language", "JAVA");
                 put("X-Fern-SDK-Name", "com.phasetwo.fern:api-sdk");
-                put("X-Fern-SDK-Version", "0.0.14");
+                put("X-Fern-SDK-Version", "0.0.11");
             }
         });
         this.headerSuppliers = headerSuppliers;
         this.httpClient = httpClient;
         this.timeout = timeout;
+        this.realm = realm;
     }
 
     public Environment environment() {
@@ -82,11 +86,15 @@ public final class ClientOptions {
                 .build();
     }
 
+    public String realm() {
+        return this.realm;
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
-    public static final class Builder {
+    public static class Builder {
         private Environment environment;
 
         private final Map<String, String> headers = new HashMap<>();
@@ -98,6 +106,8 @@ public final class ClientOptions {
         private Optional<Integer> timeout = Optional.empty();
 
         private OkHttpClient httpClient = null;
+
+        private String realm;
 
         public Builder environment(Environment environment) {
             this.environment = environment;
@@ -143,6 +153,11 @@ public final class ClientOptions {
             return this;
         }
 
+        public Builder realm(String realm) {
+            this.realm = realm;
+            return this;
+        }
+
         public ClientOptions build() {
             OkHttpClient.Builder httpClientBuilder =
                     this.httpClient != null ? this.httpClient.newBuilder() : new OkHttpClient.Builder();
@@ -165,7 +180,19 @@ public final class ClientOptions {
             this.httpClient = httpClientBuilder.build();
             this.timeout = Optional.of(httpClient.callTimeoutMillis() / 1000);
 
-            return new ClientOptions(environment, headers, headerSuppliers, httpClient, this.timeout.get());
+            return new ClientOptions(environment, headers, headerSuppliers, httpClient, this.timeout.get(), this.realm);
+        }
+
+        /**
+         * Create a new Builder initialized with values from an existing ClientOptions
+         */
+        public static Builder from(ClientOptions clientOptions) {
+            Builder builder = new Builder();
+            builder.environment = clientOptions.environment();
+            builder.timeout = Optional.of(clientOptions.timeout(null));
+            builder.httpClient = clientOptions.httpClient();
+            builder.realm = clientOptions.realm();
+            return builder;
         }
     }
 }

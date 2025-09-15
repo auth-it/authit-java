@@ -27,42 +27,42 @@ public class AttackDetectionClient {
     /**
      * Clear user login failures for all users. This can release temporarily disabled users.
      */
-    public void clearAllLoginFailures(String realm) {
-        this.rawClient.clearAllLoginFailures(realm).body();
+    public void clearAllLoginFailures() {
+        this.rawClient.clearAllLoginFailures().body();
     }
 
     /**
      * Clear user login failures for all users. This can release temporarily disabled users.
      */
-    public void clearAllLoginFailures(String realm, RequestOptions requestOptions) {
-        this.rawClient.clearAllLoginFailures(realm, requestOptions).body();
+    public void clearAllLoginFailures(RequestOptions requestOptions) {
+        this.rawClient.clearAllLoginFailures(requestOptions).body();
     }
 
     /**
-     * Get lockout status of a user in brute force detection
+     * Get lockout status of a user in brute force detection.
      */
-    public Map<String, Object> userLockoutStatus(String realm, String userId) {
-        return this.rawClient.userLockoutStatus(realm, userId).body();
+    public Map<String, Object> userLockoutStatus(String userId) {
+        return this.rawClient.userLockoutStatus(userId).body();
     }
 
     /**
-     * Get lockout status of a user in brute force detection
+     * Get lockout status of a user in brute force detection.
      */
-    public Map<String, Object> userLockoutStatus(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.userLockoutStatus(realm, userId, requestOptions).body();
-    }
-
-    /**
-     * Clear any user login failures for the user. This can release a temporarily disabled user.
-     */
-    public void clearUserLoginFailures(String realm, String userId) {
-        this.rawClient.clearUserLoginFailures(realm, userId).body();
+    public Map<String, Object> userLockoutStatus(String userId, RequestOptions requestOptions) {
+        return this.rawClient.userLockoutStatus(userId, requestOptions).body();
     }
 
     /**
      * Clear any user login failures for the user. This can release a temporarily disabled user.
      */
-    public void clearUserLoginFailures(String realm, String userId, RequestOptions requestOptions) {
-        this.rawClient.clearUserLoginFailures(realm, userId, requestOptions).body();
+    public void clearUserLoginFailures(String userId) {
+        this.rawClient.clearUserLoginFailures(userId).body();
+    }
+
+    /**
+     * Clear any user login failures for the user. This can release a temporarily disabled user.
+     */
+    public void clearUserLoginFailures(String userId, RequestOptions requestOptions) {
+        this.rawClient.clearUserLoginFailures(userId, requestOptions).body();
     }
 }

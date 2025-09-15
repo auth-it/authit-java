@@ -28,45 +28,42 @@ public class AsyncAttackDetectionClient {
     /**
      * Clear user login failures for all users. This can release temporarily disabled users.
      */
-    public CompletableFuture<Void> clearAllLoginFailures(String realm) {
-        return this.rawClient.clearAllLoginFailures(realm).thenApply(response -> response.body());
+    public CompletableFuture<Void> clearAllLoginFailures() {
+        return this.rawClient.clearAllLoginFailures().thenApply(response -> response.body());
     }
 
     /**
      * Clear user login failures for all users. This can release temporarily disabled users.
      */
-    public CompletableFuture<Void> clearAllLoginFailures(String realm, RequestOptions requestOptions) {
-        return this.rawClient.clearAllLoginFailures(realm, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Void> clearAllLoginFailures(RequestOptions requestOptions) {
+        return this.rawClient.clearAllLoginFailures(requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Get lockout status of a user in brute force detection
+     * Get lockout status of a user in brute force detection.
      */
-    public CompletableFuture<Map<String, Object>> userLockoutStatus(String realm, String userId) {
-        return this.rawClient.userLockoutStatus(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Map<String, Object>> userLockoutStatus(String userId) {
+        return this.rawClient.userLockoutStatus(userId).thenApply(response -> response.body());
     }
 
     /**
-     * Get lockout status of a user in brute force detection
+     * Get lockout status of a user in brute force detection.
      */
-    public CompletableFuture<Map<String, Object>> userLockoutStatus(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.userLockoutStatus(realm, userId, requestOptions).thenApply(response -> response.body());
-    }
-
-    /**
-     * Clear any user login failures for the user. This can release a temporarily disabled user.
-     */
-    public CompletableFuture<Void> clearUserLoginFailures(String realm, String userId) {
-        return this.rawClient.clearUserLoginFailures(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<Map<String, Object>> userLockoutStatus(String userId, RequestOptions requestOptions) {
+        return this.rawClient.userLockoutStatus(userId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Clear any user login failures for the user. This can release a temporarily disabled user.
      */
-    public CompletableFuture<Void> clearUserLoginFailures(String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient
-                .clearUserLoginFailures(realm, userId, requestOptions)
-                .thenApply(response -> response.body());
+    public CompletableFuture<Void> clearUserLoginFailures(String userId) {
+        return this.rawClient.clearUserLoginFailures(userId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Clear any user login failures for the user. This can release a temporarily disabled user.
+     */
+    public CompletableFuture<Void> clearUserLoginFailures(String userId, RequestOptions requestOptions) {
+        return this.rawClient.clearUserLoginFailures(userId, requestOptions).thenApply(response -> response.body());
     }
 }

@@ -196,6 +196,9 @@ public final class CountUsersRequest {
             return this;
         }
 
+        /**
+         * <p>email filter</p>
+         */
         @JsonSetter(value = "email", nulls = Nulls.SKIP)
         public Builder email(Optional<String> email) {
             this.email = email;
@@ -218,6 +221,9 @@ public final class CountUsersRequest {
             return this;
         }
 
+        /**
+         * <p>Boolean representing if user is enabled or not</p>
+         */
         @JsonSetter(value = "enabled", nulls = Nulls.SKIP)
         public Builder enabled(Optional<Boolean> enabled) {
             this.enabled = enabled;
@@ -229,6 +235,9 @@ public final class CountUsersRequest {
             return this;
         }
 
+        /**
+         * <p>first name filter</p>
+         */
         @JsonSetter(value = "firstName", nulls = Nulls.SKIP)
         public Builder firstName(Optional<String> firstName) {
             this.firstName = firstName;
@@ -240,6 +249,9 @@ public final class CountUsersRequest {
             return this;
         }
 
+        /**
+         * <p>last name filter</p>
+         */
         @JsonSetter(value = "lastName", nulls = Nulls.SKIP)
         public Builder lastName(Optional<String> lastName) {
             this.lastName = lastName;
@@ -262,6 +274,9 @@ public final class CountUsersRequest {
             return this;
         }
 
+        /**
+         * <p>arbitrary search string for all the fields below. Default search behavior is prefix-based (e.g., foo or foo*). Use <em>foo</em> for infix search and &quot;foo&quot; for exact search.</p>
+         */
         @JsonSetter(value = "search", nulls = Nulls.SKIP)
         public Builder search(Optional<String> search) {
             this.search = search;
@@ -273,6 +288,9 @@ public final class CountUsersRequest {
             return this;
         }
 
+        /**
+         * <p>username filter</p>
+         */
         @JsonSetter(value = "username", nulls = Nulls.SKIP)
         public Builder username(Optional<String> username) {
             this.username = username;

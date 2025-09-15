@@ -29,64 +29,60 @@ public class AsyncMappingsClient {
     /**
      * Get roles that have been mapped to this user.
      */
-    public CompletableFuture<List<RoleRepresentation>> getRoleMappings(String realm, String userId) {
-        return this.rawClient.getRoleMappings(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<List<RoleRepresentation>> getRoleMappings(String userId) {
+        return this.rawClient.getRoleMappings(userId).thenApply(response -> response.body());
     }
 
     /**
      * Get roles that have been mapped to this user.
      */
-    public CompletableFuture<List<RoleRepresentation>> getRoleMappings(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.getRoleMappings(realm, userId, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<List<RoleRepresentation>> getRoleMappings(String userId, RequestOptions requestOptions) {
+        return this.rawClient.getRoleMappings(userId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Add roles to this user.
      */
-    public CompletableFuture<Void> addRoleMappings(String realm, String userId, List<RoleRepresentation> request) {
-        return this.rawClient.addRoleMappings(realm, userId, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> addRoleMappings(String userId, List<RoleRepresentation> request) {
+        return this.rawClient.addRoleMappings(userId, request).thenApply(response -> response.body());
     }
 
     /**
      * Add roles to this user.
      */
     public CompletableFuture<Void> addRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
-        return this.rawClient
-                .addRoleMappings(realm, userId, request, requestOptions)
-                .thenApply(response -> response.body());
+            String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
+        return this.rawClient.addRoleMappings(userId, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
      * Delete roles for this user.
      */
-    public CompletableFuture<Void> deleteRoleMappings(String realm, String userId, List<RoleRepresentation> request) {
-        return this.rawClient.deleteRoleMappings(realm, userId, request).thenApply(response -> response.body());
+    public CompletableFuture<Void> deleteRoleMappings(String userId, List<RoleRepresentation> request) {
+        return this.rawClient.deleteRoleMappings(userId, request).thenApply(response -> response.body());
     }
 
     /**
      * Delete roles for this user.
      */
     public CompletableFuture<Void> deleteRoleMappings(
-            String realm, String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
+            String userId, List<RoleRepresentation> request, RequestOptions requestOptions) {
         return this.rawClient
-                .deleteRoleMappings(realm, userId, request, requestOptions)
+                .deleteRoleMappings(userId, request, requestOptions)
                 .thenApply(response -> response.body());
     }
 
     /**
      * Get roles that can be mapped to this user.
      */
-    public CompletableFuture<List<RoleRepresentation>> getAvailableRoles(String realm, String userId) {
-        return this.rawClient.getAvailableRoles(realm, userId).thenApply(response -> response.body());
+    public CompletableFuture<List<RoleRepresentation>> getAvailableRoles(String userId) {
+        return this.rawClient.getAvailableRoles(userId).thenApply(response -> response.body());
     }
 
     /**
      * Get roles that can be mapped to this user.
      */
-    public CompletableFuture<List<RoleRepresentation>> getAvailableRoles(
-            String realm, String userId, RequestOptions requestOptions) {
-        return this.rawClient.getAvailableRoles(realm, userId, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<List<RoleRepresentation>> getAvailableRoles(String userId, RequestOptions requestOptions) {
+        return this.rawClient.getAvailableRoles(userId, requestOptions).thenApply(response -> response.body());
     }
 }

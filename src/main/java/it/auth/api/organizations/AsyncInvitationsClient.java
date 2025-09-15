@@ -31,97 +31,134 @@ public class AsyncInvitationsClient {
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
-    public CompletableFuture<List<InvitationRepresentation>> getInvitations(String realm, String orgId) {
-        return this.rawClient.getInvitations(realm, orgId).thenApply(response -> response.body());
+    public CompletableFuture<List<InvitationRepresentation>> getInvitations(String orgId) {
+        return this.rawClient.getInvitations(orgId).thenApply(response -> response.body());
     }
 
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
     public CompletableFuture<List<InvitationRepresentation>> getInvitations(
-            String realm, String orgId, InvitationsGetInvitationsRequest request) {
-        return this.rawClient.getInvitations(realm, orgId, request).thenApply(response -> response.body());
+            String orgId, InvitationsGetInvitationsRequest request) {
+        return this.rawClient.getInvitations(orgId, request).thenApply(response -> response.body());
     }
 
     /**
      * Get a paginated list of invitations to an organization, using an optional search query for email address.
      */
     public CompletableFuture<List<InvitationRepresentation>> getInvitations(
-            String realm, String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
-        return this.rawClient
-                .getInvitations(realm, orgId, request, requestOptions)
-                .thenApply(response -> response.body());
+            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getInvitations(orgId, request, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> invite(String realm, String orgId) {
-        return this.rawClient.invite(realm, orgId).thenApply(response -> response.body());
+    /**
+     * Accept invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<Void> acceptInvitation(String invitationId) {
+        return this.rawClient.acceptInvitation(invitationId).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> invite(String realm, String orgId, InvitationRequestRepresentation request) {
-        return this.rawClient.invite(realm, orgId, request).thenApply(response -> response.body());
+    /**
+     * Accept invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<Void> acceptInvitation(String invitationId, RequestOptions requestOptions) {
+        return this.rawClient.acceptInvitation(invitationId, requestOptions).thenApply(response -> response.body());
     }
 
+    /**
+     * Reject invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<Void> rejectInvitation(String invitationId) {
+        return this.rawClient.rejectInvitation(invitationId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Reject invitation for the authenticated user. The token provided must be for the authenticated user rather than an administrator or service account.
+     */
+    public CompletableFuture<Void> rejectInvitation(String invitationId, RequestOptions requestOptions) {
+        return this.rawClient.rejectInvitation(invitationId, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Create an invitation to an organization.
+     */
+    public CompletableFuture<Void> invite(String orgId) {
+        return this.rawClient.invite(orgId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Create an invitation to an organization.
+     */
+    public CompletableFuture<Void> invite(String orgId, InvitationRequestRepresentation request) {
+        return this.rawClient.invite(orgId, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Create an invitation to an organization.
+     */
     public CompletableFuture<Void> invite(
-            String realm, String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
-        return this.rawClient.invite(realm, orgId, request, requestOptions).thenApply(response -> response.body());
+            String orgId, InvitationRequestRepresentation request, RequestOptions requestOptions) {
+        return this.rawClient.invite(orgId, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Get a count of invitations to an organization
+     * Get a count of invitations to an organization.
      */
-    public CompletableFuture<Integer> getInvitationsCount(String realm, String orgId) {
-        return this.rawClient.getInvitationsCount(realm, orgId).thenApply(response -> response.body());
+    public CompletableFuture<Integer> getInvitationsCount(String orgId) {
+        return this.rawClient.getInvitationsCount(orgId).thenApply(response -> response.body());
     }
 
     /**
-     * Get a count of invitations to an organization
+     * Get a count of invitations to an organization.
      */
-    public CompletableFuture<Integer> getInvitationsCount(String realm, String orgId, RequestOptions requestOptions) {
-        return this.rawClient.getInvitationsCount(realm, orgId, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<Integer> getInvitationsCount(String orgId, RequestOptions requestOptions) {
+        return this.rawClient.getInvitationsCount(orgId, requestOptions).thenApply(response -> response.body());
     }
 
     /**
-     * Get an invitation to an organization by its uuid.
+     * Get an invitation to an organization.
      */
-    public CompletableFuture<InvitationRepresentation> getInvitation(String realm, String orgId, String invitationId) {
-        return this.rawClient.getInvitation(realm, orgId, invitationId).thenApply(response -> response.body());
+    public CompletableFuture<InvitationRepresentation> getInvitation(String orgId, String invitationId) {
+        return this.rawClient.getInvitation(orgId, invitationId).thenApply(response -> response.body());
     }
 
     /**
-     * Get an invitation to an organization by its uuid.
+     * Get an invitation to an organization.
      */
     public CompletableFuture<InvitationRepresentation> getInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
-        return this.rawClient
-                .getInvitation(realm, orgId, invitationId, requestOptions)
-                .thenApply(response -> response.body());
+            String orgId, String invitationId, RequestOptions requestOptions) {
+        return this.rawClient.getInvitation(orgId, invitationId, requestOptions).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> removeInvitation(String realm, String orgId, String invitationId) {
-        return this.rawClient.removeInvitation(realm, orgId, invitationId).thenApply(response -> response.body());
+    /**
+     * Remove a pending invitation to an organization.
+     */
+    public CompletableFuture<Void> removeInvitation(String orgId, String invitationId) {
+        return this.rawClient.removeInvitation(orgId, invitationId).thenApply(response -> response.body());
     }
 
-    public CompletableFuture<Void> removeInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
+    /**
+     * Remove a pending invitation to an organization.
+     */
+    public CompletableFuture<Void> removeInvitation(String orgId, String invitationId, RequestOptions requestOptions) {
         return this.rawClient
-                .removeInvitation(realm, orgId, invitationId, requestOptions)
+                .removeInvitation(orgId, invitationId, requestOptions)
                 .thenApply(response -> response.body());
     }
 
     /**
-     * Resend the email for an existing Organization Invitation
+     * Resend the email for an existing organization invitation.
      */
-    public CompletableFuture<Void> resendInvitation(String realm, String orgId, String invitationId) {
-        return this.rawClient.resendInvitation(realm, orgId, invitationId).thenApply(response -> response.body());
+    public CompletableFuture<Void> resendInvitation(String orgId, String invitationId) {
+        return this.rawClient.resendInvitation(orgId, invitationId).thenApply(response -> response.body());
     }
 
     /**
-     * Resend the email for an existing Organization Invitation
+     * Resend the email for an existing organization invitation.
      */
-    public CompletableFuture<Void> resendInvitation(
-            String realm, String orgId, String invitationId, RequestOptions requestOptions) {
+    public CompletableFuture<Void> resendInvitation(String orgId, String invitationId, RequestOptions requestOptions) {
         return this.rawClient
-                .resendInvitation(realm, orgId, invitationId, requestOptions)
+                .resendInvitation(orgId, invitationId, requestOptions)
                 .thenApply(response -> response.body());
     }
 }
