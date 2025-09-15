@@ -49,10 +49,10 @@ public class Example {
             .builder()
             .clientId("<clientId>")
             .clientSecret("<clientSecret>")
+            .realm("<realm>")
             .build();
 
         client.events().createEvent(
-            "realm",
             AuditEventRepresentation
                 .builder()
                 .build()
