@@ -25,7 +25,7 @@ Add the dependency in your `pom.xml` file:
 <dependency>
   <groupId>it.auth</groupId>
   <artifactId>authit-java</artifactId>
-  <version>0.0.11</version>
+  <version>0.0.15</version>
 </dependency>
 ```
 
@@ -49,10 +49,10 @@ public class Example {
             .builder()
             .clientId("<clientId>")
             .clientSecret("<clientSecret>")
-            .realm("<realm>")
             .build();
 
         client.events().createEvent(
+            "realm",
             AuditEventRepresentation
                 .builder()
                 .build()
