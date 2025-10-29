@@ -39,54 +39,34 @@ public class AsyncRawInvitationsClient {
     }
 
     /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     * Get a list of all invitations for the authenticated user.
      */
-    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(String orgId) {
-        return getInvitations(orgId, InvitationsGetInvitationsRequest.builder().build());
+    public CompletableFuture<AuthItClientHttpResponse<InvitationRepresentation>> getMyInvitations() {
+        return getMyInvitations(null);
     }
 
     /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     * Get a list of all invitations for the authenticated user.
      */
-    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(
-            String orgId, InvitationsGetInvitationsRequest request) {
-        return getInvitations(orgId, request, null);
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(
-            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
-        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+    public CompletableFuture<AuthItClientHttpResponse<InvitationRepresentation>> getMyInvitations(
+            RequestOptions requestOptions) {
+        HttpUrl httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
                 .newBuilder()
                 .addPathSegments("realms")
                 .addPathSegment(clientOptions.realm())
-                .addPathSegments("orgs")
-                .addPathSegment(orgId)
-                .addPathSegments("invitations");
-        if (request.getSearch().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "search", request.getSearch().get(), false);
-        }
-        if (request.getFirst().isPresent()) {
-            QueryStringMapper.addQueryParameter(
-                    httpUrl, "first", request.getFirst().get(), false);
-        }
-        if (request.getMax().isPresent()) {
-            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
-        }
-        Request.Builder _requestBuilder = new Request.Builder()
-                .url(httpUrl.build())
+                .addPathSegments("orgs/me/invitations")
+                .build();
+        Request okhttpRequest = new Request.Builder()
+                .url(httpUrl)
                 .method("GET", null)
                 .headers(Headers.of(clientOptions.headers(requestOptions)))
-                .addHeader("Accept", "application/json");
-        Request okhttpRequest = _requestBuilder.build();
+                .addHeader("Accept", "application/json")
+                .build();
         OkHttpClient client = clientOptions.httpClient();
         if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
             client = clientOptions.httpClientWithTimeout(requestOptions);
         }
-        CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> future = new CompletableFuture<>();
+        CompletableFuture<AuthItClientHttpResponse<InvitationRepresentation>> future = new CompletableFuture<>();
         client.newCall(okhttpRequest).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -94,7 +74,7 @@ public class AsyncRawInvitationsClient {
                     if (response.isSuccessful()) {
                         future.complete(new AuthItClientHttpResponse<>(
                                 ObjectMappers.JSON_MAPPER.readValue(
-                                        responseBody.string(), new TypeReference<List<InvitationRepresentation>>() {}),
+                                        responseBody.string(), InvitationRepresentation.class),
                                 response));
                         return;
                     }
@@ -210,6 +190,86 @@ public class AsyncRawInvitationsClient {
                 try (ResponseBody responseBody = response.body()) {
                     if (response.isSuccessful()) {
                         future.complete(new AuthItClientHttpResponse<>(null, response));
+                        return;
+                    }
+                    String responseBodyString = responseBody != null ? responseBody.string() : "{}";
+                    future.completeExceptionally(new AuthItApiException(
+                            "Error with status code " + response.code(),
+                            response.code(),
+                            ObjectMappers.JSON_MAPPER.readValue(responseBodyString, Object.class),
+                            response));
+                    return;
+                } catch (IOException e) {
+                    future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                future.completeExceptionally(new AuthItException("Network error executing HTTP request", e));
+            }
+        });
+        return future;
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(String orgId) {
+        return getInvitations(orgId, InvitationsGetInvitationsRequest.builder().build());
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(
+            String orgId, InvitationsGetInvitationsRequest request) {
+        return getInvitations(orgId, request, null);
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> getInvitations(
+            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
+        HttpUrl.Builder httpUrl = HttpUrl.parse(this.clientOptions.environment().getUrl())
+                .newBuilder()
+                .addPathSegments("realms")
+                .addPathSegment(clientOptions.realm())
+                .addPathSegments("orgs")
+                .addPathSegment(orgId)
+                .addPathSegments("invitations");
+        if (request.getSearch().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "search", request.getSearch().get(), false);
+        }
+        if (request.getFirst().isPresent()) {
+            QueryStringMapper.addQueryParameter(
+                    httpUrl, "first", request.getFirst().get(), false);
+        }
+        if (request.getMax().isPresent()) {
+            QueryStringMapper.addQueryParameter(httpUrl, "max", request.getMax().get(), false);
+        }
+        Request.Builder _requestBuilder = new Request.Builder()
+                .url(httpUrl.build())
+                .method("GET", null)
+                .headers(Headers.of(clientOptions.headers(requestOptions)))
+                .addHeader("Accept", "application/json");
+        Request okhttpRequest = _requestBuilder.build();
+        OkHttpClient client = clientOptions.httpClient();
+        if (requestOptions != null && requestOptions.getTimeout().isPresent()) {
+            client = clientOptions.httpClientWithTimeout(requestOptions);
+        }
+        CompletableFuture<AuthItClientHttpResponse<List<InvitationRepresentation>>> future = new CompletableFuture<>();
+        client.newCall(okhttpRequest).enqueue(new Callback() {
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try (ResponseBody responseBody = response.body()) {
+                    if (response.isSuccessful()) {
+                        future.complete(new AuthItClientHttpResponse<>(
+                                ObjectMappers.JSON_MAPPER.readValue(
+                                        responseBody.string(), new TypeReference<List<InvitationRepresentation>>() {}),
+                                response));
                         return;
                     }
                     String responseBodyString = responseBody != null ? responseBody.string() : "{}";

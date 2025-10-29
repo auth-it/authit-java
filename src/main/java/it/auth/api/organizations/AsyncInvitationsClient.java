@@ -29,26 +29,17 @@ public class AsyncInvitationsClient {
     }
 
     /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     * Get a list of all invitations for the authenticated user.
      */
-    public CompletableFuture<List<InvitationRepresentation>> getInvitations(String orgId) {
-        return this.rawClient.getInvitations(orgId).thenApply(response -> response.body());
+    public CompletableFuture<InvitationRepresentation> getMyInvitations() {
+        return this.rawClient.getMyInvitations().thenApply(response -> response.body());
     }
 
     /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     * Get a list of all invitations for the authenticated user.
      */
-    public CompletableFuture<List<InvitationRepresentation>> getInvitations(
-            String orgId, InvitationsGetInvitationsRequest request) {
-        return this.rawClient.getInvitations(orgId, request).thenApply(response -> response.body());
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public CompletableFuture<List<InvitationRepresentation>> getInvitations(
-            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getInvitations(orgId, request, requestOptions).thenApply(response -> response.body());
+    public CompletableFuture<InvitationRepresentation> getMyInvitations(RequestOptions requestOptions) {
+        return this.rawClient.getMyInvitations(requestOptions).thenApply(response -> response.body());
     }
 
     /**
@@ -77,6 +68,29 @@ public class AsyncInvitationsClient {
      */
     public CompletableFuture<Void> rejectInvitation(String invitationId, RequestOptions requestOptions) {
         return this.rawClient.rejectInvitation(invitationId, requestOptions).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public CompletableFuture<List<InvitationRepresentation>> getInvitations(String orgId) {
+        return this.rawClient.getInvitations(orgId).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public CompletableFuture<List<InvitationRepresentation>> getInvitations(
+            String orgId, InvitationsGetInvitationsRequest request) {
+        return this.rawClient.getInvitations(orgId, request).thenApply(response -> response.body());
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public CompletableFuture<List<InvitationRepresentation>> getInvitations(
+            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getInvitations(orgId, request, requestOptions).thenApply(response -> response.body());
     }
 
     /**

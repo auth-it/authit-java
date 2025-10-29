@@ -27,7 +27,7 @@ Delete all admin events in this realm.
 <dd>
 
 ```java
-client.events().deleteAdminEvents("realm");
+client.events().deleteAdminEvents();
 ```
 </dd>
 </dl>
@@ -81,7 +81,7 @@ Delete all events in this realm.
 <dd>
 
 ```java
-client.events().deleteEvents("realm");
+client.events().deleteEvents();
 ```
 </dd>
 </dl>
@@ -136,7 +136,6 @@ Create an custom audit log event.
 
 ```java
 client.events().createEvent(
-    "realm",
     AuditEventRepresentation
         .builder()
         .build()
@@ -307,9 +306,15 @@ Get all events, or filters them based on URL query parameters.
 
 ```java
 client.events().getEvents(
-    "realm",
     GetEventsRequest
         .builder()
+        .client("client")
+        .dateFrom("dateFrom")
+        .dateTo("dateTo")
+        .first(1)
+        .ipAddress("ipAddress")
+        .max(1)
+        .user("user")
         .build()
 );
 ```
@@ -430,9 +435,17 @@ Get all admin events, or filters events based on URL query parameters.
 
 ```java
 client.events().getAdminEvents(
-    "realm",
     GetAdminEventsRequest
         .builder()
+        .authClient("authClient")
+        .authIpAddress("authIpAddress")
+        .authRealm("authRealm")
+        .authUser("authUser")
+        .dateFrom("dateFrom")
+        .dateTo("dateTo")
+        .first(1)
+        .max(1)
+        .resourcePath("resourcePath")
         .build()
 );
 ```
@@ -577,7 +590,7 @@ Clear user login failures for all users. This can release temporarily disabled u
 <dd>
 
 ```java
-client.attackDetection().clearAllLoginFailures("realm");
+client.attackDetection().clearAllLoginFailures();
 ```
 </dd>
 </dl>
@@ -631,7 +644,7 @@ Get lockout status of a user in brute force detection.
 <dd>
 
 ```java
-client.attackDetection().userLockoutStatus("realm", "userId");
+client.attackDetection().userLockoutStatus("userId");
 ```
 </dd>
 </dl>
@@ -693,7 +706,7 @@ Clear any user login failures for the user. This can release a temporarily disab
 <dd>
 
 ```java
-client.attackDetection().clearUserLoginFailures("realm", "userId");
+client.attackDetection().clearUserLoginFailures("userId");
 ```
 </dd>
 </dl>
@@ -756,7 +769,7 @@ Remove all user sessions for this realm. Any client that has an admin URL will a
 <dd>
 
 ```java
-client.sessions().removeAllSessions("realm");
+client.sessions().removeAllSessions();
 ```
 </dd>
 </dl>
@@ -811,10 +824,10 @@ Remove a specific user session. Any client that has an admin URL will also be to
 
 ```java
 client.sessions().removeUserSession(
-    "realm",
     "session",
     RemoveUserSessionRequest
         .builder()
+        .isOffline(true)
         .build()
 );
 ```
@@ -888,9 +901,12 @@ Get all roles for the given realm or client.
 
 ```java
 client.roles().getRoles(
-    "realm",
     GetRolesRequest
         .builder()
+        .briefRepresentation(true)
+        .first(1)
+        .max(1)
+        .search("search")
         .build()
 );
 ```
@@ -979,7 +995,6 @@ Create a new role for the realm or client.
 
 ```java
 client.roles().createRole(
-    "realm",
     RoleRepresentation
         .builder()
         .build()
@@ -1045,7 +1060,7 @@ Get a role by name.
 <dd>
 
 ```java
-client.roles().getRole("realm", "role-name");
+client.roles().getRole("role-name");
 ```
 </dd>
 </dl>
@@ -1108,7 +1123,6 @@ Update a role by name.
 
 ```java
 client.roles().updateRole(
-    "realm",
     "role-name",
     RoleRepresentation
         .builder()
@@ -1183,7 +1197,7 @@ Delete a role by name.
 <dd>
 
 ```java
-client.roles().deleteRole("realm", "role-name");
+client.roles().deleteRole("role-name");
 ```
 </dd>
 </dl>
@@ -1246,10 +1260,12 @@ Get users that have the specified role name assigned.
 
 ```java
 client.roles().getUsersByRole(
-    "realm",
     "role-name",
     GetUsersByRoleRequest
         .builder()
+        .briefRepresentation(true)
+        .first(1)
+        .max(1)
         .build()
 );
 ```
@@ -1339,7 +1355,6 @@ Create a new user. Username must be unique.
 
 ```java
 client.users().createUser(
-    "realm",
     UserRepresentation
         .builder()
         .build()
@@ -1406,9 +1421,16 @@ Returns the number of users that match the given criteria.
 
 ```java
 client.users().countUsers(
-    "realm",
     CountUsersRequest
         .builder()
+        .email("email")
+        .emailVerified(true)
+        .enabled(true)
+        .firstName("firstName")
+        .lastName("lastName")
+        .q("q")
+        .search("search")
+        .username("username")
         .build()
 );
 ```
@@ -1529,10 +1551,10 @@ Get representation of the user using the ID.
 
 ```java
 client.users().getUser(
-    "realm",
     "user-id",
     GetUserRequest
         .builder()
+        .userProfileMetadata(true)
         .build()
 );
 ```
@@ -1605,7 +1627,6 @@ Update the user using the ID.
 
 ```java
 client.users().updateUser(
-    "realm",
     "user-id",
     UserRepresentation
         .builder()
@@ -1680,7 +1701,7 @@ Delete the user using the ID.
 <dd>
 
 ```java
-client.users().deleteUser("realm", "user-id");
+client.users().deleteUser("user-id");
 ```
 </dd>
 </dl>
@@ -1743,13 +1764,15 @@ Send an email to the user with a link they can click to execute particular actio
 
 ```java
 client.users().sendActionEmail(
-    "realm",
     "user-id",
     SendActionEmailRequest
         .builder()
         .body(
             Arrays.asList("string")
         )
+        .clientId("client_id")
+        .lifespan(1)
+        .redirectUri("redirect_uri")
         .build()
 );
 ```
@@ -1845,7 +1868,7 @@ Impersonate the user. This will terminate any outstanding user sessions for this
 <dd>
 
 ```java
-client.users().impersonateUser("realm", "user-id");
+client.users().impersonateUser("user-id");
 ```
 </dd>
 </dl>
@@ -1907,7 +1930,7 @@ Remove all user sessions associated with the user Also send notification to all 
 <dd>
 
 ```java
-client.users().removeUserSessions("realm", "user-id");
+client.users().removeUserSessions("user-id");
 ```
 </dd>
 </dl>
@@ -1970,10 +1993,12 @@ Send an email-verification email to the user An email contains a link the user c
 
 ```java
 client.users().sendVerifyEmail(
-    "realm",
     "user-id",
     SendVerifyEmailRequest
         .builder()
+        .clientId("client_id")
+        .lifespan(1)
+        .redirectUri("redirect_uri")
         .build()
 );
 ```
@@ -2047,7 +2072,7 @@ client.users().sendVerifyEmail(
 <dd>
 
 ```java
-client.users().getUserSessions("realm", "user-id");
+client.users().getUserSessions("user-id");
 ```
 </dd>
 </dl>
@@ -2109,7 +2134,7 @@ Get organizations for the given user.
 <dd>
 
 ```java
-client.users().getUserOrganizations("realm", "userId");
+client.users().getUserOrganizations("userId");
 ```
 </dd>
 </dl>
@@ -2172,7 +2197,6 @@ Create a magic link to log in a user.
 
 ```java
 client.users().createMagicLink(
-    "realm",
     MagicLinkRequest
         .builder()
         .email("email")
@@ -2346,9 +2370,22 @@ Returns a stream of users, filtered according to query parameters.
 
 ```java
 client.users().getUsers(
-    "realm",
     GetAdminRealmsRealmExtAdminUsersRequest
         .builder()
+        .briefRepresentation(true)
+        .email("email")
+        .emailVerified(true)
+        .enabled(true)
+        .exact(true)
+        .first(1)
+        .firstName("firstName")
+        .idpAlias("idpAlias")
+        .idpUserId("idpUserId")
+        .lastName("lastName")
+        .max(1)
+        .q("q")
+        .search("search")
+        .username("username")
         .build()
 );
 ```
@@ -2518,9 +2555,12 @@ Get a paginated list of organizations using optional search query parameters.
 
 ```java
 client.organizations().getOrganizations(
-    "realm",
     GetOrganizationsRequest
         .builder()
+        .search("search")
+        .first(1)
+        .max(1)
+        .q("q")
         .build()
 );
 ```
@@ -2609,7 +2649,6 @@ Create a new organization from a representation. Must include name.
 
 ```java
 client.organizations().createOrganization(
-    "realm",
     OrganizationRepresentation
         .builder()
         .build()
@@ -2676,9 +2715,10 @@ Get a count of organizations using an optional search query.
 
 ```java
 client.organizations().getOrganizationsCount(
-    "realm",
     GetOrganizationsCountRequest
         .builder()
+        .search("search")
+        .q("q")
         .build()
 );
 ```
@@ -2736,7 +2776,7 @@ client.organizations().getOrganizationsCount(
 <dd>
 
 ```java
-client.organizations().getOrganization("realm", "orgId");
+client.organizations().getOrganization("orgId");
 ```
 </dd>
 </dl>
@@ -2785,7 +2825,6 @@ client.organizations().getOrganization("realm", "orgId");
 
 ```java
 client.organizations().updateOrganization(
-    "realm",
     "orgId",
     OrganizationRepresentation
         .builder()
@@ -2846,7 +2885,7 @@ client.organizations().updateOrganization(
 <dd>
 
 ```java
-client.organizations().deleteOrganization("realm", "orgId");
+client.organizations().deleteOrganization("orgId");
 ```
 </dd>
 </dl>
@@ -2909,7 +2948,6 @@ Create a link for this organizations admin portal. This link encodes an action t
 
 ```java
 client.organizations().createPortalLink(
-    "realm",
     "orgId",
     CreatePortalLinkRequest
         .builder()
@@ -2986,9 +3024,10 @@ Get a list of webhooks for this realm.
 
 ```java
 client.webhooks().getWebhooks(
-    "realm",
     GetWebhooksRequest
         .builder()
+        .first(1)
+        .max(1)
         .build()
 );
 ```
@@ -3061,7 +3100,6 @@ Create a webhook to send events to a URL.
 
 ```java
 client.webhooks().createWebhook(
-    "realm",
     WebhookRepresentation
         .builder()
         .build()
@@ -3127,7 +3165,7 @@ Get a count of webhooks.
 <dd>
 
 ```java
-client.webhooks().getWebhooksCount("realm");
+client.webhooks().getWebhooksCount();
 ```
 </dd>
 </dl>
@@ -3181,7 +3219,7 @@ Get details for a specific webhook.
 <dd>
 
 ```java
-client.webhooks().getWebhook("realm", "webhookId");
+client.webhooks().getWebhook("webhookId");
 ```
 </dd>
 </dl>
@@ -3244,7 +3282,6 @@ Update details for a specific webhook.
 
 ```java
 client.webhooks().updateWebhook(
-    "realm",
     "webhookId",
     WebhookRepresentation
         .builder()
@@ -3319,7 +3356,7 @@ Delete a webhook.
 <dd>
 
 ```java
-client.webhooks().deleteWebhook("realm", "webhookId");
+client.webhooks().deleteWebhook("webhookId");
 ```
 </dd>
 </dl>
@@ -3383,7 +3420,6 @@ Obtain an OAuth2 access token using client credentials
 
 ```java
 client.auth().getToken(
-    "realm",
     AuthGetTokenRequest
         .builder()
         .clientId("client_id")
@@ -3477,7 +3513,7 @@ Get a list of all organizations that the user is a member and their roles in tho
 <dd>
 
 ```java
-client.organizations().memberships().getMemberInfo("realm");
+client.organizations().memberships().getMemberInfo();
 ```
 </dd>
 </dl>
@@ -3532,10 +3568,14 @@ Get a paginated list of users who are a member of the specified organization.
 
 ```java
 client.organizations().memberships().getMemberships(
-    "realm",
     "orgId",
     MembershipsGetMembershipsRequest
         .builder()
+        .search("search")
+        .first(1)
+        .max(1)
+        .excludeAdminAccounts(true)
+        .includeOrgs(true)
         .build()
 );
 ```
@@ -3640,10 +3680,10 @@ Get total number of members of a given organization.
 
 ```java
 client.organizations().memberships().countMemberships(
-    "realm",
     "orgId",
     MembershipsCountMembershipsRequest
         .builder()
+        .excludeAdminAccounts(true)
         .build()
 );
 ```
@@ -3715,7 +3755,7 @@ Check if a user is a member of an organization
 <dd>
 
 ```java
-client.organizations().memberships().isMember("realm", "orgId", "userId");
+client.organizations().memberships().isMember("orgId", "userId");
 ```
 </dd>
 </dl>
@@ -3785,7 +3825,7 @@ Add the specified user to the specified organization as a member.
 <dd>
 
 ```java
-client.organizations().memberships().addMember("realm", "orgId", "userId");
+client.organizations().memberships().addMember("orgId", "userId");
 ```
 </dd>
 </dl>
@@ -3855,7 +3895,7 @@ Remove the specified user from the specified organization as a member.
 <dd>
 
 ```java
-client.organizations().memberships().removeMember("realm", "orgId", "userId");
+client.organizations().memberships().removeMember("orgId", "userId");
 ```
 </dd>
 </dl>
@@ -3899,7 +3939,7 @@ client.organizations().memberships().removeMember("realm", "orgId", "userId");
 </details>
 
 ## Organizations Invitations
-<details><summary><code>client.organizations.invitations.getInvitations(realm, orgId) -> List&lt;InvitationRepresentation&gt;</code></summary>
+<details><summary><code>client.organizations.invitations.getMyInvitations(realm) -> InvitationRepresentation</code></summary>
 <dl>
 <dd>
 
@@ -3911,7 +3951,7 @@ client.organizations().memberships().removeMember("realm", "orgId", "userId");
 <dl>
 <dd>
 
-Get a paginated list of invitations to an organization, using an optional search query for email address.
+Get a list of all invitations for the authenticated user.
 </dd>
 </dl>
 </dd>
@@ -3926,13 +3966,7 @@ Get a paginated list of invitations to an organization, using an optional search
 <dd>
 
 ```java
-client.organizations().invitations().getInvitations(
-    "realm",
-    "orgId",
-    InvitationsGetInvitationsRequest
-        .builder()
-        .build()
-);
+client.organizations().invitations().getMyInvitations();
 ```
 </dd>
 </dl>
@@ -3948,38 +3982,6 @@ client.organizations().invitations().getInvitations(
 <dd>
 
 **realm:** `String` — realm name (not id!)
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**orgId:** `String` — organization id
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**search:** `Optional<String>` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**first:** `Optional<Integer>` 
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**max:** `Optional<Integer>` 
     
 </dd>
 </dl>
@@ -4018,7 +4020,7 @@ Accept invitation for the authenticated user. The token provided must be for the
 <dd>
 
 ```java
-client.organizations().invitations().acceptInvitation("realm", "invitationId");
+client.organizations().invitations().acceptInvitation("invitationId");
 ```
 </dd>
 </dl>
@@ -4080,7 +4082,7 @@ Reject invitation for the authenticated user. The token provided must be for the
 <dd>
 
 ```java
-client.organizations().invitations().rejectInvitation("realm", "invitationId");
+client.organizations().invitations().rejectInvitation("invitationId");
 ```
 </dd>
 </dl>
@@ -4104,6 +4106,100 @@ client.organizations().invitations().rejectInvitation("realm", "invitationId");
 <dd>
 
 **invitationId:** `String` — invitation UUID
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.organizations.invitations.getInvitations(realm, orgId) -> List&lt;InvitationRepresentation&gt;</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Get a paginated list of invitations to an organization, using an optional search query for email address.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```java
+client.organizations().invitations().getInvitations(
+    "orgId",
+    InvitationsGetInvitationsRequest
+        .builder()
+        .search("search")
+        .first(1)
+        .max(1)
+        .build()
+);
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**realm:** `String` — realm name (not id!)
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**orgId:** `String` — organization id
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `Optional<String>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**first:** `Optional<Integer>` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**max:** `Optional<Integer>` 
     
 </dd>
 </dl>
@@ -4143,7 +4239,6 @@ Create an invitation to an organization.
 
 ```java
 client.organizations().invitations().invite(
-    "realm",
     "orgId",
     InvitationRequestRepresentation
         .builder()
@@ -4258,7 +4353,7 @@ Get a count of invitations to an organization.
 <dd>
 
 ```java
-client.organizations().invitations().getInvitationsCount("realm", "orgId");
+client.organizations().invitations().getInvitationsCount("orgId");
 ```
 </dd>
 </dl>
@@ -4320,7 +4415,7 @@ Get an invitation to an organization.
 <dd>
 
 ```java
-client.organizations().invitations().getInvitation("realm", "orgId", "invitationId");
+client.organizations().invitations().getInvitation("orgId", "invitationId");
 ```
 </dd>
 </dl>
@@ -4390,7 +4485,7 @@ Remove a pending invitation to an organization.
 <dd>
 
 ```java
-client.organizations().invitations().removeInvitation("realm", "orgId", "invitationId");
+client.organizations().invitations().removeInvitation("orgId", "invitationId");
 ```
 </dd>
 </dl>
@@ -4460,7 +4555,7 @@ Resend the email for an existing organization invitation.
 <dd>
 
 ```java
-client.organizations().invitations().resendInvitation("realm", "orgId", "invitationId");
+client.organizations().invitations().resendInvitation("orgId", "invitationId");
 ```
 </dd>
 </dl>
@@ -4531,7 +4626,7 @@ Get details for all domains owned by an organization.
 <dd>
 
 ```java
-client.organizations().domains().getDomains("realm", "orgId");
+client.organizations().domains().getDomains("orgId");
 ```
 </dd>
 </dl>
@@ -4593,7 +4688,7 @@ Get details for a domain owned by an organization.
 <dd>
 
 ```java
-client.organizations().domains().getDomain("realm", "orgId", "domainName");
+client.organizations().domains().getDomain("orgId", "domainName");
 ```
 </dd>
 </dl>
@@ -4663,7 +4758,7 @@ Initiate a verification check for the domain name owned by this organization.
 <dd>
 
 ```java
-client.organizations().domains().verifyDomain("realm", "orgId", "domainName");
+client.organizations().domains().verifyDomain("orgId", "domainName");
 ```
 </dd>
 </dl>
@@ -4734,7 +4829,7 @@ Get a list of roles for this organization.
 <dd>
 
 ```java
-client.organizations().roles().getOrganizationRoles("realm", "orgId");
+client.organizations().roles().getOrganizationRoles("orgId");
 ```
 </dd>
 </dl>
@@ -4797,7 +4892,6 @@ Create a new role for this organization.
 
 ```java
 client.organizations().roles().createOrganizationRole(
-    "realm",
     "orgId",
     OrganizationRoleRepresentation
         .builder()
@@ -4872,7 +4966,7 @@ Get role for this organization by name.
 <dd>
 
 ```java
-client.organizations().roles().getRole("realm", "orgId", "name");
+client.organizations().roles().getRole("orgId", "name");
 ```
 </dd>
 </dl>
@@ -4943,7 +5037,6 @@ Update role for this organization.
 
 ```java
 client.organizations().roles().updateRole(
-    "realm",
     "orgId",
     "name",
     OrganizationRoleRepresentation
@@ -5027,7 +5120,7 @@ Delete role for this organization
 <dd>
 
 ```java
-client.organizations().roles().deleteRole("realm", "orgId", "name");
+client.organizations().roles().deleteRole("orgId", "name");
 ```
 </dd>
 </dl>
@@ -5097,7 +5190,7 @@ Get users with this organization role.
 <dd>
 
 ```java
-client.organizations().roles().getUserOrganizationRoles("realm", "orgId", "name");
+client.organizations().roles().getUserOrganizationRoles("orgId", "name");
 ```
 </dd>
 </dl>
@@ -5167,7 +5260,7 @@ Check if a user has an organization role.
 <dd>
 
 ```java
-client.organizations().roles().hasOrganizationRole("realm", "orgId", "name", "userId");
+client.organizations().roles().hasOrganizationRole("orgId", "name", "userId");
 ```
 </dd>
 </dl>
@@ -5245,7 +5338,7 @@ Grant the specified user to the specified organization role.
 <dd>
 
 ```java
-client.organizations().roles().grantOrganizationRole("realm", "orgId", "name", "userId");
+client.organizations().roles().grantOrganizationRole("orgId", "name", "userId");
 ```
 </dd>
 </dl>
@@ -5323,7 +5416,7 @@ Revoke the specified organization role from the specified user.
 <dd>
 
 ```java
-client.organizations().roles().revokeOrganizationRole("realm", "orgId", "name", "userId");
+client.organizations().roles().revokeOrganizationRole("orgId", "name", "userId");
 ```
 </dd>
 </dl>
@@ -5401,7 +5494,7 @@ Get organization roles for the given user and organization.
 <dd>
 
 ```java
-client.organizations().roles().listOrganizationRoles("realm", "userId", "orgId");
+client.organizations().roles().listOrganizationRoles("userId", "orgId");
 ```
 </dd>
 </dl>
@@ -5472,7 +5565,7 @@ Get roles that have been mapped to this user.
 <dd>
 
 ```java
-client.roles().mappings().getRoleMappings("realm", "user-id");
+client.roles().mappings().getRoleMappings("user-id");
 ```
 </dd>
 </dl>
@@ -5535,7 +5628,6 @@ Add roles to this user.
 
 ```java
 client.roles().mappings().addRoleMappings(
-    "realm",
     "user-id",
     Arrays.asList(
         RoleRepresentation
@@ -5613,7 +5705,6 @@ Delete roles for this user.
 
 ```java
 client.roles().mappings().deleteRoleMappings(
-    "realm",
     "user-id",
     Arrays.asList(
         RoleRepresentation
@@ -5690,7 +5781,7 @@ Get roles that can be mapped to this user.
 <dd>
 
 ```java
-client.roles().mappings().getAvailableRoles("realm", "user-id");
+client.roles().mappings().getAvailableRoles("user-id");
 ```
 </dd>
 </dl>

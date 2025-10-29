@@ -19,6 +19,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 }
 
 
@@ -45,7 +46,7 @@ java {
 
 group = 'it.auth'
 
-version = '0.0.15'
+version = '0.0.16'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -72,7 +73,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'it.auth'
             artifactId = 'authit-java'
-            version = '0.0.15'
+            version = '0.0.16'
             from components.java
             pom {
                 licenses {
@@ -82,9 +83,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/fern-demo/phasetwo-java-sdk.git'
-                    developerConnection = 'scm:git:git://github.com/fern-demo/phasetwo-java-sdk.git'
-                    url = 'https://github.com/fern-demo/phasetwo-java-sdk'
+                    connection = 'scm:git:git://github.com/auth-it/authit-java.git'
+                    developerConnection = 'scm:git:git://github.com/auth-it/authit-java.git'
+                    url = 'https://github.com/auth-it/authit-java'
                 }
             }
         }

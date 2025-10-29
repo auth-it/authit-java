@@ -28,25 +28,17 @@ public class InvitationsClient {
     }
 
     /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     * Get a list of all invitations for the authenticated user.
      */
-    public List<InvitationRepresentation> getInvitations(String orgId) {
-        return this.rawClient.getInvitations(orgId).body();
+    public InvitationRepresentation getMyInvitations() {
+        return this.rawClient.getMyInvitations().body();
     }
 
     /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     * Get a list of all invitations for the authenticated user.
      */
-    public List<InvitationRepresentation> getInvitations(String orgId, InvitationsGetInvitationsRequest request) {
-        return this.rawClient.getInvitations(orgId, request).body();
-    }
-
-    /**
-     * Get a paginated list of invitations to an organization, using an optional search query for email address.
-     */
-    public List<InvitationRepresentation> getInvitations(
-            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
-        return this.rawClient.getInvitations(orgId, request, requestOptions).body();
+    public InvitationRepresentation getMyInvitations(RequestOptions requestOptions) {
+        return this.rawClient.getMyInvitations(requestOptions).body();
     }
 
     /**
@@ -75,6 +67,28 @@ public class InvitationsClient {
      */
     public void rejectInvitation(String invitationId, RequestOptions requestOptions) {
         this.rawClient.rejectInvitation(invitationId, requestOptions).body();
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public List<InvitationRepresentation> getInvitations(String orgId) {
+        return this.rawClient.getInvitations(orgId).body();
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public List<InvitationRepresentation> getInvitations(String orgId, InvitationsGetInvitationsRequest request) {
+        return this.rawClient.getInvitations(orgId, request).body();
+    }
+
+    /**
+     * Get a paginated list of invitations to an organization, using an optional search query for email address.
+     */
+    public List<InvitationRepresentation> getInvitations(
+            String orgId, InvitationsGetInvitationsRequest request, RequestOptions requestOptions) {
+        return this.rawClient.getInvitations(orgId, request, requestOptions).body();
     }
 
     /**
