@@ -48,7 +48,7 @@ java {
 
 group = 'it.auth'
 
-version = '0.0.17'
+version = '0.0.18'
 
 jar {
     dependsOn(":generatePomFileForMavenPublication")
@@ -79,11 +79,11 @@ publishing {
         maven(MavenPublication) {
             groupId = 'it.auth'
             artifactId = 'authit-java'
-            version = '0.0.17'
+            version = '0.0.18'
             from components.java
             pom {
-                name = 'phasetwo'
-                description = 'The official SDK of phasetwo'
+                name = 'authit'
+                description = 'The official SDK of authit'
                 url = 'https://buildwithfern.com'
                 licenses {
                     license {
@@ -93,8 +93,8 @@ publishing {
                 }
                 developers {
                     developer {
-                        name = 'phasetwo'
-                        email = 'developers@phasetwo.com'
+                        name = 'authit'
+                        email = 'developers@authit.com'
                     }
                 }
                 scm {

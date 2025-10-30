@@ -1,9 +1,9 @@
-# Phasetwo Java Library
+# Authit Java Library
 
 [![fern shield](https://img.shields.io/badge/%F0%9F%8C%BF-Built%20with%20Fern-brightgreen)](https://buildwithfern.com?utm_source=github&utm_medium=github&utm_campaign=readme&utm_source=https%3A%2F%2Fgithub.com%2Fauth-it%2Fauthit-java)
 [![Maven Central](https://img.shields.io/maven-central/v/it.auth/authit-java)](https://central.sonatype.com/artifact/it.auth/authit-java)
 
-The Phasetwo Java library provides convenient access to the Phasetwo APIs from Java.
+The Authit Java library provides convenient access to the Authit APIs from Java.
 
 ## Installation
 
@@ -25,7 +25,7 @@ Add the dependency in your `pom.xml` file:
 <dependency>
   <groupId>it.auth</groupId>
   <artifactId>authit-java</artifactId>
-  <version>0.0.17</version>
+  <version>0.0.18</version>
 </dependency>
 ```
 
