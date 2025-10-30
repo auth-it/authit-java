@@ -25,7 +25,7 @@ Add the dependency in your `pom.xml` file:
 <dependency>
   <groupId>it.auth</groupId>
   <artifactId>authit-java</artifactId>
-  <version>0.0.18</version>
+  <version>0.0.19</version>
 </dependency>
 ```
 
