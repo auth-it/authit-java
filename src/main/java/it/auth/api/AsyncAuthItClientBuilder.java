@@ -140,8 +140,10 @@ public class AsyncAuthItClientBuilder {
      */
     protected void setAuthentication(ClientOptions.Builder builder) {
         if (this.clientId != null && this.clientSecret != null) {
-            AuthClient authClient = new AuthClient(
-                    ClientOptions.builder().environment(this.environment).realm(this.realm).build());
+            AuthClient authClient = new AuthClient(ClientOptions.builder()
+                    .environment(this.environment)
+                    .realm(this.realm)
+                    .build());
             OAuthTokenSupplier oAuthTokenSupplier =
                     new OAuthTokenSupplier(this.clientId, this.clientSecret, authClient);
             builder.addHeader("Authorization", oAuthTokenSupplier);
